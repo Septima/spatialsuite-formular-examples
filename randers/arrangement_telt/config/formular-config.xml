@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+   <formular name="arrangement_telt">
+        <header>Ansøgning efter Tekniske forskrifter for forsamlingstelte.</header>
+        <subheader>Ansøgning efter Tekniske forskrifter for forsamlingstelte.</subheader>
+        <!-- <submitpage>formular.send.arrangement_telt.oldfashion</submitpage> -->
+        
+		<submitpages>
+			<page parser="setFrid" condition="jQuery('#journr').val() == ''">sbsys.arrangement_telt.create-case</page>
+			<page parser="setFrid" urlparam="journalnr">sbsys.arrangement_telt.journalNr</page>
+			<page>formular.send.arrangement_telt.save</page>
+			<page parser="setPdf">formular.send.arrangement_telt.pdf</page>
+            <!-- Denne del (move) er general - den skal der ikke pilles ved -->
+			<page>formular.move.pdf</page>
+            <page>sbsys.arrangement_telt.attach-document</page>
+			<page>sbsys.arrangement_telt.attach-document.plads</page>
+			<page>sbsys.arrangement_telt.attach-document.brand</page>
+            
+			<page>formular.send.arrangement_telt.mail</page>
+        </submitpages>
+        
+        
+        <!-- <reportmapscale>500</reportmapscale> -->
+        <reportprofile>beredskab_formular</reportprofile>
+        <reportlayers>default</reportlayers>
+	   	<js>/modules/formular/formular-config/js/arrangement_telt.js</js>
+	   	<js>/modules/formular/formular-config/js/sorteringsdato.js</js>
+        <reportxsl>arrangement_telt</reportxsl>
+		<messages>
+			<message name="done">Ansøgningen er nu registreret. Du vil modtage en kopi af din ansøgning i din mailboks&lt;br/&gt;Du kan også åbne kvitteringen &lt;a href=&quot;{{pdf}}&quot; target=&quot;_blank&quot;&gt;her&lt;/a&gt;</message>
+			<message name="error">Der er opstået en fejl! Send os venligst en besked via &lt;a href=&quot;mailto:selvbetjeningssupport@randers.dk&quot;&gt;denne adresse&lt;/a&gt;</message>
+		</messages>
+
+        <tabs class="smalltabs">true</tabs>
+        <content displayname="Antal deltage">
+			<input type="hidden" id="dagsdato" urlparam="dagsdato" defaultvalue="-" />
+            <input type="input" displayname="Antal personer:" urlparam="antalpersoner" regexp="^(1[5-9][0-9]|[2-9][0-9][0-9]|[0-9]{4,6})$" validate="Antallet af personer overstiger ikke 150, så du skal ikke anmelde arrangementet."/> 
+        </content>  
+        
+        <content displayname="Hvor og hvad">
+			<input type="hidden" id="arttekst" urlparam="art" defaultvalue="-"/>
+			<input type="hidden" urlparam="sbsys_brugerid" defaultvalue="APKT075"/>
+			<input type="hidden" urlparam="doktitel" defaultvalue="Ansøgning om teltarrangement"/>
+			<input type="hidden" id="bsikmail" urlparam="bsikmail" defaultvalue="omrvest@bsik.dk" />
+			
+
+            <input type="text" displayname=" "/>
+			<input type="text" displayname="Fremsøg stedet via vejnavn og husnummer:"/>
+			<geosearch urlparam="address" displayname="Adresse:" resources="Adresser" filter="muncode0730,muncode0706,muncode0710,muncode0707" usegeometry="true" regexp="[a-zæøå]" validate="Det skal være indtastet en adresse!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Du skal på kortet angive de arealer hvor teltet skal stå.&lt;br&gt;
+											&lt;ul&gt; 
+												&lt;li&gt;Du kan indtegne et areal ved at vælge knappen med den første firkant &lt;div class='button_in_help button_polygon'&gt;&lt;/div&gt; &lt;/li&gt; 
+												&lt;li&gt;Du kan tilpasse de udvalgte arealer ved at trykke på den næste knap med firkant, og markere det areal du ønsker ændret &lt;div class='button_in_help button_modify'&gt;&lt;/div&gt; &lt;/li&gt; 
+												&lt;li&gt;Du kan slette ved at trykke på knappen med viskelæderet og markere det areal, du ønsker at slette &lt;div class='button_in_help button_delete'&gt;&lt;/div&gt; &lt;/li&gt; 
+											&lt;/ul&gt;
+			"/>
+            <maptools>
+                <maptool displayname="Slet en markering" name="delete"  />
+				<maptool displayname="Tilpas udvalgt areal" name="modify"/>
+				<maptool displayname="Tegn areal" name="polygon"/>                
+<!--				<maptool displayname="Udvælg eksisterende markblok" name="select" datasource="ds_markblokkort2012" />-->
+            </maptools>
+            <map  required="true" multiplegeometries="false">
+                <extent>539430.4,6237856,591859.2,6290284.8</extent>
+                <resolutions>0.2,0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4</resolutions>
+                <themes>
+                    <!-- <theme name="theme-luftfoto" host="//tile2.randers.dk/service/wms"/> -->
+					<theme name="theme-gst-dtkskaerm-sh" host="/wms?servicename=beredskab"/>
+                </themes>
+            </map>
+            <conflicts urlparam="konflikttekst1" displayname="Ejendomsinformationer:" targerset="ejendom"/>
+            <area urlparam="areal" displayname="Areal:" onchange="settekst();" condition="jQuery('#art').val() == 'bla'"/> 
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+			<input type="hidden" urlparam="frid" id="frid"/>
+			<input type="input" displayname="Journalnummer" urlparam="journr" id="journr" condition="jQuery('#journr').val() != ''"/>
+            <input type="dropdown" displayname="Arrangementets art:" urlparam="artvalg" id="art" onchange="settekst();">
+                <option value="Skolefest" name="Skolefest"/>
+                <option value="Firmafest" name="Firmafest"/>
+                <option value="Juletræsfest" name="Juletræsfest"/>
+                <option value="Koncert" name="Koncert"/> 
+                <option value="Fordrag" name="Fordrag"/>                
+                <option value="Udstilling" name="Udstilling"/>
+                <option value="Messe" name="Messe"/>
+                <option value="Byfest" name="Byfest"/>
+                <option value="Andet" name="Andet"/>
+            </input>
+            <input type="input" displayname="Beskriv arten:" urlparam="artandet"  id="artAndet" condition="jQuery('#art').val() == 'Andet'" onkeyup="settekst()"/>
+            <input type="dropdown" id="kommune" displayname="Hvilken kommune:" urlparam="kommune" regexp=".+" onchange="setMail();">
+                <option value=" " name="VÆLG"/>
+                <option value="randers" name="Randers"/>
+                <option value="favrskov" name="Favrskov"/>
+				<option value="norddjurs" name="Norddjurs"/>
+				<option value="syddjurs" name="Syddjurs"/>
+            </input>
+
+            <input id="date1" type="date" displayname="Startdato:" urlparam="startdato" onkeyup="formular.countDays(jQuery('#date1').val(),jQuery('#date2').val(),'days')" onchange="formular.countDays(jQuery('#date1').val(),jQuery('#date2').val(),'days')"/>
+            <input id="date2" type="date" displayname="Slutdato:" urlparam="slutdato" onkeyup="formular.countDays(jQuery('#date1').val(),jQuery('#date2').val(),'days')" onchange="formular.countDays(jQuery('#date1').val(),jQuery('#date2').val(),'days')"/>
+            <input id="days" type="input" displayname="Antal dage:" urlparam="antal_dage"/>
+            <input type="input" displayname="Start tidspunkt:" urlparam="start_tid" regexp=".+" validate="Indtast arrangementets starttidspunkt!"/>
+            <input type="input" displayname="Slut tidspunkt:" urlparam="slut_tid" regexp=".+" validate="Indtast arrangementets sluttidspunkt!"/>
+            </content>  
+        <content displayname="Kontaktoplysninger">
+            <input type="input" displayname="Navn på ansvarlig:" urlparam="navn" regexp=".+" validate="Indtast navn!"/>
+            <input type="input" displayname="Adresse på ansvarlig:" urlparam="adresse2" regexp=".+"/>
+            <input type="input" displayname="E-mail på ansvarlig:" id="email1" urlparam="email" regexp="[a-z0-9!#$%'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?" validate="Indtast mailadresse!"/>
+            <input type="text" displayname="Indtast e-mail igen, for at verificere:"/>
+            <input type="input" displayname="E-mail:" id="email2" urlparam="email" onkeyup="formular.compare('email1','email2','De to skal være ens')"  regexp=".+" validate="Gentag mailadresse!"/>
+            <input type="input" displayname="Tlf. nr. på ansvarlig:" urlparam="tlf" regexp=".+" validate="Indtast telefonnummer!"/>
+            <input type="text" displayname=" "/>
+<!--            <input type="text" displayname="Du skal vedhæfte Brand- og Evakueringsinstruks (eksempel kan ses under hjælp)"/>
+            <input type="file" displayname="Vedhæft fil:" urlparam="filnavn"/> -->
+            <input type="text" displayname=" "/>
+        </content>  
+        <content displayname="Vedhæft bilag og send">
+            <input type="text" displayname="Du skal vedhæfte pladsfordelingsplan (eksempel kan ses under hjælp)"/>
+            <input type="file" displayname="Vedhæft fil:" urlparam="filnavn2" regexp=".+" />
+            <input type="text" displayname="Du skal vedhæfte Brand- og Evakueringsinstruks (eksempel kan ses under hjælp)"/>
+            <input type="file" displayname="Vedhæft fil:" urlparam="filnavn" regexp=".+" />
+            <confirm displayname="Følgende oplysninger er indtastet. Er det korrekt?"/>
+			<submitbutton displayname="Ansøg om arrangement til over 150 personer" function="handleContinue();"/>
+        </content>  
+   </formular>
+
+</config>

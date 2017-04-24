@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+     <formular name="drikkevandskvalitet">
+        <header>Kontrol af drikkevandskvalitet ved enkeltvandsforsyninger</header>
+        <subheader>Miljøministeriets bekendtgørelse nr. 1310 af 25. november 2015 om vandkvalitet og tilsyn med vandforsyningsanlæg.</subheader>
+        <submitpage>formular.send.drikkevandskvalitet</submitpage>
+        <!-- <reportmapscale>1000</reportmapscale> -->
+        <reportprofile>ekstern_all</reportprofile>
+        <reportlayers>default</reportlayers>
+        <reportxsl>drikkevandskvalitet</reportxsl>
+		<js>/js/custom/drikkevandskvalitet.js</js>
+		<messages>
+			<message name="done">Ansøgningen er nu registreret. Du vil modtage en kopi af din ansøgning, samt en kvittering, i din mailboks&lt;br/&gt;Du kan også åbne ansøgningen &lt;a href=&quot;{{pdf}}&quot; target=&quot;_blank&quot;&gt;her&lt;/a&gt;</message>
+			<message name="error">Der er opstået en fejl! Send os venligst en besked via &lt;a href=&quot;mailto:selvbetjeningssupport@randers.dk&quot;&gt;denne adresse&lt;/a&gt;</message>
+		</messages>
+
+        <!-- <css>/css/custom/selvbetjening/.css</css>-->
+        <tabs class="smalltabs">true</tabs>
+		<content displayname="Hvor?">
+			<!-- ekstra adresser -->
+			
+			<input type="hidden" urlparam="adrHiddenOne" id="adrHiddenOne" defaultvalue="0" />
+			<input type="hidden" urlparam="adrHiddenTwo" id="adrHiddenTwo" defaultvalue="0" />
+			<!--
+			<input type="hidden" urlparam="adrHiddenThree" id="adrHiddenThree" defaultvalue="0" />
+			<input type="hidden" urlparam="adrHiddenFour" id="adrHiddenFour" defaultvalue="0" />
+			<input type="hidden" urlparam="adrHiddenFive" id="adrHiddenFive" defaultvalue="0" />
+			<input type="hidden" urlparam="adrHiddenSix" id="adrHiddenSix" defaultvalue="0" />
+			<input type="hidden" urlparam="adrHiddenSeven" id="adrHiddenSeven" defaultvalue="0" />
+			<input type="hidden" urlparam="adrHiddenEight" id="adrHiddenEight" defaultvalue="0" />
+			<input type="hidden" urlparam="adrHiddenNine" id="adrHiddenNine" defaultvalue="0" />
+			-->
+			<!-- diverse tekster -->
+			<input type="hidden" urlparam="analysebehov_tekst" id="analysebehov_tekst" defaultvalue="Nej" />
+			<input type="hidden" urlparam="standardanalyse_tekst" id="standardanalyse_tekst" defaultvalue="Nej" />
+			<input type="hidden" urlparam="ukendtplacering_tekst" id="ukendtplacering_tekst" defaultvalue="Nej" />
+		    
+			<input type="hidden" urlparam="dagsdato" id="dagsdato" defaultvalue="-"/>
+			<input type="hidden" urlparam="hid_aar" id="hid_aar" defaultvalue="-"/>
+			<!-- mail svar -->
+			
+			<input type="hidden" urlparam="hasInit" id="hasInit" defaultvalue="0" />
+            <input type="hidden" urlparam="mailtekstfinal" id="mailtekstfinal" defaultvalue="" />
+			<input type="hidden" urlparam="mailtekstoverskriftfinal" id="mailtekstoverskriftfinal" defaultvalue="" />
+			
+			<input type="hidden" id="overskriftStandardAnalyse" defaultvalue="(Autosvar) Bekræftelse på tilmelding af drikkevandsanalyse samt lokalisering af boring" />
+			<input type="hidden" id="tekstStandardAnalyse" defaultvalue="Tak for din lokalisering af ejendommens drikkevandsindvinding. 
+Randers Kommune bekræfter hermed, at jeres ejendom er tilmeldt pristilbud fra firmaet Eurofins 
+Vi har registreret følgende bestilte analyse: {analyse}. 
+Laboratoriet vil kontakte jer i løbet af september måned. De vil sammen med jer aftale et tidspunkt for prøveudtagning. 
+Med venlig hilsen
+
+Jan Hansen (89 15 16 44) og Astrid Sophie Bonde (89 15 16 28)
+drikkevandsanalyser@randers.dk
+" />
+			
+			<input type="hidden" id="overskriftAndenAnalyse"  defaultvalue="(Autosvar) Lokalisering af boring og påmindelse om drikkevandsanalyse ”forenklet kontrol”" />
+			<input type="hidden" id="tekstAndenAnalyse"  defaultvalue="Tak for din lokalisering af ejendommens drikkevandsindvinding. 
+Randers Kommune har registreret, at jeres ejendom ikke er tilmeldt pristilbud fra firmaet Eurofins, men at I derimod vælger firmaet: {firma} og analysen: {analyse}. 
+Vi vil gøre opmærksom på, at Randers Kommune skal modtage en kopi af jeres drikkevandsanalyse senest den 6. december 2013. 
+Med venlig hilsen
+Jan Hansen (89 15 16 44) og Astrid Sophie Bonde (89 15 16 28)
+drikkevandsanalyser@randers.dk
+" />
+			
+			<input type="hidden" id="overskriftAndet"  defaultvalue="(Autosvar) Tak for din henvendelse" />
+			<input type="hidden" id="tekstAndet"  defaultvalue="Randers Kommune takker for din henvendelse. 
+Såfremt der er spørgsmål kan du kontakte Jan Hansen (89 15 16 44) eller Astrid Sophie Bonde (89 15 16 28)
+
+Mvh.
+Randers Kommune" />
+			
+			
+            <!-- <input type="text" displayname="Søg adressen, hvor prøven skal tages."/> -->
+            <!-- <geosearch urlparam="adresse" displayname="Adresse på ejendommen med privat drikkevandsboring/brønd:" resources="Adresser" filter="muncode0730" usegeometry="true"/> -->
+			<address urlparam="adresse" displayname="Adresse på ejendommen med privat drikkevandsboring/brønd:" apikey="[module.spatialaddress.apikey]" filter="[module.spatialaddress.filter]" />
+            
+			<input type="text" displayname="Angiv venligst på kortet hvor ejendommens private drikkevandsboring/brønd er placeret:" />
+			<input type="text" displayname="Vælg knappen med den gule prik og klik på kortet." />
+			
+			<!-- <input type="checkbox" id="ukendtplacering" displayname="Jeg kender ikke placeringen af ejendommes boring/brønd, så derfor udpeger jeg selve huset på ejendommen" urlparam="ukendtplacering" defaultvalue="false" /> -->
+            
+            <maptools>
+                <maptool name="point"/>               
+            </maptools>
+            <map>
+                <extent>539430.4,6237856,591859.2,6290284.8</extent>
+                <resolutions>0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4</resolutions>
+                <themes>
+                    <theme name="theme-ddoland2012" host="//tile2.randers.dk/service/wms"/>
+                </themes>
+            </map>
+             <conflicts urlparam="konflikttekst1" displayname="" targerset="drikkevandskvalitet"/> 
+			
+			<!-- OBS OBS OBS - denne mystiske streng sikre, at adressesoegningsfeltet kommer til at se fornuftigt ud (KMR - 8/8-2013) -->)
+			<input type="text" id="dummy1" displayname="&lt;tr&gt;	&lt;td&gt;&lt;div class=&quot;labeldiv&quot;)&gt;&lt;/div&gt;&lt;/td&gt;	&lt;td&gt;&lt;div class=&quot;valuediv&quot;&gt;&lt;input type=&quot;hidden&quot; value=&quot;dummy&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;"/>
+		</content>
+		<!--  -->
+		<content displayname="Analyse">
+			<!-- ************** Analyse nødvendig *************** -->
+			
+			<!-- Vælges standardløsningen? - NEJ -->
+			
+			<!-- <input type="text" displayname="Ejendommens drikkevand skal analyseres:" condition="jQuery('#analysebehov').is(':checked') == 0" /> --> <!--  &amp;&amp; jQuery('#standardanalyse').is(':checked') == 0"  /> -->
+
+			<!-- Vælges standardløsningen? - JA  -->
+			<input type="checkbox" id="standardanalyse" displayname="Jeg vælger kommunens tilbud fra Eurofins" urlparam="standardanalyse" defaultvalue="false" onchange="UpdateStd()" condition="jQuery('#analysebehov').is(':checked') == 0 "/>
+			<input type="checkbox" id="andet_analyse" displayname="Jeg tager selv kontakt til et andet analysefirma" urlparam="standardanalyse" defaultvalue="false" onchange="UpdateAndet()" condition="jQuery('#analysebehov').is(':checked') == 0 " />
+			
+			<input type="hidden" id="laboratorium_tekst" urlparam="laboratorium_tekst" />
+			<input type="dropdown" id="laboratorium" displayname="Analysefirma:" urlparam="laboratorium"  condition="jQuery('#analysebehov').is(':checked') == 0 &amp;&amp; jQuery('#andet_analyse').is(':checked') == 1"  > <!-- regexp="[A-Åa-å0-9]{2,}$" -->
+				<option value="Agrolab" name="Agrolab 78 77 59 52"/>
+				<option value="VBM" name="VBM Laboratoriet A/S 98 21 32 00"/>
+				<option value="Højvang" name="Højvang Miljølaboratorium 58 24 24 58"/>
+				<option value="ALControl" name="ALControl AB 39 40 59 79"/>
+				<option value="AnalyTechMiljølaboratorium" name="AnalyTech Miljølaboratorium A/S 98 19 39 00" />
+				<option value="Andet" name="Andet firma" />
+            </input>
+			<input type="input" id="laboratorium_andet" displayname=" - Hvilket firma: " urlparam="laboratorium_andet" condition="jQuery('#analysebehov').is(':checked') == 0 &amp;&amp; jQuery('#andet_analyse').is(':checked') == 1  &amp;&amp; jQuery('#laboratorium').val() == 'Andet'" />  <!-- regexp=".+" validate="Angiv navnet" -->
+
+			
+			<input type="dropdown" id="kontrolniv1" displayname="Kontrolniveau:" urlparam="kontrolniv1" condition="jQuery('#analysebehov').is(':checked') == 0 &amp;&amp; jQuery('#standardanalyse').is(':checked') == 1" onchange="Update()"  > <!-- regexp="[A-Åa-å0-9]{2,}$" -->
+				<option value="Forenklet kontrol" name="Forenklet kontrol"/>
+				<option value="Forenklet kontrol og valgfri pesticider" name="Forenklet kontrol og valgfri pesticider"/>
+            </input>
+			
+			<input type="dropdown" id="kontrolniv2" displayname="Kontrolniveau:" urlparam="kontrolniv2" condition="jQuery('#analysebehov').is(':checked') == 0 &amp;&amp; jQuery('#standardanalyse').is(':checked') == 0 &amp;&amp; jQuery('#andet_analyse').is(':checked') == 1 " onchange="Update()" > <!-- regexp="[A-Åa-å0-9]{2,}$" -->
+				<option value="Forenklet kontrol" name="Forenklet kontrol"/>
+				<option value="Forenklet kontrol og valgfri pesticider" name="Forenklet kontrol og valgfri pesticider "/>
+            </input>
+			<input type="hidden" id="kontrolniv" urlparam="kontrolniv" />
+			
+			<!-- ********* Mellemrum ************** -->
+			<input type="text" displayname=" &lt;br&gt;" />
+			<input type="text" displayname=" " />
+
+			<input type="checkbox" id="analysebehov" displayname="Analyse af ejendommes drikkevand er unødvendig" urlparam="analysebehov" defaultvalue="false" onchange="SetMailText()"/>
+			<!-- *************** Analyse unødvendig - angiv hvorfor ********************* -->
+			
+			
+			<input type="dropdown" id="analyseaarsag" displayname="Hvorfor er analyse unødvendig?:" urlparam="analyseaarsag"  condition="jQuery('#analysebehov').is(':checked') == 1" onchange="Update()">
+                <option value="--" name="-- VÆLG --"/>
+				<option value="Godkendt analyse" name="Godkendt analyse er under 5 år gammel."/>
+                <option value="Tilsluttet vandvaerk" name="Tilsluttet vandværk."/>
+				<option value="Tilsluttet nabo" name="Tilsluttet privat vandforsyning ved nabo."/>
+            </input>
+			<!-- godkendt analyse - dokumentation paakraevet -->
+			<input type="file" displayname="Vedhæft venligst analyse" urlparam="analysefil" condition="jQuery('#analysebehov').is(':checked') == 1 &amp;&amp; jQuery('#analyseaarsag').val() == 'Godkendt analyse'" />
+			
+			<!-- alment vandvaerk -->
+			<input type="text" displayname="Klik &lt;a href=&quot;http://vandogvarme.randers.dk/FrontEnd.aspx?id=1181&quot; target=&quot;_new&quot;&gt;HER&lt;/a&gt; for at ansøge om sløjfning af boring" condition="jQuery('#analysebehov').is(':checked') == 1 &amp;&amp; jQuery('#analyseaarsag').val() == 'Tilsluttet vandvaerk'"/>
+
+			<!-- godkendt analyse - dokumentation paakraevet -->
+			<!-- <geosearch urlparam="ikkealmentvvadresse" displayname="Angiv venglist adresse for vandforsyning:" resources="Adresser" filter="muncode0730"/> -->
+			<input type="input" displayname="Angiv venglist adresse for vandforsyning:" urlparam="ikkealmentvvadresse" apikey="[module.spatialaddress.apikey]" filter="komnr0730" condition="jQuery('#analysebehov').is(':checked') == 1 &amp;&amp; jQuery('#analyseaarsag').val() == 'Tilsluttet nabo'" /> <!-- regexp=".+" validate="Indtast adresse" /> -->
+			
+
+		</content>
+		<content displayname="Personoplysninger">
+			<input type="input" displayname="Navn:" urlparam="navn" regexp=".+" validate="Indtast navn"/> 
+			<input type="input" displayname="Adresse på ejer:" urlparam="adresse_ejer" regexp=".+" validate="Indtast adresse"/> 
+			<input type="input" displayname="Adresse på ejendommen med privat drikkevandsboring/brønd:" urlparam="adresse_boring" regexp=".+" validate="Indtast adresse"/> 
+			<input type="input" displayname="E-mail:" id="email1" urlparam="email" regexp="[a-z0-9!#$%'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?" validate="Indtast mailadresse!"/> 
+			<input type="input" displayname="Gentag e-mail:" id="email2" urlparam="email" onkeyup="formular.compare('email1','email2','De to skal være ens')"  regexp=".+" validate="Gentag mailadresse!"/>
+			<input type="input" class="Red" displayname="Tlf. nr.:" urlparam="tlf" regexp="^[0-9]{8}$" validate="Indtast korrekt telefonnummer (8 tal)" />
+			<input type="input" displayname="Mobil/udenlandske:" urlparam="mobilnummer" />
+			<input type="input" displayname="Træffetid pr. telefon:" urlparam="traeffetid" />
+			<input type="input" displayname="Indtast Jupiter ID:" urlparam="jupiterid" regexp=".+" />
+			<input type="textarea" displayname="Evt. bemærkning:" urlparam="bemaerkning" />
+			<!-- <input type="textarea" class="Red" displayname="Leverer ejendommen vand til andre adresser?" urlparam="andre_adresser"  /> -->
+			
+			<input type="checkbox" id="andre_adresser" displayname="Jeg leverer vand til andre ejendomme" urlparam="andre_adresser" defaultvalue="false" /> <!-- onchange="SetAdresser();" -->
+			<input type="dropdown" id="antal_adresser" displayname="Vælg antal adresser:" urlparam="antal_adresser" condition="jQuery('#andre_adresser').is(':checked') == 1" onchange="SetAdresser();">
+                <option value="0" name="0"/>
+				<option value="1" name="1"/>
+				<option value="2" name="2"/>
+            </input>
+			
+			<!-- <geosearch displayname="Angiv adresse 1:" urlparam="andre_adresserEt"  resources="Adresser" filter="muncode0730" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenOne').value == 1 " /> -->
+			<input type="input" displayname="Angiv adresse 1:" id="andre_adresserEt" urlparam="andre_adresserEt" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenOne').val() == 1" />
+			
+			<!-- <geosearch displayname="Angiv adresse 2:" urlparam="andre_adresserTo"  resources="Adresser" filter="muncode0730" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenTwo').value == 1 " /> -->
+			<input type="input" displayname="Angiv adresse 2:" id="andre_adresserTo" urlparam="andre_adresserTo" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenTwo').val() == 1" />
+			
+			<!-- <geosearch displayname="Angiv adresse 3:" urlparam="andre_adresserTre"  resources="Adresser" filter="muncode0730" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenThree').value == 1 " /> -->
+			<!-- <input type="input" displayname="Angiv adresse 3:" id="andre_adresserTre" urlparam="andre_adresserTre" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenThree').val() == 1" /> -->
+			
+			<!-- <geosearch displayname="Angiv adresse 4:" urlparam="andre_adresserFire"  resources="Adresser" filter="muncode0730" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenFour').value == 1 " /> -->
+			<!-- <input type="input" displayname="Angiv adresse 4:" id="andre_adresserFire" urlparam="andre_adresserFire" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenFour').val() == 1" /> -->
+			
+			<!-- <geosearch displayname="Angiv adresse 5:" urlparam="andre_adresserFem"  resources="Adresser" filter="muncode0730" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenFive').value == 1 " /> -->
+			<!-- <input type="input" displayname="Angiv adresse 5:" id="andre_adresserFem" urlparam="andre_adresserFem" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenFive').val() == 1" /> -->
+			
+			<!-- <geosearch displayname="Angiv adresse 6:" urlparam="andre_adresserSeks"  resources="Adresser" filter="muncode0730" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenSix').value == 1 " /> -->
+			<!-- <input type="input" displayname="Angiv adresse 6:" id="andre_adresserSeks" urlparam="andre_adresserSeks" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenSix').val() == 1" /> -->
+			
+			<!-- <geosearch displayname="Angiv adresse 7:" urlparam="andre_adresserSyv"  resources="Adresser" filter="muncode0730" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenSeven').value == 1 " /> -->
+			<!-- <input type="input" displayname="Angiv adresse 7:" id="andre_adresserSyv" urlparam="andre_adresserSyv" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenSeven').val() == 1" /> -->
+			
+			<!-- <geosearch displayname="Angiv adresse 8:" urlparam="andre_adresserOtte"  resources="Adresser" filter="muncode0730" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenEight').value == 1 " /> -->
+			<!-- <input type="input" displayname="Angiv adresse 8:" id="andre_adresserOtte" urlparam="andre_adresserOtte" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenEight').val() == 1" /> -->
+			
+			<!-- <geosearch displayname="Angiv adresse 9:" urlparam="andre_adresserNi"  resources="Adresser" filter="muncode0730" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenNine').value == 1 " /> -->
+			<!-- <input type="input" displayname="Angiv adresse 9:" id="andre_adresserNi" urlparam="andre_adresserNi" condition="jQuery('#andre_adresser').is(':checked') == 1 &amp;&amp; jQuery('#adrHiddenNine').val() == 1" /> -->
+		</content>
+   </formular>
+
+</config>

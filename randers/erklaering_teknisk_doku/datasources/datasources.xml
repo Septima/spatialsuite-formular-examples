@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+    <endpoint endpointtype="postgis" name="mailsender">
+        <connect>[module.formular-config.connection]</connect>
+        <user>[module.formular-config.user]</user>
+        <pwd>[module.formular-config.pwd]</pwd>
+        <srid>25832</srid>
+        <table geometrycolumn="the_geom" pkcolumn="ogc_fid"/>
+    </endpoint>
+	<datasource displayname="Teknisk dokumentation" endpoint="selvbetjening" name="ds_formular_teknisk_dokumentation">
+		<sql command="write">insert into formular_teknisk_dokumentation 
+							(journalnr,adresse,navn,tlf,mobil,
+								a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,
+								aa,ab,ba,bb,ca,cb,da,db,ea,eb,fa,fb,ga,gb,wkb_geometry) 
+						values (
+						[string: if IsDefined(journalnr) 		then journalnr else '' endif],
+						[string: if IsDefined(address) 			then address else '' endif],
+						[string: if IsDefined(navn) 			then navn else '' endif],
+						[string: if IsDefined(tlf) 				then tlf else '' endif],
+						[string: if IsDefined(mobil) 			then mobil else '' endif],
+						[string: if IsDefined(a) 				then a else '' endif],
+						[string: if IsDefined(b) 				then b else '' endif],
+						[string: if IsDefined(c) 				then c else '' endif],
+						[string: if IsDefined(d) 				then d else '' endif],
+						[string: if IsDefined(e) 				then e else '' endif],
+						[string: if IsDefined(f) 				then f else '' endif],
+						[string: if IsDefined(g) 				then g else '' endif],
+						[string: if IsDefined(h) 				then h else '' endif],
+						[string: if IsDefined(i) 				then i else '' endif],
+						[string: if IsDefined(j) 				then j else '' endif],
+						[string: if IsDefined(k) 				then k else '' endif],
+						[string: if IsDefined(l) 				then l else '' endif],
+						[string: if IsDefined(m)				then m else '' endif],
+						[string: if IsDefined(n) 				then n else '' endif],
+						[string: if IsDefined(o) 				then o else '' endif],
+						[string: if IsDefined(p) 				then p else '' endif],
+						[string: if IsDefined(q) 				then q else '' endif],
+						[string: if IsDefined(aa) 				then aa else '' endif],
+						[string: if IsDefined(ab) 				then ab else '' endif],
+						[string: if IsDefined(ba) 				then ba else '' endif],
+						[string: if IsDefined(bb) 				then bb else '' endif],
+						[string: if IsDefined(ca) 				then ca else '' endif],
+						[string: if IsDefined(cb) 				then cb else '' endif],
+						[string: if IsDefined(da) 				then da else '' endif],
+						[string: if IsDefined(db) 				then db else '' endif],
+						[string: if IsDefined(ea) 				then ea else '' endif],
+						[string: if IsDefined(eb) 				then eb else '' endif],
+						[string: if IsDefined(fa) 				then fa else '' endif],
+						[string: if IsDefined(fb) 				then fb else '' endif],
+						[string: if IsDefined(ga) 				then ga else '' endif],
+						[string: if IsDefined(gb) 				then gb else '' endif],
+						
+						[geometry: ToGeometry(wkt)]
+						
+						)
+						</sql>
+		<debug>true</debug>
+	</datasource>
+</datasources>

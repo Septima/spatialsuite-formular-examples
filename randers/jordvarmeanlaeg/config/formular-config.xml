@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <formular name="jordvarmeanlaeg">
+        <header>Ansøgning om tilladelse til etablering af jordvarmeanlæg</header>
+        <subheader>Ansøgning efter bekendtgørelse nr 1019 af 25-10-2009 om jordvarme</subheader>
+        <help displayname="Hjælp"><![CDATA[<b>Hjælp</b><br/>Her står der hvordan du kan bruge siden. Man kan skrive HTML ind i hjælpeteksten. Det kunne også være billeder og <a href="http://spatialmap.com">links</a>]]></help>        
+        <!-- <submitpage>formular.send.jordvarmeanlaeg.oldfashion</submitpage> -->
+
+		<submitpages>
+			<page parser="setFrid">sbsys.jordvarmeanlaeg.create-case</page>
+			<page parser="setFrid" urlparam="journalnr">sbsys.jordvarmeanlaeg.journalNr</page>
+			<page parser="setPdf">formular.send.jordvarmeanlaeg.pdf</page>
+            <page>formular.send.jordvarmeanlaeg.save</page>
+            <page>formular.move.pdf</page>
+            <page>sbsys.jordvarmeanlaeg.attach-document</page>
+			<page>formular.send.jordvarmeanlaeg.mail</page>
+        </submitpages>
+
+<!--        <reportmapscale>500</reportmapscale> -->
+        <reportprofile>ekstern_all</reportprofile>
+        <reportlayers>default</reportlayers>
+        <reportxsl>jordvarmeanlaeg</reportxsl>
+		<localstore>true</localstore> 
+		<js>/modules/formular/formular-config/js/jordvarmeanlaeg.js</js>
+        <content>
+            <input type="hidden" urlparam="dagsdato" id="dagsdato" defaultvalue="-"/>
+			<input type="hidden" urlparam="vejkode" defaultvalue=""/>
+			<input type="hidden" urlparam="sbsys_brugerid" defaultvalue="APKT108"/>
+			<input type="hidden" urlparam="doktitel" id="doktitel" defaultvalue="MBL § 19"/>
+
+            <input type="text" displayname=" "/>
+            <!-- <geosearch urlparam="address" displayname="Ansøgningsadresse:" resources="Adresser" filter="muncode0730" usegeometry="true" regexp="[a-zæøå]" validate="Det skal være indtastet en adresse!"/> -->
+
+            <address urlparam="address" id="address" displayname="Ansøgningsadresse:" apikey="[module.spatialaddress.apikey]" filter="[module.spatialaddress.filter]" regexp="[a-zæøå]" validate="Det skal være indtastet en adresse!"></address>
+
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Du skal nu angive på kortet, hvor anlægget ønskes placeret. Vælg polygon-knappen og tegn i kortet. Afslut ved at dobbeltklikke:&lt;br&gt;Tegnes der forkert, slettes tegningen med viskelæderet"/>
+            <maptools>
+                <maptool name="pan" default="true"/>               
+                <maptool name="polygon"/>   
+				<maptool displayname="Slet" name="delete"/> -->				
+            </maptools>
+            <map>
+                <extent>539430.4,6237856,591859.2,6290284.8</extent>
+                <resolutions>0.2,0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4</resolutions>
+                <themes>
+                    <theme name="theme-ddoland2012" host="//tile2.randers.dk/service/wms"/>
+					<theme name="theme-matrnr" host="/wms?servicename=randers_wms" />
+					<theme name="theme-jordstykke" host="/wms?servicename=randers_wms" />
+                </themes>
+            </map>
+            <area urlparam="areal" displayname="Areal:"/>
+            <conflicts urlparam="konflikttekst1" displayname="Det ansøgte vedrører følgende ejendom(e):" targerset="ejendom"  />
+            <input type="dropdown" displayname="Fødeledning norm:" urlparam="foedeledningnorm">
+               <option value="DS-godkendt SBC" name="DS-godkendt SBC"/>
+               <option value="Polygodkendt EN13244" name="Polygodkendt EN13244"/>
+            </input>				   
+            <input type="dropdown" displayname="Fødeledningens dimension:" urlparam="foedeledningens_dimension">
+               <option value="SDR11 40 mm" name="SDR11 40 mm"/>
+               <option value="SDR11 50 mm" name="SDR11 50 mm"/>
+               <option value="SDR17 80 mm" name="SDR17 80 mm"/>
+            </input>
+			      <input type="indput"  displayname="Fødelednings længde (m):" urlparam="foedeledningens_laengde" regexp=".+" validate="Indtast længden på fødeledningen!"/>	
+            <input type="dropdown" displayname="Varmeslangens norm:" urlparam="varmeslangensnorm">                
+                <option value="SDR11" name="SDR11"/>				
+				        <option value="SDR17" name="SDR17"/>
+            </input>
+            <input type="dropdown" displayname="Varmeslanges dimension:" urlparam="varmeslangens_dimension">
+               <option value="50mm" name="50 mm"/>
+               <option value="40mm" name="40 mm"/> 
+			      </input>  
+            <input type="indput"  displayname="Varmeslange længde (m):" urlparam="varmeslangens_laengde" regexp=".+" validate="Indtast længden på varmeslangen!"/>
+			      <input type="indput"  displayname="Antal sløjfer:" urlparam="antal_sloejfer" regexp=".+" validate="Indtast antallet af sløjfer!"/>	
+			      <input type="indput"  displayname="Længde på sløjfer (m):" urlparam="laengde_sloejfer" regexp=".+" validate="Indtast længden på sløjfer!"/>
+			      <input type="indput"  displayname="Nedgravningsdybde (m):" urlparam="nedgravningsdybde" regexp=".+" validate="Indtast nedgravningsdybden!"/>
+			      <input type="dropdown" displayname="Inspektionsgang:" urlparam="inspektionsgang">
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>				
+            </input>	
+			      <input type="dropdown" displayname="Frostmiddel:" urlparam="frostmiddel">
+                <option value="IPA-sprit" name="IPA-sprit"/>
+                <option value="Glykol" name="Glykol"/>
+			      </input>				
+            <input type="indput"  displayname="Mængden af frostmiddel:" urlparam="frostmiddel_maengde" regexp="^[1-9][0-9]*$" validate="Indtast mængden af frostmiddel (hele liter)!"/>
+		    <input type="input" displayname="Kompressor (mærke/type):" urlparam="varmepumpe" />
+    	    <input type="dropdown" displayname="Trykovervågning:" urlparam="trykovervaagning">
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>		
+		    	  </input>
+	   			  <input type="dropdown" displayname="Alarm:" urlparam="alarm">
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>				
+		        </input>	
+            <input type="dropdown" displayname="Sikkerhedsanordning:" urlparam="sikkerhedsanordning">
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>				
+			      </input>
+            <input type="indput"  displayname="Installatørens navn:" urlparam="installatoer_navn" regexp=".+" validate="Indtast installatørens navn!"/>
+		        <input type="dropdown" displayname="Vandforsyning:" urlparam="vandforsyning">
+                <option value="Brønd" name="Brønd"/>
+                <option value="Egen boring" name="Egen boring"/>
+				        <option value="Vandværk" name="Vandværk"/>
+			      </input>
+			      <input type="dropdown" displayname="Brønd/boring inden for 50m:" urlparam="broend_boring">
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>
+			      </input>         
+            <input type="input" displayname="Navn:" urlparam="navn" regexp=".+" validate="Indtast navn!"/>
+            <input type="input" displayname="E-mail:" id="email1" urlparam="email"/>
+            <input type="text" displayname="Indtast e-mail igen, for at verificere:"/>
+            <input type="input" displayname="E-mail:" id="email2" urlparam="email" onkeyup="formular.compare('email1','email2','De to skal være ens')"/>
+            <input type="input" displayname="Tlf. nr.:" urlparam="tlf"/>
+            <!-- <input type="file" displayname="Vedhæft fil:" urlparam="filnavn" regexp=".+" validate=" "/> -->
+            <confirm displayname="Følgende oplysninger er indtastet. Er det korrekt?"/>
+            <submitbutton displayname="Opret endnu en ansøgning" function="window.open('https://ddr.randers.dk/FrontEnd.aspx?id=48342')"/>
+            <submitbutton displayname="Link til Veje og Trafik's hjemmeside" function="window.open('http://vejeogtrafik.randers.dk/FrontEnd.aspx?id=1674')"/>
+        </content>
+	</formular>
+</config>

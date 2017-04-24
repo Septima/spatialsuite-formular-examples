@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+    <endpoint endpointtype="postgis" name="mailsender">
+        <connect>[module.formular-config.connection]</connect>
+        <user>[module.formular-config.user]</user>
+        <pwd>[module.formular-config.pwd]</pwd>
+        <srid>25832</srid>
+        <table geometrycolumn="the_geom" pkcolumn="ogc_fid"/>
+    </endpoint>
+    <datasource displayname="Udspredning af slam" endpoint="selvbetjening" name="ds_formular_slam">
+        <sql command="write">insert into formular_slam(address, areal,markblok,matrikel, soe,slamproducent,maengdefosforha,flere_producenter,slamproducent2,maengdefosforha2, aar, kvartal,slamtype,
+										slamnavn, slamadresse,slammail, leverandoernavn,leverandoermail, leverandoertlf, analyseresultat, leveringsaftale,login,hovedejer,journalnr,slam_ton,slam_ton2,
+										sbsys,angivet_areal,ton_toerstof,ton_toerstof2,fil1,fil2,fil3,fil4,fil5,fil6, wkb_geometry) 
+							values
+							([string: if isDefined(address) then address else "Ikke oplyst" endif],
+							[string: areal],
+							[string: if isDefined(konflikttekst2) then konflikttekst2 else "" endif],
+							[string: if isDefined(konflikttekst1) then konflikttekst1 else "" endif],
+							[string: if isDefined(konflikttekst3) then konflikttekst3 else "" endif ],
+							[string: slamproducent],
+							[string: maengdefosforha],
+							[string: if isDefined(flere_producenter) then flere_producenter else "" endif],
+							[string: if isDefined(slamproducent2) then slamproducent2 else "" endif],
+							[string: if isDefined(maengdefosforha2) then maengdefosforha2 else "" endif],
+							
+							[number: toNumber(aar)],
+							[number: toNumber(kvartal)],
+							[string: typeafslam],
+							[string: slamnavn],
+							[string: slamadresse],
+							[string: if isDefined(slammail) then slammail else "" endif],
+							[string: leverandoer],
+							[string: email],
+							[string: tlf],
+							[string: if isDefined(filnavn1) then filnavn1 else "Ingen fil" endif],
+							[string: if isDefined(filnavn2) then filnavn2 else "Ingen fil" endif],
+							[string: if isDefined(login) then login else "" endif],
+							[string: if isDefined(konflikttekst4) then konflikttekst4 else "" endif],
+							[string: if isDefined(journalnr) then journalnr else "" endif],
+							[number: if isDefined(maengdeslam) then ToNumber(maengdeslam) else 0 endif],
+							[number: if isDefined(maengdeslam2) then ToNumber(maengdeslam2) else 0 endif],
+							[string: if isDefined(journalnr) then journalnr else "" endif],
+							[number: if isDefined(angivet_areal) then ToNumber(angivet_areal) else 0 endif],
+							[number: if isDefined(ton_toerstof) then ToNumber(ton_toerstof) else 0 endif],
+							[number: if isDefined(ton_toerstof2) then ToNumber(ton_toerstof2) else 0 endif],
+							[string: if isDefined(filnavn1) then filnavn1 else "" endif],
+							[string: if isDefined(filnavn2) then filnavn2 else "" endif],
+							[string: if isDefined(filnavn3) then filnavn3 else "" endif],
+							[string: if isDefined(filnavn4) then filnavn4 else "" endif],
+							[string: if isDefined(filnavn5) then filnavn5 else "" endif],
+							[string: if isDefined(filnavn6) then filnavn6 else "" endif],
+							[geometry: ToGeometry(wkt)])</sql>
+        <table geometrycolumn="wkb_geometry" name="formular_slam" pkcolumn="ogc_fid"/>
+		<sql command="read">
+			select wkb_geometry,ogc_fid,address,aar,kvartal,slamnavn,slamadresse,maengdefosforha,maengdefosforha2,slam_ton,slam_ton2,areal,leverandoernavn,leverandoertlf,slamproducent from formular_slam order by ogc_fid
+		</sql>
+		<sql command="updaterow">
+			update formular_slam SET 
+				maengdefosforha = [number: ToNumber(maengdefosforha)], 
+				maengdefosforha2 = [number: ToNumber(maengdefosforha2)], 
+				slam_ton = [number: ToNumber(slam_ton)], 
+				slam_ton2 = [number: ToNumber(slam_ton2)] 
+				where ogc_fid = [number: ToNumber(ogc_fid)]
+		</sql>
+		<sql command="read-pk">
+			select wkb_geometry,ogc_fid,address,aar,kvartal,slamnavn,slamadresse,maengdefosforha,maengdefosforha2,slam_ton,slam_ton2,areal,leverandoernavn,leverandoertlf,slamproducent from formular_slam where ogc_fid = [number:id]
+		</sql>
+    </datasource>
+</datasources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+    <endpoint endpointtype="postgis" name="mailsender">
+        <connect>[module.formular-config.connection]</connect>
+        <user>[module.formular-config.user]</user>
+        <pwd>[module.formular-config.pwd]</pwd>
+        <srid>25832</srid>
+        <table geometrycolumn="the_geom" pkcolumn="ogc_fid"/>
+    </endpoint>
+    <datasource displayname="Midlertidige overnatninger" endpoint="selvbetjening" name="ds_formular_midlertidig_overnat">
+        <sql command="write">insert into formular_midlertidig_overnat(formular, ref, address, stedetsnavn, date1, date2, antal_dage, startkl, slutkl, lokale, overnatningslokalet, antalvoksne, antalboern, bilag, ansvarlig, ansvarligmobilnr, email,ts_alteret,kommune, wkb_geometry) values([string: formular],[string: sessionid],[string: if isDefined(address) then address else "Ikke oplyst" endif], [string: stedetsnavn],[string: date1],[string: date2],[number: if isDefined(antal_dage) then ToNumber(antal_dage) else 0 endif],[string: startkl],[string: slutkl],[string: lokale],[string: overnatningslokalet],[string: antalvoksne],[string: antalboern],[string: if isDefined(bilag) then bilag else "Ikke oplyst" endif],[string: ansvarlig],[string: ansvarligmobilnr],[string: email], localtimestamp,[string: if isDefined(kommune) then kommune else "" endif],[geometry: ToGeometry(wkt)])</sql>
+        <table geometrycolumn="wkb_geometry" name="formular_midlertidig_overnat" pkcolumn="ogc_fid"/>
+    </datasource>
+</datasources>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages>
+
+	<page name="sbsys.lejemaal.update_dato" contenttype="application/json" sessionrequired="false">
+		<data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_datoholder"/>
+                <url-parameter name="command" value="updaterow"/>
+				<url-parameter name="dato">dato</url-parameter>
+				<url-parameter name="id">dage</url-parameter>
+            </url-parameters>
+        </data>
+	</page>
+	<page name="sbsys.lejemaal.read_by_id_dato" contenttype="application/json" sessionrequired="false">
+		<data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_datoholder"/>
+                <url-parameter name="command" value="read-by-id"/>
+				<url-parameter name="id">id</url-parameter>
+            </url-parameters>
+        </data>
+	</page>
+	<page name="sbsys.lejemaal.create_dato" contenttype="application/json" sessionrequired="false">
+		<data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_datoholder"/>
+                <url-parameter name="command" value="create"/>
+				<url-parameter name="id">dage</url-parameter>
+				<url-parameter name="dato">dato</url-parameter>
+            </url-parameters>
+        </data>
+	</page>
+
+	<page name="sbsys.lejemaal.create-case" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="create">
+			<url-parameters>
+				<!-- <url-parameter name="brugerid" value="DQ21379" /> -->
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="statuskode" value="Created"/>
+				<url-parameter name="beskyttet" value="0"/>										
+				<url-parameter name="klenummer">klenr</url-parameter>
+				<!-- <url-parameter name="klenummer" value="01.04.00" />  -->
+				<url-parameter name="facetnummer">facetnr</url-parameter>					
+				<!-- <url-parameter name="facetnummer" value="P19" /> -->
+				<url-parameter name="titel" value="Lejemål"/>		
+				<url-parameter name="sagsbehandler" value="demo1"/>								<!-- Fra formularen -->
+				<url-parameter name="oprettetdato" value="!now"/>								<!-- Fra formularen -->
+				<url-parameter name="bortskaffelseskode" value="K"/> 
+				<!-- <url-parameter name="bortskaffelsesdato" value="20131231"/> -->
+			</url-parameters>
+		</data>
+	</page>
+
+    <page name="formular.send.lejemaal.pdf" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+        <include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+
+	<page name="formular.send.lejemaal.save" contenttype="application/json" sessionrequired="true">
+		<data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_kommunale_lejemaal"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>
+    </page>
+	
+	<page name="sbsys.lejemaal.attach-document" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel">doktitel</url-parameter>
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.pdf.dir]/'+formular+'_'+frid+'.pdf'</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+
+    <page name="formular.send.lejemaal.oldfashion" contenttype="text/xml" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_kommunale_lejemaal"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>  
+		<include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+
+</pages>

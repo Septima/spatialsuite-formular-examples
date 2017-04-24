@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+
+    <formular name="tilsyn_fbb">
+        <header>FBB selvbetjening-tilsyn</header>
+        <subheader>Formularens hovedformål er at medarbejderen i marken kan registrere de informationer som kulturarvsstyrelsen kræver.</subheader>
+		
+        <localstore clear="false">true</localstore>
+		<submitpages>
+            <!-- <page parser="setFrid" errortype="error" errormessage="Fejl i skabelse af SBSYS sag">sbsys.tilsyn_fbb.create-case</page> -->
+			<page parser="setFrid" errortype="error" errormessage="Fejl i hentning af SBSYS sag" urlparam="frid">sbsys.tilsyn_fbb.get-case</page>
+			<!-- <page parser="setFrid">formular.create-frid</page> -->
+            <page>formular.save</page>
+            <page parser="setPdf">formular.send.tilsyn_fbb.pdf</page>
+			<page>formular.move.pdf</page>
+            <page>sbsys.tilsyn_fbb.attach-document</page>
+            <page url="/jsp/modules/formular/final_json.jsp">move</page>
+        </submitpages>
+        <reportxsl>tilsyn_fbb</reportxsl>
+        <reportprofile>ekstern_all</reportprofile>
+		<reportlayers>theme-grundkort_graa theme-bygninger_fot theme-matrnr theme-kom_bygninger_punkt</reportlayers>
+		<css>/modules/formular/formular-config/css/ffbtilsyn.css</css>
+		<js>/modules/formular/formular-config/js/tilsyn_fbb.js</js>
+        <tabs>true</tabs>
+        <content displayname="Hvor">
+            <input type="hidden" urlparam="datasource" defaultvalue="ds_tilsyn_fbb"/>
+            <input type="hidden" urlparam="command" defaultvalue="write"/>
+			<input type="hidden" urlparam="dagsdato" id="dagsdato" />
+			<input type="hidden" urlparam="ejdnr" id="ejdnr" />
+			<!-- <input type="hidden" urlparam="bygnr" id="bygnr"/> -->
+            <geosearch id="adresse" urlparam="adresse" displayname="Adresse:" resources="Adresser" filter="[module.spatialaddress.filter]" usegeometry="false"/>
+            <maptools>
+                <maptool displayname="Tegn et punkt" name="point" default="true"/>
+                <maptool displayname="Slet en geometri" name="delete"/>
+                <maptool displayname="Flyt/rotér en geometri" name="move"/>
+            </maptools>
+            <map multiplegeometries="false">
+                <extent>556287,6249146,571602,6264462</extent>
+                <resolutions>0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4</resolutions>
+                <themes>
+                    <!--
+					<theme name="theme-grundkort_graa_med_labels"  host="/wms?servicename=selvbetjening_wms"/>
+					<theme name="theme-bygninger_fot" host="/wms?servicename=selvbetjening_wms" maxScale="3000" singleTile="true" ratio="1"/>
+					<theme name="theme-matrnr"  host="/wms?servicename=selvbetjening_wms" maxScale="1000" singleTile="true" ratio="1"/>
+					<theme name="theme-kom_bygninger_punkt" host="/wms?servicename=selvbetjening_wms" maxScale="3000" opacity="0.8" singleTile="true"/>
+					-->
+					
+					<theme name="theme-grundkort_graa_med_labels" displayname="Grundkort" group="Grundkort" host="/wms?servicename=selvbetjening_wms"/>
+					<theme name="theme-bygninger_fot" displayname="Bygninger" group="Grundkort"  host="/wms?servicename=selvbetjening_wms" maxScale="3000" singleTile="true" ratio="1"/>
+					<theme name="theme-matrnr" displayname="Matrikelkort" group="Grundkort"  host="/wms?servicename=selvbetjening_wms" maxScale="1000" singleTile="true" ratio="1"/>
+					<theme name="theme-kom_bygninger_punkt" displayname="Kommunal bygnigner"  host="/wms?servicename=selvbetjening_wms" maxScale="3000" opacity="0.8" singleTile="true"/>
+					
+
+				</themes>
+            </map>
+			<conflicts urlparam="konflikttekst1" displayname="Ejerinformationer:" targerset="ejendom" onconflict="handleEjdNr(this);" onnoconflict="handleEjdNr(null);"/>
+			<conflicts urlparam="konflikttekst2" displayname="Bygningsinformation:" targerset="ds_nybbr_bygningview_aktuel" querypage="formular-query-tilsyn_fbb" onconflict="handleEjd(this);" onnoconflict="handleEjd(null);"/>
+			<conflicts urlparam="konflikttekst3" displayname="Adresser:" id="adrsoeg" targerset="adresser_nybbr" onconflict="handleAddress(this);" onnoconflict="handleAddress(null);"/>
+			<input type="dropdown" displayname="Vælg adressen:" urlparam="adr" id="adr" regexp=".+" validate="Vælg en adresse" class="" />
+			<input type="dropdown" displayname="Vælg bygningsnr:" urlparam="bygnr" id="bygnr" regexp=".+" validate="Vælg et bygningsnr" >
+				<option value="1" name="1"/>
+				<option value="2" name="2"/>
+				<option value="3" name="3"/>
+				<option value="4" name="4"/>
+				<option value="5" name="5"/>
+				<option value="6" name="6"/>
+				<option value="7" name="7"/>
+				<option value="8" name="8"/>
+				<option value="9" name="9"/>
+				<option value="10" name="10"/>
+				<option value="11" name="11"/>
+				<option value="12" name="12"/>
+				<option value="13" name="13"/>
+				<option value="14" name="14"/>
+				<option value="15" name="15"/>
+				<option value="16" name="16"/>
+				<option value="17" name="17"/>
+				<option value="18" name="18"/>
+				<option value="19" name="19"/>
+				<option value="20" name="20"/>
+				<option value="21" name="21"/>
+				<option value="22" name="22"/>
+				<option value="23" name="23"/>
+				<option value="24" name="24"/>
+				<option value="25" name="25"/>
+            </input>
+			<input type="input" displayname="Betegnelse:" urlparam="betegnelse" id="betegnelse"  />
+        </content>
+        <content displayname="Bygningskontruktion">
+
+            <input type="dropdown" displayname="Hovedplan:" urlparam="hovedplan" datasource="fbb_hovedplan"/>
+            <input type="dropdown" displayname="Sokkel:" urlparam="sokkel" datasource="fbb_sokkel"/>
+            <input type="dropdown" displayname="Ydermur:" urlparam="ydermur" datasource="fbb_ydermur"/>
+            <input type="dropdown" displayname="Tagkonstruktion:" urlparam="tagkonstruktion" datasource="fbb_tagkonstruktion"/>
+            <input type="dropdown" displayname="Gavlkonstruktion:" urlparam="gavlkonstruktion" datasource="fbb_gavlkonstruktion"/>
+            <input type="dropdown" displayname="Kvist:" urlparam="kvist" datasource="fbb_kvist"/>
+            <input type="dropdown" displayname="Gesims:" urlparam="gesims" datasource="fbb_gesims"/>
+            <input type="dropdown" displayname="Dør/port:" urlparam="doer_port" datasource="fbb_doer_port"/>
+            <input type="dropdown" displayname="Vindue:" urlparam="vindue" datasource="fbb_vindue"/>
+            <input type="dropdown" displayname="Bygningsdel:" urlparam="bygningsdel" datasource="fbb_bygningsdel"/>
+            <input type="dropdown" displayname="Udsmykning:" urlparam="udsmykning" datasource="fbb_udsmykning"/>
+            <input type="dropdown" displayname="Stilart:" urlparam="stilart" datasource="fbb_stilart"/>
+            <input type="dropdown" displayname="Oprindelig funktion:" urlparam="oprindelig_fuktion" datasource="fbb_oprindelig_fuktion"/>
+            <input type="dropdown" displayname="Nuværende funktion:" urlparam="nuvaerende_fuktion" datasource="fbb_nuvaerende_fuktion"/>
+            <input type="dropdown" displayname="Komplekstype:" urlparam="komplekstype" datasource="fbb_komplekstype"/>
+
+        </content>
+        <content displayname="Bygningsomgivelser">
+
+            <input type="dropdown" displayname="Indre forhold:" urlparam="indre_forhold" datasource="fbb_indre_forhold"/>
+            <input type="dropdown" displayname="Ydre forhold:" urlparam="ydre_forhold" datasource="fbb_ydre_forhold"/>
+            <input type="textarea" displayname="Notat om indre og ydre forhold" urlparam="notatomindreogydreforhold"/>
+
+            <input type="dropdown" displayname="Omgivelser af særlig interesse:" urlparam="omgivelser" datasource="fbb_omgivelse"/>
+            <input type="textarea" displayname="Notat om omgivelser" urlparam="notatomomgivelser"/>
+
+            <input type="dropdown" displayname="Bebyggelsesmiljø:" urlparam="bebyggelsesmiljo" datasource="fbb_bebyggelsesmiljoe_pri"/>
+            <input type="textarea" displayname="Notat om bygningsmiljø" urlparam="notatombygningsmiljo"/>
+
+        </content>
+        <content displayname="SAVE-vurdering">
+
+            <input type="dropdown" displayname="Arkitektonisk værdi:" urlparam="arkitektoniskvaerdi">
+				<option value="Ikke angivet" name="Ikke angivet"/>
+				<option value="1" name="1"/>
+				<option value="2" name="2"/>
+				<option value="3" name="3"/>
+				<option value="4" name="4"/>
+				<option value="5" name="5"/>
+				<option value="6" name="6"/>
+				<option value="7" name="7"/>
+				<option value="8" name="8"/>
+				<option value="9" name="9"/>
+			</input>
+            <input type="textarea" displayname="Arkitektonisk:" urlparam="arkitektonisk"/>
+
+            <input type="dropdown" displayname="Kulturhistorisk værdi:" urlparam="kulturhistoriskvaerdi">
+				<option value="Ikke angivet" name="Ikke angivet"/>
+				<option value="1" name="1"/>
+				<option value="2" name="2"/>
+				<option value="3" name="3"/>
+				<option value="4" name="4"/>
+				<option value="5" name="5"/>
+				<option value="6" name="6"/>
+				<option value="7" name="7"/>
+				<option value="8" name="8"/>
+				<option value="9" name="9"/>
+			</input>
+            <input type="textarea" displayname="Kulturhistorisk:" urlparam="kulturhistorisk"/>
+
+            <input type="dropdown" displayname="Miljømæssig værdi:" urlparam="miljomaessigvaerdi">
+				<option value="Ikke angivet" name="Ikke angivet"/>
+				<option value="1" name="1"/>
+				<option value="2" name="2"/>
+				<option value="3" name="3"/>
+				<option value="4" name="4"/>
+				<option value="5" name="5"/>
+				<option value="6" name="6"/>
+				<option value="7" name="7"/>
+				<option value="8" name="8"/>
+				<option value="9" name="9"/>
+			</input>
+            <input type="textarea" displayname="Miljømæssig:" urlparam="miljomaessig"/>
+
+            <input type="dropdown" displayname="Originalitetsværdi:" urlparam="originalitetsvaerdi">
+				<option value="Ikke angivet" name="Ikke angivet"/>
+				<option value="1" name="1"/>
+				<option value="2" name="2"/>
+				<option value="3" name="3"/>
+				<option value="4" name="4"/>
+				<option value="5" name="5"/>
+				<option value="6" name="6"/>
+				<option value="7" name="7"/>
+				<option value="8" name="8"/>
+				<option value="9" name="9"/>
+			</input>
+            <input type="textarea" displayname="Originalitet:" urlparam="originalitets"/>
+
+            <input type="dropdown" displayname="Tilstandsværdi:" urlparam="tilstandsvaerdi">
+				<option value="Ikke angivet" name="Ikke angivet"/>
+				<option value="1" name="1"/>
+				<option value="2" name="2"/>
+				<option value="3" name="3"/>
+				<option value="4" name="4"/>
+				<option value="5" name="5"/>
+				<option value="6" name="6"/>
+				<option value="7" name="7"/>
+				<option value="8" name="8"/>
+				<option value="9" name="9"/>
+			</input>
+            <input type="textarea" displayname="Tilstand:" urlparam="tilstand"/>
+
+            <input type="dropdown" displayname="Bevaringsmæssig værdi:" urlparam="bevaringsmaessigvaerdi">
+				<option value="Ikke angivet" name="Ikke angivet"/>
+				<option value="1" name="1"/>
+				<option value="2" name="2"/>
+				<option value="3" name="3"/>
+				<option value="4" name="4"/>
+				<option value="5" name="5"/>
+				<option value="6" name="6"/>
+				<option value="7" name="7"/>
+				<option value="8" name="8"/>
+				<option value="9" name="9"/>
+			</input>
+            <input type="textarea" displayname="Bevaringsmæssig:" urlparam="bevaringsmaessig"/>
+
+        </content>
+        <content displayname="Foto">
+
+            <input type="text" displayname="--!!! Billeder skal tages liggende med kameraet i øverste venstre hjørne !!!--"/>
+
+            <input type="file" displayname="Indsæt foto" id="foto1" urlparam="foto1"/>
+            <input type="textarea" displayname="Evt. tekst til foto:" id="foto1_tekst" urlparam="foto1_tekst"/>
+
+            <input type="file" displayname="Indsæt foto" id="foto2" urlparam="foto2"/>
+            <input type="textarea" displayname="Evt. tekst til foto:" id="foto2_tekst" urlparam="foto2_tekst"/>
+
+            <input type="file" displayname="Indsæt foto" id="foto3" urlparam="foto3"/>
+            <input type="textarea" displayname="Evt. tekst til foto:" id="foto3_tekst" urlparam="foto3_tekst"/>
+
+            <input type="file" displayname="Indsæt foto" id="foto4" urlparam="foto4"/>
+            <input type="textarea" displayname="Evt. tekst til foto:" id="foto4_tekst" urlparam="foto4_tekst"/>
+
+            <input type="file" displayname="Indsæt foto" id="foto5" urlparam="foto5"/>
+            <input type="textarea" displayname="Evt. tekst til foto:" id="foto5_tekst" urlparam="foto5_tekst"/>
+
+            <input type="file" displayname="Indsæt foto" id="foto6" urlparam="foto6"/>
+            <input type="textarea" displayname="Evt. tekst til foto:" id="foto6_tekst" urlparam="foto6_tekst"/>
+
+            <confirm displayname="Følgende oplysninger er indtastet. Er det korrekt?"/>
+            <submitbutton displayname="Ny bygning på samme ejendom" function="formular.start({keepMap:true, clear: false});"/>
+            <submitbutton displayname="Ny ejendom" function="formular.start({clear: true});"/>
+
+        </content>
+    </formular>
+	
+</config>

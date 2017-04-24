@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages>
+	<page name="sbsys.slam.create-case" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="create">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="statuskode" value="Created"/>
+				<url-parameter name="beskyttet" value="0"/>										
+				<url-parameter name="klenummer" value="07.20.02" />								
+				<url-parameter name="facetnummer" value="K08"/>									
+				<url-parameter name="titel">sbsys_title + ' ' + slamadresse</url-parameter>
+				<url-parameter name="sagsbehandler" value="demo1"/>								
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="bortskaffelseskode" value="K"/>							
+			</url-parameters>
+		</data>
+	</page>
+
+	<page name="sbsys.slam.journalNr" contenttype="application/json" >
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="get">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="sagsnummer">frid</url-parameter>
+			</url-parameters>
+		</data>		
+	</page>
+
+
+	<page name="formular.send.slam.pdf" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+		<include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+    <page name="formular.send.slam.pdf.move" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+           <url-parameters>
+                <url-parameter name="datasource" value="formular-final"/>
+                <url-parameter name="command" value="move"/>
+				<url-parameter name="frid">frid</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+	
+	<page name="formular.send.slam.pdf.kvittering" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+		<data handler="PDFFormatter" operation="format-pdf">
+            <url-parameters>
+                <url-parameter name="formularxsl" value="pdf"/>
+                <url-parameter name="nomap" value="false"/>
+				<url-parameter name="stylesheet">"[module:formular-randers.dir]/xsl/slam_kvittering.xsl"</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+    <page name="formular.send.slam.pdf.move.kvittering" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+           <url-parameters>
+                <url-parameter name="datasource" value="formular-final"/>
+                <url-parameter name="command" value="move"/>
+				<url-parameter name="frid">frid+'_2'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+<!--
+    <page name="formular.send.slam.pdf" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+        <include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+-->
+
+	<page name="formular.send.slam.save" contenttype="application/json" sessionrequired="true">
+		<data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_slam"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>
+    </page>
+	
+	<page name="formular.send.slam.mail.ansoeger" contenttype="application/json" sessionrequired="true">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">frid+'_2'</url-parameter>
+                <url-parameter name="sendto_email">'to:'+email</url-parameter>
+                <url-parameter name="sendto_subject">'Udbringelse af spildevandsslam'</url-parameter> -->
+                <url-parameter name="sendto_content">'
+                Randers Kommune kvitterer hermed for modtagelse af din anmeldelse om udspredning af affald til jordbrugsformål. 
+
+Vi tilstræber at slammodtager og –leverandør senest 8 dage fra dags dato får tilsendt resultatet af kommunens gennemgang af anmeldelsen. 
+I ferieperioder kan der dog gå længere tid.
+
+Såfremt du har spørgsmål er du velkommen til at kontakte miljømedarbejder Esben Husted Kjær på 89 15 17 46 eller pr. mail til slam@randers.dk
+
+Med venlig hilsen
+Natur og Miljø
+Randers Kommune'</url-parameter>
+                <url-parameter name="sendto_attached">'kvittering.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+frid+'_2.pdf,ansøgning.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+frid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+	<page name="formular.send.slam.mail" contenttype="application/json" sessionrequired="true">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">frid</url-parameter>
+                <url-parameter name="sendto_email">'to:slam@randers.dk'</url-parameter>
+                <url-parameter name="sendto_subject">'Udbringelse af spildevandsslam'</url-parameter> -->
+                <url-parameter name="sendto_content">'Ny sag indsendt - journalnr:' + journalnr</url-parameter>
+                <url-parameter name="sendto_attached">'Ansøgning.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+frid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+	<page name="sbsys.slam.attach-document.kvittering" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Slamkvittering"/>
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.pdf.dir]/'+formular+'_'+frid+'_2.pdf'</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.slam.attach-document.ansoegning" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel">doktitel</url-parameter>
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.pdf.dir]/'+formular+'_'+frid+'.pdf'</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.slam.attach-document.fil1" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Analyseresultat" />
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.upload.dir]/'+filnavn1</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.slam.attach-document.fil2" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Leveringsaftale" />
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.upload.dir]/'+filnavn2</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.slam.attach-document.fil3" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Analyseresultat (leverandør 2)" />
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.upload.dir]/'+filnavn3</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.slam.attach-document.fil4" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Leveringsaftale (leverandør 2)" />
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.upload.dir]/'+filnavn4</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.slam.attach-document.fil5" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Andet dokumentation" />
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.upload.dir]/'+filnavn5</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.slam.attach-document.fil6" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Andet dokumentation" />
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.upload.dir]/'+filnavn6</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+
+    <page name="formular.send.slam.oldfashion" contenttype="text/xml" resultpassing="pass-all">
+		<data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_slam"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">sessionid</url-parameter>
+                <url-parameter name="sendto_email">'to:'+email+',bcc:slam@randers.dk'</url-parameter>
+                <url-parameter name="sendto_subject">'Udbringelse af spildevandsslam'</url-parameter> -->
+                <url-parameter name="sendto_content">'
+                Randers Kommune kvitterer hermed for modtagelse af din anmeldelse om udspredning af affald til jordbrugsformål. 
+
+Vi tilstræber at slammodtager og –leverandør senest 8 dage fra dags dato får tilsendt resultatet af kommunens gennemgang af anmeldelsen. 
+I ferieperioder kan der dog gå længere tid.
+
+Såfremt du har spørgsmål er du velkommen til at kontakte miljømedarbejder Esben Husted Kjær på 89 15 17 46 eller pr. mail til slam@randers.dk
+
+Med venlig hilsen
+Natur og Miljø
+Randers Kommune'</url-parameter>
+                <url-parameter name="sendto_ref">sessionid</url-parameter>
+                <url-parameter name="sendto_attached">'kvittering.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+sessionid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+         
+        <include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+
+</pages>

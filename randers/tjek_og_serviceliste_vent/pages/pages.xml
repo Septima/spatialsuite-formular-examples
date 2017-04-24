@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages>
+    <page name="formular.send.tjek_og_serviceliste_vent" contenttype="text/xml" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_tjek_og_serviceliste_vent"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>
+    </page>
+    
+	<page name="formular.send.tjek_og_serviceliste_vent.readall" contenttype="text/xml" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_tmp_ventilation"/>
+                <url-parameter name="command">if isdefined(command) then command else 'readall' endif</url-parameter>
+				<url-parameter name="ogc_fid">if isdefined(id) then id else '0' endif</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+</pages>

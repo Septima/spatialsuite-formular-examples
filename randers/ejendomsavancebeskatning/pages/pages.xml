@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages>
+	<page name="formular.ejendomsavancebeskatning.getEjendomArea" contenttype="text/xml" sessionrequired="false">
+		<data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_ejendomsopslag"/>
+                <url-parameter name="command">command</url-parameter>
+				<url-parameter name="ejdnr">ejdnr</url-parameter>
+            </url-parameters>
+        </data>
+	</page>
+	
+	<page name="sbsys.ejendomsavancebeskatning.create-case" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="create">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>								
+				<url-parameter name="statuskode" value="Created"/>
+				<url-parameter name="beskyttet" value="0"/>										
+				<url-parameter name="klenummer">klenummer</url-parameter>								
+				<url-parameter name="facetnummer">facetnummer</url-parameter>
+				<url-parameter name="titel">'Ejendomsavancebeskatning ' + address + ' - ' + samletmatr</url-parameter>
+				<url-parameter name="sagsbehandler" value="demo1"/>								
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="bortskaffelseskode" value="K"/>							
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.ejendomsavancebeskatning.journalNr" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="get">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="sagsnummer">frid</url-parameter>
+			</url-parameters>
+		</data>		
+	</page>
+	
+	
+	
+	<!--
+	Denne del skabet selve PDF´en. Det er ligesom i gamledag, blot ligger den i en PAGE for sig selv
+	-->
+    <page name="formular.send.ejendomsavancebeskatning.pdf.ansoegning" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+        <include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+    <page name="formular.send.ejendomsavancebeskatning.pdf.ansoegning.move" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+           <url-parameters>
+                <url-parameter name="datasource" value="formular-final"/>
+                <url-parameter name="command" value="move"/>
+				<url-parameter name="frid">frid</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+	<!--
+		brugertilpasset PDF - ikke laengre relevant
+	
+	<page name="formular.send.ejendomsavancebeskatning.pdf.kvittering" contenttype="application/json" sessionrequired="false" resultpassing="pass-all">
+		<data handler="PDFFormatter" operation="format-pdf">
+            <url-parameters>
+                <url-parameter name="formularxsl" value="pdf"/>
+                <url-parameter name="nomap" value="false"/>
+				<url-parameter name="stylesheet">"[module:formular-randers.dir]/xsl/ejendomsavancebeskatning_kvittering.xsl"</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+	-->
+    <page name="formular.send.ejendomsavancebeskatning.pdf.kvittering.move" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+           <url-parameters>
+                <url-parameter name="datasource" value="formular-final"/>
+                <url-parameter name="command" value="move"/>
+				<url-parameter name="frid">frid+'_2'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+	<!--
+	Denne del gemmer i databasen. Det er ligesom i gamle dage, med en datasource - blot ligger den i en PAGE for sig selv
+	-->
+	<page name="formular.send.ejendomsavancebeskatning.save" contenttype="application/json" sessionrequired="true">
+		<data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_ejendavance"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>
+    </page>
+	
+	<!--
+	Denne del sender en mail. Det er ligesom i gamle dage - blot ligger den i en PAGE for sig selv. 
+	Dette giver også mulighed for at sende flere mail til forskellige personer og med forskelligt indhold
+	-->
+	<page name="formular.send.ejendomsavancebeskatning.mail_ansoeger" contenttype="application/json" sessionrequired="true">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">mailid</url-parameter>
+                <url-parameter name="sendto_email">'to:'+email</url-parameter>
+                <url-parameter name="sendto_subject">'Ejendomsavancebeskatning'</url-parameter>
+                <url-parameter name="sendto_content">'Kvittering - '+ address +' - '+ samletmatr +'
+
+Tak for din forespørgsel om udstykning ved salg af ejendom.
+
+Vi har en ekspeditionstid på ca. 10 dage.
+Du vil enten få en tilbagemelding på din henvendelse eller en vurdering af hvor lang behandlingstid vi forventer.
+Hvis vi har behov for yderligere materiale, før vi kan vurdere din sag, vil vi kontakte dig.
+
+Mvh.
+Venlig hilsen
+Plan, Randers Kommune
+Journalnummer:' + journalnr + ''
+
+</url-parameter>
+                <url-parameter name="sendto_attached">'Ansøgning.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+frid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+	<page name="formular.send.ejendomsavancebeskatning.mail_anni" contenttype="application/json" sessionrequired="true">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">mailid+'_2'</url-parameter>
+                <url-parameter name="sendto_email">'to:anni.stege@randers.dk'</url-parameter>
+                <url-parameter name="sendto_subject">'Ny ejendomsavancebeskatningssag (journalnr:' + journalnr +')'</url-parameter>
+                <url-parameter name="sendto_content">'Kvittering - '+ address +' - '+ samletmatr +'
+
+Tak for din forespørgsel om udstykning ved salg af ejendom.
+
+Vi har en ekspeditionstid på ca. 10 dage.
+Du vil enten få en tilbagemelding på din henvendelse eller en vurdering af hvor lang behandlingstid vi forventer.
+Hvis vi har behov for yderligere materiale, før vi kan vurdere din sag, vil vi kontakte dig.
+
+Mvh.
+Venlig hilsen
+Plan, Randers Kommune
+Journalnummer:' + journalnr + ''</url-parameter>
+                <url-parameter name="sendto_attached">'Ansøgning.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+frid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+	<page name="formular.send.ejendomsavancebeskatning.mail_intern" contenttype="application/json" sessionrequired="true">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">mailid+'_2'</url-parameter>
+                <url-parameter name="sendto_email">'to:plankontor@randers.dk'</url-parameter>
+                <url-parameter name="sendto_subject">'Ny ejendomsavancebeskatningssag (journalnr:' + journalnr +')'</url-parameter>
+                <url-parameter name="sendto_content">'Kvittering - '+ address +' - '+ samletmatr +'
+
+Tak for din forespørgsel om udstykning ved salg af ejendom.
+
+Vi har en ekspeditionstid på ca. 10 dage.
+Du vil enten få en tilbagemelding på din henvendelse eller en vurdering af hvor lang behandlingstid vi forventer.
+Hvis vi har behov for yderligere materiale, før vi kan vurdere din sag, vil vi kontakte dig.
+
+Mvh.
+Venlig hilsen
+Plan, Randers Kommune
+Journalnummer:' + journalnr + ''</url-parameter>
+                <url-parameter name="sendto_attached">'Ansøgning.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+frid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+	<page name="sbsys.ejendomsavancebeskatning.attach-document.ansoegning" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel">'Forespørgsel om udstykning for: ' + address + ' - ' + samletmatr</url-parameter>
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.pdf.dir]/'+formular+'_'+frid+'.pdf'</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.ejendomsavancebeskatning.attach-document.kvittering" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel">'Kvittering ' + address + ' - ' + samletmatr</url-parameter>
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.pdf.dir]/'+formular+'_'+frid+'_2.pdf'</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+
+</pages>

@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+   <formular name="miljoetilsyn">
+        <header>Tilsyn med virksomheders miljøforhold</header>
+        <subheader>Miljøtilsyn ifølge Miljøbeskyttelsesloven</subheader>
+		<submitpages>
+<!-- 			<page parser="setFrid">sbsys.miljoetilsyn.create-case</page>
+			<page parser="setFrid" urlparam="journalnr">sbsys.miljoetilsyn.journalNr</page>
+ -->
+			<page condition="jQuery('#opret_ny_sag').is(':checked')" parser="setFrid" errortype="warning" errormessage="Fejl i create-case">sbsys.miljoetilsyn.create-case</page>
+ 			<page condition="jQuery('#opret_ny_sag').is(':checked')" parser="setFrid" errortype="warning" errormessage="Fejl i journalNr" urlparam="journalnr">sbsys.miljoetilsyn.journalNr</page>
+			<page condition="!jQuery('#opret_ny_sag').is(':checked')" parser="setFrid" errortype="warning" errormessage="Fejl i get.eks_sag">sbsys.miljoetilsyn.get.eks_sag</page>
+			<page errortype="error" errormessage="Fejl i gemning af data" >formular.send.miljoetilsyn.save</page>
+			<page parser="setPdf" errortype="warning" errormessage="Fejl i oprettelse af PDF (Notat)" >formular.send.miljoetilsyn.pdf2</page>
+			<page errortype="warning" errormessage="Fejl i flytning af PDF (Notat)">formular.send.miljoetilsyn.pdf2.move</page>
+			<page parser="setPdf" errortype="warning" errormessage="Fejl i oprettelse af PDF">formular.send.miljoetilsyn.pdf1</page>
+			<page errortype="warning" errormessage="Fejl i flytning af PDF">formular.send.miljoetilsyn.pdf1.move</page>
+			<page>formular.send.miljoetilsyn.mail.virksomhed</page>
+			<page errortype="warning" errormessage="Fejl kobling af PDF til SBSYS">sbsys.miljoetilsyn.attach-document.pdf</page>
+			<page errortype="warning" errormessage="Fejl kobling af PDF (Notat) til SBSYS">sbsys.miljoetilsyn.attach-document.pdf2</page>
+			<page condition="jQuery('#send_mail').is(':checked')" parser="setFrid">formular.send.tilsyn.mail.virksomhed</page>
+        </submitpages>
+		<reportprofile>ekstern_all</reportprofile>
+        <reportlayers>default</reportlayers>
+		<showreport>false</showreport>
+		<localstore>true</localstore>
+<!-- 		
+ -->
+        <reportxsl>miljoetilsyn_notat</reportxsl>
+
+		<css>/modules/formular/formular-config/css/miljoetilsyn.css</css>
+        <js>/modules/formular/formular-config/js/miljoetilsyn.js</js>
+		<messages>
+            <message name="done">Oplysningerne i forbindelse med tilsynet med virksomhedens miljøforhold er nu registreret&lt;br/&gt;Du kan se tilsynsnotatet &lt;a href=&quot;{{pdf}}&quot; target=&quot;_blank&quot;&gt;her&lt;/a&gt;</message>
+            <message name="error">Der er desværre opstået en fejl! Kontakt Rene Jensen på 89 15 18 53 eller på &lt;a href=&quot;mailto:rcj@randers.dk&quot;&gt;mail&lt;/a&gt;</message>
+        </messages>
+        <tabs class="smalltabs">true</tabs>
+        <content displayname="Start">
+            <input type="text" displayname=" "/>
+			<input type="hidden" urlparam="dagsdato" id="dagsdato" defaultvalue="-"/>
+			<input type="hidden" urlparam="aar" id="aar" defaultvalue=""/>
+			<input type="hidden" id="sbsys_brugerid" urlparam="sbsys_brugerid" defaultvalue="DQ15586" />
+			<input type="hidden" id="klenr" urlparam="klenr" defaultvalue="" />
+			<input type="hidden" id="facetnr" urlparam="facetnr" defaultvalue="" />
+			<input type="hidden"  displayname="sagsbehandler_mail" id="sagsbehandler_mail" urlparam="sagsbehandler_mail" defaultvalue="miljoe@randers.dk" />
+			<input type="hidden"  displayname="sagsbehandler_tlf" id="sagsbehandler_tlf" urlparam="sagsbehandler_tlf" defaultvalue="89151515" />
+			<input type="hidden"  id="listerror" urlparam="listerror" defaultvalue="false" />
+			
+			<!-- <input type="hidden" id="frid" urlparam="frid" defaultvalue="123456789"/> -->
+            <input type="input" displayname="Søg firma:" id="soeg_adresse" urlparam="soeg_adresse" /> <!-- regexp=".+" validate="Vælg firmaet ud fra adressen på listen!"  onchange="updateStdInfo(this.formular);"-->
+			<input type="text" class="error" displayname="Problemer med at indlæse firmadata - prøv at genindlæse siden" condition="jQuery('#listerror').val() == 'true'" />
+			<!-- <input type="text" displayname="Firmadata OK" condition="jQuery('#listerror').val() == 'false'" /> -->
+            <input type="text" displayname=" "/>
+			<input type="hidden" id="soeg_adresse_wkt" urlparam="soeg_adresse_wkt" defaultvalue="" />
+			<input type="input" displayname="CVR-nr:" id="cvr_nummer" urlparam="cvr_nummer"/>
+			<input type="input" displayname="P-nr:" id="p_nummer" urlparam="p_nummer"/>
+			<input type="input" displayname="Firmanavn:" id="virksomhed" urlparam="virksomhed"/>
+			<input type="input" displayname="Adresse:" id="virksomhed_adresse" urlparam="virksomhed_adresse"/>
+			<input type="input" displayname="Post nr:" id="virksomhed_postnr_by" urlparam="virksomhed_postnr_by"/>
+			<input type="input" displayname="Tlf:" id="virksomhed_tlf" urlparam="virksomhed_tlf"/>
+            <input type="input" displayname="Opstartsdato:" id="opstartsdato" urlparam="opstartsdato"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+			<input type="input" displayname="Indtast eksisterende SB-SYS sagsnummer:" urlparam="journalnr" id="journalnr" regexp="^[0-9]{2}\.[0-9]{2}\.[0-9]{2}\-[A-Z][0-9]{2}\-[0-9]{1,5}\-[0-9]{2}$" validate="Indtast sagsnummer f.eks. 09.30.02-K08-1-15!" condition="!jQuery('#opret_ny_sag').is(':checked')"/>
+			<input type="checkbox" displayname="Opret en ny sag i SB-SYS" urlparam="opret_ny_sag" id="opret_ny_sag" defaultvalue="false"/>
+            <input type="dropdown" displayname="Tilsyn udført af:" id="tilsyn_udfoert_af" urlparam="tilsyn_udfoert_af" regexp=".+" validate="Vælg sagsbehandler!" onchange="setSbsysBrugerId();setSagsbehandlerMail();setSagsbehandlerTlf()">
+                <option value="" name="Vælg"/>
+                <option value="Per Eriksen" name="Per Eriksen"/>
+                <option value="Peter Høeg" name="Peter Høeg"/>
+                <option value="Jonna Ploug" name="Jonna Ploug"/>
+                <option value="Jeanette Rosager-Hansen" name="Jeanette Rosager-Hansen"/>
+                <option value="Anja Fisker Jensen" name="Anja Fisker Jensen"/>
+                <option value="Freddy Fisker Sørensen" name="Freddy Fisker Sørensen"/>
+                <option value="Rene Chris Jensen" name="Rene Chris Jensen"/>
+            </input>          
+            <input type="dropdown" displayname="Virksomhedstype:" id="virksomhedstype" urlparam="virksomhedstype"  regexp=".+" validate="Vælg virksomhedstype!" onchange="updateUndertype();"/>
+			<input type="dropdown" displayname="Undertype:" id="undertype" urlparam="undertype"  onchange="setKleAndFacet();" condition="jQuery('#virksomhedstype').val() == 'Bilag 1 Brugerbetalingsbekendtgørelse' || jQuery('#virksomhedstype').val() == 'Bilag 2 Listevirksomheder'"/>
+			
+            <input type="text" displayname=" "/>
+            <input type="checkbox" displayname="Mekanisk reparation" id="mekanisk_reparation" urlparam="mekanisk_reparation" defaultvalue="false" condition="jQuery('#virksomhedstype').val() == 'Autovirksomheder'"/>
+            <input type="checkbox" displayname="Pladearbejde" id="pladearbejde" urlparam="pladearbejde" defaultvalue="false" condition="jQuery('#virksomhedstype').val() == 'Autovirksomheder'"/>
+            <input type="checkbox" displayname="Serviceeftersyn" id="serviceeftersyn" urlparam="serviceeftersyn" defaultvalue="false" condition="jQuery('#virksomhedstype').val() == 'Autovirksomheder'"/>
+            <input type="checkbox" displayname="Klargøring til syn" id="klargoering" urlparam="klargoering" defaultvalue="false" condition="jQuery('#virksomhedstype').val() == 'Autovirksomheder'"/>
+            <input type="checkbox" displayname="Køb og salg af biler" id="koeb_salg_biler" urlparam="koeb_salg_biler" defaultvalue="false" condition="jQuery('#virksomhedstype').val() == 'Autovirksomheder'"/>
+            <input type="checkbox" displayname="Lakering" id="lakering" urlparam="lakering" defaultvalue="false" condition="jQuery('#virksomhedstype').val() == 'Autovirksomheder'"/>
+            <input type="checkbox" displayname="Undervognsbehandling" id="undervognsbehandling" urlparam="undervognsbehandling" defaultvalue="false" condition="jQuery('#virksomhedstype').val() == 'Autovirksomheder'"/>
+			
+            <input type="checkbox" displayname="Montage" id="montage" urlparam="montage" defaultvalue="false" condition="jQuery('#undertype option:selected').val() == 'A 205' || jQuery('#undertype option:selected').val() == 'A 53'"/>
+            <input type="checkbox" displayname="Valsning" id="valsning" urlparam="valsning" defaultvalue="false" condition="jQuery('#undertype option:selected').val() == 'A 205' || jQuery('#undertype option:selected').val() == 'A 53'"/>
+            <input type="checkbox" displayname="Bukning" id="bukning" urlparam="bukning" defaultvalue="false" condition="jQuery('#undertype option:selected').val() == 'A 205' || jQuery('#undertype option:selected').val() == 'A 53'"/>
+            <input type="checkbox" displayname="TIG-svejsening" id="tig_svejsening" urlparam="tig_svejsening" defaultvalue="false" condition="jQuery('#undertype option:selected').val() == 'A 205' || jQuery('#undertype option:selected').val() == 'A 53'"/>
+            <input type="checkbox" displayname="MIG-MAG-svejsning" id="mig_mag_svejsning" urlparam="mig_mag_svejsning" defaultvalue="false" condition="jQuery('#undertype option:selected').val() == 'A 205' || jQuery('#undertype option:selected').val() == 'A 53'"/>
+            <input type="checkbox" displayname="Opskæring" id="opskaering" urlparam="opskaering" defaultvalue="false" condition="jQuery('#undertype option:selected').val() == 'A 205' || jQuery('#undertype option:selected').val() == 'A 53'"/>
+            <input type="checkbox" displayname="Spåndtagning" id="spaandtagning" urlparam="spaandtagning" defaultvalue="false" condition="jQuery('#undertype option:selected').val() == 'A 205' || jQuery('#undertype option:selected').val() == 'A 53'"/>
+
+            <input type="textarea" displayname="Bemærkninger:" id="bemaerkning_andre_virksomheder" urlparam="bemaerkning_andre_virksomheder"/>
+            <input type="input" displayname="Udvidelse/ændringer:" id="udvidelse_aendringer" urlparam="udvidelse_aendringer" defaultvalue="Ingen væsentlige ændringer siden sidste tilsyn." regexp=".+" validate="Beskriv eventuelle udvidelser/ændringer!"/>
+            <input type="input" displayname="Deltager fra virksomheden:" id="virksomhed_deltager" urlparam="virksomhed_deltager"/>
+            <input type="input" displayname="Mail til virksomheden:" id="virksomhed_mail" urlparam="virksomhed_mail"/>
+            <input type="checkbox" displayname="Send mail til virksomheden med tilsynsrapporter" id="send_mail" urlparam="send_mail" defaultvalue="false" condition="jQuery('#virksomhed_mail').val() != ''"/>
+            <input id="dato_tilsyn" type="date" displayname="Dato for tilsynet:" urlparam="dato_tilsyn" regexp=".+" validate="Indtast dato for tilsynet!" onchange="setDropdown();"/>
+            <input type="text" displayname=" "/>
+        </content>  
+        <content displayname="Generelt">
+            <input type="text" displayname=" "/>
+			<input type="text" displayname="Med pilen kan en eksisterende matrikel udpeges. Alternativt kan man tegne en polygon - dobbeltklik for at afslutte. Med viskelæderet slettes polygonerne en efter en." />
+			<maptools>
+                <maptool displayname="Brug aktuelle position" name="location" default="true"/>
+                <maptool displayname="Slet en markering" name="delete"/>
+				<maptool displayname="Tegn areal" name="polygon"/>                
+				<maptool displayname="Udvælg eksisterende matrikel" name="select" datasource="ds_jordstykke" />
+            </maptools>
+            <map multiplegeometries="true" required="true">
+                <extent>546927,6285494,583177,6246787</extent>
+                <resolutions>0.2,0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4</resolutions>
+                <themes>
+                    <theme name="theme-luftfoto" host="//tile2.randers.dk/service/wms?FORMAT=image%2Fjpeg"/>
+					<theme name="theme-matrnr" host="/wms?servicename=selvbetjening_wms" singleTile="true" maxScale="3000"/>
+					<theme name="theme-jordstykke" host="/wms?servicename=selvbetjening_wms" singleTile="true" maxScale="3000"/>
+                </themes>
+            </map>
+            <conflicts urlparam="konflikttekst1" displayname="Området omfatter følgende matrikelnumre:" targerset="ejendom_matrikelnumre"/>
+            <conflicts urlparam="konflikttekst2" displayname="Området er ifølge kommuneplanen udlagt til:" targerset="kommuneplan_anvendelsegenerel"/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Produktionsareal (m2):" urlparam="produktionsareal" id="produktionsareal" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="textarea" displayname="Bemærkninger til produktionsareal:" id="bemaerkning_produktionsareal" urlparam="bemaerkning_produktionsareal"/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Antal ansatte i produktionen:" urlparam="antal_ansatte" id="antal_ansatte" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="textarea" displayname="Driftstid:" id="driftstid" urlparam="driftstid" regexp=".+" validate="Indtast virksomhedens driftstid!"/>
+            <input type="text" displayname=" "/>
+            <input type="textarea" displayname="Produktionsforhold:" id="produktionsforhold" urlparam="produktionsforhold"/>
+            <input type="text" displayname=" "/>
+        </content>  
+        <content displayname="Miljøforhold">
+			<input type="text" displayname=" "/>
+            <input type="dropdown" displayname="Foregår der støjende aktiviteter?" id="stoej_viberationer" urlparam="stoej_viberationer" regexp=".+" validate="Vælg Ja eller Nej!">
+                <option value="" name="Vælg"/>
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>
+            </input>          
+            <input type="checkbox" displayname="Randers Kommune har ikke siden sidste tilsyn modtaget klager over støj fra virksomheden." id="stoej_viberationer_tekst1" urlparam="stoej_viberationer_tekst1" defaultvalue="false" condition="jQuery('#stoej_viberationer').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Driften vurderes ikke, at medføre væsentlige støjgener, der overstiger de vejledende støjgrænseværdier, der gælder for området." id="stoej_viberationer_tekst2" urlparam="stoej_viberationer_tekst2" defaultvalue="false" condition="jQuery('#stoej_viberationer').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Virksomheden påvirker ikke sine omgivelser med uacceptable viberationer." id="stoej_viberationer_tekst3" urlparam="stoej_viberationer_tekst3" defaultvalue="false" condition="jQuery('#stoej_viberationer').val() == 'Ja'"/>
+            <input type="textarea" displayname="Bemærkninger til støj og viberationer:" id="stoej_viberationer_bemaerkning" urlparam="stoej_viberationer_bemaerkning" condition="jQuery('#stoej_viberationer').val() == 'Ja'"/>
+            <input type="file" displayname="Billede af støj og viberationer:" id="stoej_viberationer_foto" urlparam="stoej_viberationer_foto" condition="jQuery('#stoej_viberationer').val() == 'Ja'"/>				
+
+			<input type="text" displayname=" "/>
+			<input type="text" displayname=" "/>
+            <input type="dropdown" displayname="Forekommer der udledninger til luften fra virksomheden?" id="luftemission" urlparam="luftemission" regexp=".+" validate="Vælg Ja eller Nej!">
+                <option value="" name="Vælg"/>
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>
+            </input>          
+			<input type="text" displayname=" " condition="jQuery('#luftemission').val() == 'Ja'"/>
+			<input type="text" displayname=" " condition="jQuery('#luftemission').val() == 'Ja'"/>
+            <input type="text" displayname="LUFTAFKAST 1:" condition="jQuery('#luftemission').val() == 'Ja'"/>
+            <input type="input" displayname="Proces:" id="luftafkast1_proces" urlparam="luftafkast1_proces" condition="jQuery('#luftemission').val() == 'Ja'"/>
+            <input type="input" displayname="Rensning:" id="luftafkast1_rensning" urlparam="luftafkast1_rensning" condition="jQuery('#luftemission').val() == 'Ja'"/>
+            <input type="input" displayname="Højde over tag:" id="luftafkast1_hoejde" urlparam="luftafkast1_hoejde" condition="jQuery('#luftemission').val() == 'Ja'"/>
+			<input type="text" displayname=" " condition="jQuery('#luftemission').val() == 'Ja'"/>
+			<input type="text" displayname=" " condition="jQuery('#luftemission').val() == 'Ja'"/>
+
+            <input type="text" displayname="LUFTAFKAST 2:" condition="jQuery('#luftafkast1_proces').val() != '' || jQuery('#luftafkast1_rensning').val() != '' || jQuery('#luftafkast1_hoejde').val() != ''"/>
+            <input type="input" displayname="Proces:" id="luftafkast2_proces" urlparam="luftafkast2_proces" condition="jQuery('#luftafkast1_proces').val() != '' || jQuery('#luftafkast1_rensning').val() != '' || jQuery('#luftafkast1_hoejde').val() != ''"/>
+            <input type="input" displayname="Rensning:" id="luftafkast2_rensning" urlparam="luftafkast2_rensning" condition="jQuery('#luftafkast1_proces').val() != '' || jQuery('#luftafkast1_rensning').val() != '' || jQuery('#luftafkast1_hoejde').val() != ''"/>
+            <input type="input" displayname="Højde over tag:" id="luftafkast2_hoejde" urlparam="luftafkast2_hoejde" condition="jQuery('#luftafkast1_proces').val() != '' || jQuery('#luftafkast1_rensning').val() != '' || jQuery('#luftafkast1_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast1_proces').val() != '' || jQuery('#luftafkast1_rensning').val() != '' || jQuery('#luftafkast1_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast1_proces').val() != '' || jQuery('#luftafkast1_rensning').val() != '' || jQuery('#luftafkast1_hoejde').val() != ''"/>
+
+            <input type="text" displayname="LUFTAFKAST 3:" condition="jQuery('#luftafkast2_proces').val() != '' || jQuery('#luftafkast2_rensning').val() != '' || jQuery('#luftafkast2_hoejde').val() != ''"/>
+            <input type="input" displayname="Proces:" id="luftafkast3_proces" urlparam="luftafkast3_proces" condition="jQuery('#luftafkast2_proces').val() != '' || jQuery('#luftafkast2_rensning').val() != '' || jQuery('#luftafkast2_hoejde').val() != ''"/>
+            <input type="input" displayname="Rensning:" id="luftafkast3_rensning" urlparam="luftafkast3_rensning" condition="jQuery('#luftafkast2_proces').val() != '' || jQuery('#luftafkast2_rensning').val() != '' || jQuery('#luftafkast2_hoejde').val() != ''"/>
+            <input type="input" displayname="Højde over tag:" id="luftafkast3_hoejde" urlparam="luftafkast3_hoejde" condition="jQuery('#luftafkast2_proces').val() != '' || jQuery('#luftafkast2_rensning').val() != '' || jQuery('#luftafkast2_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast2_proces').val() != '' || jQuery('#luftafkast2_rensning').val() != '' || jQuery('#luftafkast2_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast2_proces').val() != '' || jQuery('#luftafkast2_rensning').val() != '' || jQuery('#luftafkast2_hoejde').val() != ''"/>
+
+            <input type="text" displayname="LUFTAFKAST 4:" condition="jQuery('#luftafkast3_proces').val() != '' || jQuery('#luftafkast3_rensning').val() != '' || jQuery('#luftafkast3_hoejde').val() != ''"/>
+            <input type="input" displayname="Proces:" id="luftafkast4_proces" urlparam="luftafkast4_proces" condition="jQuery('#luftafkast3_proces').val() != '' || jQuery('#luftafkast3_rensning').val() != '' || jQuery('#luftafkast3_hoejde').val() != ''"/>
+            <input type="input" displayname="Rensning:" id="luftafkast4_rensning" urlparam="luftafkast4_rensning" condition="jQuery('#luftafkast3_proces').val() != '' || jQuery('#luftafkast3_rensning').val() != '' || jQuery('#luftafkast3_hoejde').val() != ''"/>
+            <input type="input" displayname="Højde over tag:" id="luftafkast4_hoejde" urlparam="luftafkast4_hoejde" condition="jQuery('#luftafkast3_proces').val() != '' || jQuery('#luftafkast3_rensning').val() != '' || jQuery('#luftafkast3_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast3_proces').val() != '' || jQuery('#luftafkast3_rensning').val() != '' || jQuery('#luftafkast3_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast3_proces').val() != '' || jQuery('#luftafkast3_rensning').val() != '' || jQuery('#luftafkast3_hoejde').val() != ''"/>
+
+            <input type="text" displayname="LUFTAFKAST 5:" condition="jQuery('#luftafkast4_proces').val() != '' || jQuery('#luftafkast4_rensning').val() != '' || jQuery('#luftafkast4_hoejde').val() != ''"/>
+            <input type="input" displayname="Proces:" id="luftafkast5_proces" urlparam="luftafkast5_proces" condition="jQuery('#luftafkast4_proces').val() != '' || jQuery('#luftafkast4_rensning').val() != '' || jQuery('#luftafkast4_hoejde').val() != ''"/>
+            <input type="input" displayname="Rensning:" id="luftafkast5_rensning" urlparam="luftafkast5_rensning" condition="jQuery('#luftafkast4_proces').val() != '' || jQuery('#luftafkast4_rensning').val() != '' || jQuery('#luftafkast4_hoejde').val() != ''"/>
+            <input type="input" displayname="Højde over tag:" id="luftafkast5_hoejde" urlparam="luftafkast5_hoejde" condition="jQuery('#luftafkast4_proces').val() != '' || jQuery('#luftafkast4_rensning').val() != '' || jQuery('#luftafkast4_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast4_proces').val() != '' || jQuery('#luftafkast4_rensning').val() != '' || jQuery('#luftafkast4_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast4_proces').val() != '' || jQuery('#luftafkast4_rensning').val() != '' || jQuery('#luftafkast4_hoejde').val() != ''"/>
+
+            <input type="text" displayname="LUFTAFKAST 6:" condition="jQuery('#luftafkast5_proces').val() != '' || jQuery('#luftafkast5_rensning').val() != '' || jQuery('#luftafkast5_hoejde').val() != ''"/>
+            <input type="input" displayname="Proces:" id="luftafkast6_proces" urlparam="luftafkast6_proces" condition="jQuery('#luftafkast5_proces').val() != '' || jQuery('#luftafkast5_rensning').val() != '' || jQuery('#luftafkast5_hoejde').val() != ''"/>
+            <input type="input" displayname="Rensning:" id="luftafkast6_rensning" urlparam="luftafkast6_rensning" condition="jQuery('#luftafkast5_proces').val() != '' || jQuery('#luftafkast5_rensning').val() != '' || jQuery('#luftafkast5_hoejde').val() != ''"/>
+            <input type="input" displayname="Højde over tag:" id="luftafkast6_hoejde" urlparam="luftafkast6_hoejde" condition="jQuery('#luftafkast5_proces').val() != '' || jQuery('#luftafkast5_rensning').val() != '' || jQuery('#luftafkast5_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast5_proces').val() != '' || jQuery('#luftafkast5_rensning').val() != '' || jQuery('#luftafkast5_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast5_proces').val() != '' || jQuery('#luftafkast5_rensning').val() != '' || jQuery('#luftafkast5_hoejde').val() != ''"/>
+
+            <input type="text" displayname="LUFTAFKAST 7:" condition="jQuery('#luftafkast6_proces').val() != '' || jQuery('#luftafkast6_rensning').val() != '' || jQuery('#luftafkast6_hoejde').val() != ''"/>
+            <input type="input" displayname="Proces:" id="luftafkast7_proces" urlparam="luftafkast7_proces" condition="jQuery('#luftafkast6_proces').val() != '' || jQuery('#luftafkast6_rensning').val() != '' || jQuery('#luftafkast6_hoejde').val() != ''"/>
+            <input type="input" displayname="Rensning:" id="luftafkast7_rensning" urlparam="luftafkast7_rensning" condition="jQuery('#luftafkast6_proces').val() != '' || jQuery('#luftafkast6_rensning').val() != '' || jQuery('#luftafkast6_hoejde').val() != ''"/>
+            <input type="input" displayname="Højde over tag:" id="luftafkast7_hoejde" urlparam="luftafkast7_hoejde" condition="jQuery('#luftafkast6_proces').val() != '' || jQuery('#luftafkast6_rensning').val() != '' || jQuery('#luftafkast6_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast6_proces').val() != '' || jQuery('#luftafkast6_rensning').val() != '' || jQuery('#luftafkast6_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast6_proces').val() != '' || jQuery('#luftafkast6_rensning').val() != '' || jQuery('#luftafkast6_hoejde').val() != ''"/>
+
+            <input type="text" displayname="LUFTAFKAST 8:" condition="jQuery('#luftafkast7_proces').val() != '' || jQuery('#luftafkast7_rensning').val() != '' || jQuery('#luftafkast7_hoejde').val() != ''"/>
+            <input type="input" displayname="Proces:" id="luftafkast8_proces" urlparam="luftafkast8_proces" condition="jQuery('#luftafkast7_proces').val() != '' || jQuery('#luftafkast7_rensning').val() != '' || jQuery('#luftafkast7_hoejde').val() != ''"/>
+            <input type="input" displayname="Rensning:" id="luftafkast8_rensning" urlparam="luftafkast8_rensning" condition="jQuery('#luftafkast7_proces').val() != '' || jQuery('#luftafkast7_rensning').val() != '' || jQuery('#luftafkast7_hoejde').val() != ''"/>
+            <input type="input" displayname="Højde over tag:" id="luftafkast8_hoejde" urlparam="luftafkast8_hoejde" condition="jQuery('#luftafkast7_proces').val() != '' || jQuery('#luftafkast7_rensning').val() != '' || jQuery('#luftafkast7_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast7_proces').val() != '' || jQuery('#luftafkast7_rensning').val() != '' || jQuery('#luftafkast7_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast7_proces').val() != '' || jQuery('#luftafkast7_rensning').val() != '' || jQuery('#luftafkast7_hoejde').val() != ''"/>
+
+            <input type="text" displayname="LUFTAFKAST 9:" condition="jQuery('#luftafkast8_proces').val() != '' || jQuery('#luftafkast8_rensning').val() != '' || jQuery('#luftafkast8_hoejde').val() != ''"/>
+            <input type="input" displayname="Proces:" id="luftafkast9_proces" urlparam="luftafkast9_proces" condition="jQuery('#luftafkast8_proces').val() != '' || jQuery('#luftafkast8_rensning').val() != '' || jQuery('#luftafkast8_hoejde').val() != ''"/>
+            <input type="input" displayname="Rensning:" id="luftafkast9_rensning" urlparam="luftafkast9_rensning" condition="jQuery('#luftafkast8_proces').val() != '' || jQuery('#luftafkast8_rensning').val() != '' || jQuery('#luftafkast8_hoejde').val() != ''"/>
+            <input type="input" displayname="Højde over tag:" id="luftafkast9_hoejde" urlparam="luftafkast9_hoejde" condition="jQuery('#luftafkast8_proces').val() != '' || jQuery('#luftafkast8_rensning').val() != '' || jQuery('#luftafkast8_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast8_proces').val() != '' || jQuery('#luftafkast8_rensning').val() != '' || jQuery('#luftafkast8_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast8_proces').val() != '' || jQuery('#luftafkast8_rensning').val() != '' || jQuery('#luftafkast8_hoejde').val() != ''"/>
+
+            <input type="text" displayname="LUFTAFKAST 10:" condition="jQuery('#luftafkast9_proces').val() != '' || jQuery('#luftafkast9_rensning').val() != '' || jQuery('#luftafkast9_hoejde').val() != ''"/>
+            <input type="input" displayname="Proces:" id="luftafkast10_proces" urlparam="luftafkast10_proces" condition="jQuery('#luftafkast9_proces').val() != '' || jQuery('#luftafkast9_rensning').val() != '' || jQuery('#luftafkast9_hoejde').val() != ''"/>
+            <input type="input" displayname="Rensning:" id="luftafkast10_rensning" urlparam="luftafkast10_rensning" condition="jQuery('#luftafkast9_proces').val() != '' || jQuery('#luftafkast9_rensning').val() != '' || jQuery('#luftafkast9_hoejde').val() != ''"/>
+            <input type="input" displayname="Højde over tag:" id="luftafkast10_hoejde" urlparam="luftafkast10_hoejde" condition="jQuery('#luftafkast9_proces').val() != '' || jQuery('#luftafkast9_rensning').val() != '' || jQuery('#luftafkast9_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast9_proces').val() != '' || jQuery('#luftafkast9_rensning').val() != '' || jQuery('#luftafkast9_hoejde').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#luftafkast9_proces').val() != '' || jQuery('#luftafkast9_rensning').val() != '' || jQuery('#luftafkast9_hoejde').val() != ''"/>
+
+            <input type="checkbox" displayname="Randers Kommune har ikke siden sidste tilsyn ikke modtaget klager over luftemission fra virksomheden." id="luftemission_tekst1" urlparam="luftemission_tekst1" defaultvalue="false" condition="jQuery('#luftemission').val() == 'Ja'"/>
+            <input type="textarea" displayname="Bemærkninger til luftemission:" id="luftemission_bemaerkning" urlparam="luftemission_bemaerkning" condition="jQuery('#luftemission').val() == 'Ja'"/>
+            <input type="file" displayname="Billede af luftemission:" id="luftemission_foto" urlparam="luftemission_foto" condition="jQuery('#luftemission').val() == 'Ja'"/>				
+
+			<input type="text" displayname=" "/>
+			<input type="text" displayname=" "/>
+            <input type="dropdown" displayname="Afledes der andet spildevand end sanitært spildevand fra virksomheden?" id="spildevand" urlparam="spildevand" regexp=".+" validate="Vælg Ja eller Nej!">
+                <option value="" name="Vælg"/>
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>
+            </input>          
+            <input type="checkbox" displayname="Virksomhedens spildevandstilladelse overholdes." id="spildevand_tekst1" urlparam="spildevand_tekst1" defaultvalue="false" condition="jQuery('#spildevand').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Virksomheden afleder udelukkende sanitært spildevand." id="spildevand_tekst2" urlparam="spildevand_tekst2" defaultvalue="false" condition="jQuery('#spildevand').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Virksomheden er tilsluttet Randers Kommunes ordning for kontrol af olie- og benzinudskillere." id="spildevand_tekst3" urlparam="spildevand_tekst3" defaultvalue="false" condition="jQuery('#spildevand').val() == 'Ja'"/>
+            <input type="textarea" displayname="Bemærkninger til spildevand:" id="spildevand_bemaerkning" urlparam="spildevand_bemaerkning" condition="jQuery('#spildevand').val() == 'Ja'"/>
+            <input type="file" displayname="Billede af spildevand:" id="spildevand_foto" urlparam="spildevand_foto" condition="jQuery('#spildevand').val() == 'Ja'"/>				
+
+			<input type="text" displayname=" "/>
+			<input type="text" displayname=" "/>
+            <input type="dropdown" displayname="Er der oplag af råvarer og materialer på virksomheden?" id="raavarer_oplag" urlparam="raavarer_oplag" regexp=".+" validate="Vælg Ja eller Nej!">
+                <option value="" name="Vælg"/>
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>
+            </input>          
+            <input type="checkbox" displayname="Råvarer og materialer opbevares overvejede indendørs." id="raavarer_oplag_tekst1" urlparam="raavarer_oplag_tekst1" defaultvalue="false" condition="jQuery('#raavarer_oplag').val() == 'Ja'"/>
+            <input type="textarea" displayname="Bemærkninger til råvarer og materialer:" id="raavarer_oplag_bemaerkning" urlparam="raavarer_oplag_bemaerkning" condition="jQuery('#raavarer_oplag').val() == 'Ja'"/>
+            <input type="file" displayname="Billede af råvarer og materialer:" id="raavarer_oplag_foto" urlparam="raavarer_oplag_foto" condition="jQuery('#raavarer_oplag').val() == 'Ja'"/>				
+
+			<input type="text" displayname=" "/>
+			<input type="text" displayname=" "/>
+            <input type="dropdown" displayname="Er der nedgravede eller fritstående tanke?" id="tanke" urlparam="tanke" regexp=".+" validate="Vælg Ja eller Nej!">
+                <option value="" name="Vælg"/>
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>
+            </input>          
+            <input type="text" displayname="TANK 1:" condition="jQuery('#tanke').val() == 'Ja'"/>
+            <input type="input" displayname="Årstal:" id="tank1_aarstal" urlparam="tank1_aarstal" regexp="^[0-9]*$" validate="Indtast et årstal, f.eks. 1997" condition="jQuery('#tanke').val() == 'Ja'"/>
+            <input type="input" displayname="Placering:" id="tank1_placering" urlparam="tank1_placering" condition="jQuery('#tanke').val() == 'Ja'"/>
+            <input type="input" displayname="Indhold:" id="tank1_indhold" urlparam="tank1_indhold" condition="jQuery('#tanke').val() == 'Ja'"/>
+            <input type="input" displayname="Størrelse:" id="tank1_stoerrelse" urlparam="tank1_stoerrelse" regexp="^[0-9]*$" validate="Indtast kun tal, f.eks: 1200" condition="jQuery('#tanke').val() == 'Ja'"/>
+            <input type="input" displayname="Fabrikationsnr:" id="tank1_fabrikationsnr" urlparam="tank1_fabrikationsnr" condition="jQuery('#tanke').val() == 'Ja'"/>
+			<input type="text" displayname=" " condition="jQuery('#tanke').val() == 'Ja'"/>
+			<input type="text" displayname=" " condition="jQuery('#tanke').val() == 'Ja'"/>
+
+            <input type="text" displayname="TANK 2:" condition="jQuery('#tank1_aarstal').val() != '' || jQuery('#tank1_placering').val() != '' || jQuery('#tank1_indhold').val() != '' || jQuery('#tank1_stoerrelse').val() != '' || jQuery('#tank1_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Årstal:" id="tank2_aarstal" urlparam="tank2_aarstal" regexp="^[0-9]*$" validate="Indtast et årstal, f.eks. 1997" condition="jQuery('#tank1_aarstal').val() != '' || jQuery('#tank1_placering').val() != '' || jQuery('#tank1_indhold').val() != '' || jQuery('#tank1_stoerrelse').val() != '' || jQuery('#tank1_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Placering:" id="tank2_placering" urlparam="tank2_placering" condition="jQuery('#tank1_aarstal').val() != '' || jQuery('#tank1_placering').val() != '' || jQuery('#tank1_indhold').val() != '' || jQuery('#tank1_stoerrelse').val() != '' || jQuery('#tank1_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Indhold:" id="tank2_indhold" urlparam="tank2_indhold" condition="jQuery('#tank1_aarstal').val() != '' || jQuery('#tank1_placering').val() != '' || jQuery('#tank1_indhold').val() != '' || jQuery('#tank1_stoerrelse').val() != '' || jQuery('#tank1_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Størrelse:" id="tank2_stoerrelse" urlparam="tank2_stoerrelse" regexp="^[0-9]*$" validate="Indtast kun tal, f.eks: 1200" condition="jQuery('#tank1_aarstal').val() != '' || jQuery('#tank1_placering').val() != '' || jQuery('#tank1_indhold').val() != '' || jQuery('#tank1_stoerrelse').val() != '' || jQuery('#tank1_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Fabrikationsnr:" id="tank2_fabrikationsnr" urlparam="tank2_fabrikationsnr" condition="jQuery('#tank1_aarstal').val() != '' || jQuery('#tank1_placering').val() != '' || jQuery('#tank1_indhold').val() != '' || jQuery('#tank1_stoerrelse').val() != '' || jQuery('#tank1_fabrikationsnr').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#tank1_aarstal').val() != '' || jQuery('#tank1_placering').val() != '' || jQuery('#tank1_indhold').val() != '' || jQuery('#tank1_stoerrelse').val() != '' || jQuery('#tank1_fabrikationsnr').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#tank1_aarstal').val() != '' || jQuery('#tank1_placering').val() != '' || jQuery('#tank1_indhold').val() != '' || jQuery('#tank1_stoerrelse').val() != '' || jQuery('#tank1_fabrikationsnr').val() != ''"/>
+
+            <input type="text" displayname="TANK 3:" condition="jQuery('#tank2_aarstal').val() != '' || jQuery('#tank2_placering').val() != '' || jQuery('#tank2_indhold').val() != '' || jQuery('#tank2_stoerrelse').val() != '' || jQuery('#tank2_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Årstal:" id="tank3_aarstal" urlparam="tank3_aarstal" regexp="^[0-9]*$" validate="Indtast et årstal, f.eks. 1997" condition="jQuery('#tank2_aarstal').val() != '' || jQuery('#tank2_placering').val() != '' || jQuery('#tank2_indhold').val() != '' || jQuery('#tank2_stoerrelse').val() != '' || jQuery('#tank2_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Placering:" id="tank3_placering" urlparam="tank3_placering" condition="jQuery('#tank2_aarstal').val() != '' || jQuery('#tank2_placering').val() != '' || jQuery('#tank2_indhold').val() != '' || jQuery('#tank2_stoerrelse').val() != '' || jQuery('#tank2_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Indhold:" id="tank3_indhold" urlparam="tank3_indhold" condition="jQuery('#tank2_aarstal').val() != '' || jQuery('#tank2_placering').val() != '' || jQuery('#tank2_indhold').val() != '' || jQuery('#tank2_stoerrelse').val() != '' || jQuery('#tank2_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Størrelse:" id="tank3_stoerrelse" urlparam="tank3_stoerrelse" regexp="^[0-9]*$" validate="Indtast kun tal, f.eks: 1200" condition="jQuery('#tank2_aarstal').val() != '' || jQuery('#tank2_placering').val() != '' || jQuery('#tank2_indhold').val() != '' || jQuery('#tank2_stoerrelse').val() != '' || jQuery('#tank2_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Fabrikationsnr:" id="tank3_fabrikationsnr" urlparam="tank3_fabrikationsnr" condition="jQuery('#tank2_aarstal').val() != '' || jQuery('#tank2_placering').val() != '' || jQuery('#tank2_indhold').val() != '' || jQuery('#tank2_stoerrelse').val() != '' || jQuery('#tank2_fabrikationsnr').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#tank2_aarstal').val() != '' || jQuery('#tank2_placering').val() != '' || jQuery('#tank2_indhold').val() != '' || jQuery('#tank2_stoerrelse').val() != '' || jQuery('#tank2_fabrikationsnr').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#tank2_aarstal').val() != '' || jQuery('#tank2_placering').val() != '' || jQuery('#tank2_indhold').val() != '' || jQuery('#tank2_stoerrelse').val() != '' || jQuery('#tank2_fabrikationsnr').val() != ''"/>
+
+            <input type="text" displayname="TANK 4:" condition="jQuery('#tank3_aarstal').val() != '' || jQuery('#tank3_placering').val() != '' || jQuery('#tank3_indhold').val() != '' || jQuery('#tank3_stoerrelse').val() != '' || jQuery('#tank3_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Årstal:" id="tank4_aarstal" urlparam="tank4_aarstal" regexp="^[0-9]*$" validate="Indtast et årstal, f.eks. 1997" condition="jQuery('#tank3_aarstal').val() != '' || jQuery('#tank3_placering').val() != '' || jQuery('#tank3_indhold').val() != '' || jQuery('#tank3_stoerrelse').val() != '' || jQuery('#tank3_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Placering:" id="tank4_placering" urlparam="tank4_placering" condition="jQuery('#tank3_aarstal').val() != '' || jQuery('#tank3_placering').val() != '' || jQuery('#tank3_indhold').val() != '' || jQuery('#tank3_stoerrelse').val() != '' || jQuery('#tank3_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Indhold:" id="tank4_indhold" urlparam="tank4_indhold" condition="jQuery('#tank3_aarstal').val() != '' || jQuery('#tank3_placering').val() != '' || jQuery('#tank3_indhold').val() != '' || jQuery('#tank3_stoerrelse').val() != '' || jQuery('#tank3_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Størrelse:" id="tank4_stoerrelse" urlparam="tank4_stoerrelse" regexp="^[0-9]*$" validate="Indtast kun tal, f.eks: 1200" condition="jQuery('#tank3_aarstal').val() != '' || jQuery('#tank3_placering').val() != '' || jQuery('#tank3_indhold').val() != '' || jQuery('#tank3_stoerrelse').val() != '' || jQuery('#tank3_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Fabrikationsnr:" id="tank4_fabrikationsnr" urlparam="tank4_fabrikationsnr" condition="jQuery('#tank3_aarstal').val() != '' || jQuery('#tank3_placering').val() != '' || jQuery('#tank3_indhold').val() != '' || jQuery('#tank3_stoerrelse').val() != '' || jQuery('#tank3_fabrikationsnr').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#tank3_aarstal').val() != '' || jQuery('#tank3_placering').val() != '' || jQuery('#tank3_indhold').val() != '' || jQuery('#tank3_stoerrelse').val() != '' || jQuery('#tank3_fabrikationsnr').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#tank3_aarstal').val() != '' || jQuery('#tank3_placering').val() != '' || jQuery('#tank3_indhold').val() != '' || jQuery('#tank3_stoerrelse').val() != '' || jQuery('#tank3_fabrikationsnr').val() != ''"/>
+
+            <input type="text" displayname="TANK 5:" condition="jQuery('#tank4_aarstal').val() != '' || jQuery('#tank4_placering').val() != '' || jQuery('#tank4_indhold').val() != '' || jQuery('#tank4_stoerrelse').val() != '' || jQuery('#tank4_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Årstal:" id="tank5_aarstal" urlparam="tank5_aarstal" regexp="^[0-9]*$" validate="Indtast et årstal, f.eks. 1997" condition="jQuery('#tank4_aarstal').val() != '' || jQuery('#tank4_placering').val() != '' || jQuery('#tank4_indhold').val() != '' || jQuery('#tank4_stoerrelse').val() != '' || jQuery('#tank4_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Placering:" id="tank5_placering" urlparam="tank5_placering" condition="jQuery('#tank4_aarstal').val() != '' || jQuery('#tank4_placering').val() != '' || jQuery('#tank4_indhold').val() != '' || jQuery('#tank4_stoerrelse').val() != '' || jQuery('#tank4_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Indhold:" id="tank5_indhold" urlparam="tank5_indhold" condition="jQuery('#tank4_aarstal').val() != '' || jQuery('#tank4_placering').val() != '' || jQuery('#tank4_indhold').val() != '' || jQuery('#tank4_stoerrelse').val() != '' || jQuery('#tank4_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Størrelse:" id="tank5_stoerrelse" urlparam="tank5_stoerrelse" regexp="^[0-9]*$" validate="Indtast kun tal, f.eks: 1200" condition="jQuery('#tank4_aarstal').val() != '' || jQuery('#tank4_placering').val() != '' || jQuery('#tank4_indhold').val() != '' || jQuery('#tank4_stoerrelse').val() != '' || jQuery('#tank4_fabrikationsnr').val() != ''"/>
+            <input type="input" displayname="Fabrikationsnr:" id="tank5_fabrikationsnr" urlparam="tank5_fabrikationsnr" condition="jQuery('#tank4_aarstal').val() != '' || jQuery('#tank4_placering').val() != '' || jQuery('#tank4_indhold').val() != '' || jQuery('#tank4_stoerrelse').val() != '' || jQuery('#tank4_fabrikationsnr').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#tank4_aarstal').val() != '' || jQuery('#tank4_placering').val() != '' || jQuery('#tank4_indhold').val() != '' || jQuery('#tank4_stoerrelse').val() != '' || jQuery('#tank4_fabrikationsnr').val() != ''"/>
+			<input type="text" displayname=" " condition="jQuery('#tank4_aarstal').val() != '' || jQuery('#tank4_placering').val() != '' || jQuery('#tank4_indhold').val() != '' || jQuery('#tank4_stoerrelse').val() != '' || jQuery('#tank4_fabrikationsnr').val() != ''"/>
+
+            <input type="textarea" displayname="Bemærkninger til tanke:" id="tanke_bemaerkning" urlparam="tanke_bemaerkning" condition="jQuery('#tanke').val() == 'Ja'"/>
+            <input type="file" displayname="Billede af tanke:" id="tanke_foto" urlparam="tanke_foto" condition="jQuery('#tanke').val() == 'Ja'"/>				
+
+			<input type="text" displayname=" "/>
+			<input type="text" displayname=" "/>
+            
+			<input type="dropdown" displayname="Er der andet affald end alm. dagrenovation/ brændbart affald?" id="affald" urlparam="affald" regexp=".+" validate="Vælg Ja eller Nej!">
+                <option value="" name="Vælg"/>
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>
+            </input>          
+            <input type="text" displayname="Farligt affald:" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Alm. batterier" id="affald_batterier" urlparam="affald_batterier" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Savsmuld (olieholdigt)" id="affald_savsmuld" urlparam="affald_savsmuld" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Spildolie" id="affald_spildolie" urlparam="affald_spildolie" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Blyakkumulatorer" id="affald_blyakkumulatorer" urlparam="affald_blyakkumulatorer" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Kølervæske" id="affald_koelervaeske" urlparam="affald_koelervaeske" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Bremsevæske" id="affald_bremsevaeske" urlparam="affald_bremsevaeske" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Oliefiltre" id="affald_oliefiltre" urlparam="affald_oliefiltre" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Alkalisk bremsevaskevand" id="affald_bremsevaskevand" urlparam="affald_bremsevaskevand" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Tomme spraydåser" id="affald_tomme_spraydaaser" urlparam="affald_tomme_spraydaaser" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Lysstofrør" id="affald_lysstofroer" urlparam="affald_lysstofroer" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="textarea" displayname="Bemærkninger til farligt affald:" id="farligt_affald_bemaerkning" urlparam="farligt_affald_bemaerkning" condition="jQuery('#affald').val() == 'Ja'"/>
+			<input type="text" displayname=" " condition="jQuery('#affald').val() == 'Ja'"/>
+			<input type="text" displayname=" " condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Opbevaringsforholdene for farligt affald er i overensstemmelse med forskrift for opbevaring af affald i Randers Kommuen." id="farligt_affald_tekst1" urlparam="farligt_affald_tekst1" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Affaldsbortskaffelsen af farligt affald er i overensstemmelse med regulativ for erhvervsaffald i Randers Kommuen." id="farligt_affald_tekst2" urlparam="farligt_affald_tekst2" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Opbevaringsforholdene for farligt affald er IKKE i overensstemmelse med forskrift for opbevaring af affald i Randers Kommuen." id="farligt_affald_tekst3" urlparam="farligt_affald_tekst3" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Affaldsbortskaffelsen af farligt affald er IKKE i overensstemmelse med regulativ for erhvervsaffald i Randers Kommuen." id="farligt_affald_tekst4" urlparam="farligt_affald_tekst4" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="file" displayname="Billede af farligt affald:" id="farligt_affald_foto" urlparam="farligt_affald_foto" condition="jQuery('#affald').val() == 'Ja'"/>				
+
+			<input type="text" displayname=" " condition="jQuery('#affald').val() == 'Ja'"/>
+			<input type="text" displayname=" " condition="jQuery('#affald').val() == 'Ja'"/>
+
+            <input type="text" displayname="Affald i øvrigt:" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Brændbart affald" id="affald_braendbart" urlparam="affald_braendbart" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Dagrenovation" id="affald_dagrenovation" urlparam="affald_dagrenovation" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Papir/pap" id="affald_papir_pap" urlparam="affald_papir_pap" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Metal" id="affald_metal" urlparam="affald_metal" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Dæk" id="affald_daek" urlparam="affald_daek" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Isolering" id="affald_isolering" urlparam="affald_isolering" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Betonrester og betonslam fra bassiner" id="affald_beton" urlparam="affald_beton" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="textarea" displayname="Bemærkninger til affald:" id="affald_bemaerkning" urlparam="affald_bemaerkning" condition="jQuery('#affald').val() == 'Ja'"/>
+			<input type="text" displayname=" " condition="jQuery('#affald').val() == 'Ja'"/>
+			<input type="text" displayname=" " condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Opbevaringsforholdene for affald er i overensstemmelse med forskrift for opbevaring af affald i Randers Kommuen." id="affald_tekst1" urlparam="affald_tekst1" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Affaldsbortskaffelsen er i overensstemmelse med regulativ for erhvervsaffald i Randers Kommuen." id="affald_tekst2" urlparam="affald_tekst2" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Opbevaringsforholdene for affald er IKKE i overensstemmelse med forskrift for opbevaring af affald i Randers Kommuen." id="affald_tekst3" urlparam="affald_tekst3" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="checkbox" displayname="Affaldsbortskaffelsen er IKKE i overensstemmelse med regulativ for erhvervsaffald i Randers Kommuen." id="affald_tekst4" urlparam="affald_tekst4" defaultvalue="false" condition="jQuery('#affald').val() == 'Ja'"/>
+            <input type="file" displayname="Billede af affald:" id="affald_foto" urlparam="affald_foto" condition="jQuery('#affald').val() == 'Ja'"/>				
+
+			<input type="text" displayname=" "/>
+			<input type="text" displayname=" "/>
+            <input type="dropdown" displayname="Lugt eller andet af miljømæssig betydning?" id="andre_miljoeforhold" urlparam="andre_miljoeforhold" regexp=".+" validate="Vælg Ja eller Nej!">
+                <option value="" name="Vælg"/>
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>
+            </input>          
+            <input type="textarea" displayname="Bemærkninger til øvrige miljøforhold:" id="andre_miljoeforhold_bem" urlparam="andre_miljoeforhold_bem" condition="jQuery('#andre_miljoeforhold').val() == 'Ja'"/>
+            <input type="file" displayname="Billede af øvrige miljøforhold:" id="andre_miljoeforhold_foto" urlparam="andre_miljoeforhold_foto" condition="jQuery('#andre_miljoeforhold').val() == 'Ja'"/>				
+
+			<input type="text" displayname=" "/>
+            <input type="dropdown" displayname="Virksomheden opvarmes med:" id="opvarmningsmiddel" urlparam="opvarmningsmiddel" regexp=".+" validate="Vælg opvarmningsmiddel!">
+                <option value="" name="Vælg"/>
+                <option value="fjernvarme" name="Fjernvarme"/>
+                <option value="oliefyr" name="Oliefyr"/>
+                <option value="gasfyr" name="Gasfyr"/>
+                <option value="biobrændsel" name="Biobrændsel"/>
+                <option value="andet" name="Andet"/>
+            </input>          
+            <input type="textarea" displayname="Anden opvarmning:" id="opvarmningsmiddel_andet" urlparam="opvarmningsmiddel_andet" regexp=".+" condition="jQuery('#opvarmningsmiddel').val() == 'andet'"/>
+            <input type="text" displayname=" "/>
+        </content>  
+        <content displayname="Reguleringsgrundlag">
+            <input type="checkbox" displayname="Virksomhedens miljøgodkendelse." id="reguleringsgrundlag_tekst7" urlparam="reguleringsgrundlag_tekst7" defaultvalue="false"/>
+            <input type="input" displayname="Dato for miljøgodkendelsen:" id="dato_miljoegodkendelse" urlparam="dato_miljoegodkendelse" condition="jQuery('#reguleringsgrundlag_tekst7').is(':checked')"/>
+            <input type="checkbox" displayname="Virksomhedens spildevandstilladelse." id="reguleringsgrundlag_tekst8" urlparam="reguleringsgrundlag_tekst8" defaultvalue="false"/>
+            <input type="input" displayname="Dato for spildevandstilladelsen:" id="dato_spildevandstilladelse" urlparam="dato_spildevandstilladelse" condition="jQuery('#reguleringsgrundlag_tekst8').is(':checked')"/>
+            <input type="checkbox" displayname="Virksomheden reguleres efter bekendtgørelse om miljøkrav i forbindelse med etablering og drift af autoværksteder m. v., bekendtgørelse nr. 1447 af 2. december 2015." id="reguleringsgrundlag_tekst1" urlparam="reguleringsgrundlag_tekst1" defaultvalue="false"/>
+            <input type="checkbox" displayname="Virksomheden er omfattet af bilskrotbekendtgørelse nr. 1312 af 19. december 2012 om håndtering af affald i form af motordrevne køretøjer og affaldsfraktioner herfra." id="reguleringsgrundlag_tekst2" urlparam="reguleringsgrundlag_tekst2" defaultvalue="false"/>
+            <input type="checkbox" displayname="Virksomheden er omfattet af  Randers Kommunes Regulativ for erhvervsaffald." id="reguleringsgrundlag_tekst3" urlparam="reguleringsgrundlag_tekst3" defaultvalue="false"/>
+            <input type="checkbox" displayname="Virksomheden er omfattet af bekendtgørelse nr. 1417 af 2. december 2015 om brugerbetaling for godkendelse og tilsyn efter lov om miljøbeskyttelse." id="reguleringsgrundlag_tekst4" urlparam="reguleringsgrundlag_tekst4" defaultvalue="false"/>
+            <input type="checkbox" displayname="Virksomheden er omfattet af Miljøbeskyttelseslovens § 42, der giver lovmæssig hjemmel til påbud og forbud." id="reguleringsgrundlag_tekst5" urlparam="reguleringsgrundlag_tekst5" defaultvalue="false"/>
+            <input type="checkbox" displayname="Virksomheden er omfattet af bekendtgørelse nr. 1611 af 10. december 2015 om indretning, etablering og drift af olietanke, rørsystemer og pipelines." id="reguleringsgrundlag_tekst6" urlparam="reguleringsgrundlag_tekst6" defaultvalue="false"/>
+            <input type="checkbox" displayname="Virksomheden er omfattet af bekendtgørelse nr. 1447 af 2. december 2015 om godkendelse af listevirksomhed." id="reguleringsgrundlag_tekst9" urlparam="reguleringsgrundlag_tekst9" defaultvalue="false"/>
+            <input type="checkbox" displayname="Virksomheden er omfattet af bekendtgørelse nr. 1418 af 2. december 2015 om standardvilkår." id="reguleringsgrundlag_tekst10" urlparam="reguleringsgrundlag_tekst10" defaultvalue="false"/>
+        </content>  
+        <content displayname="Opsumering">
+			<input type="text" displayname=" "/>
+			<input type="text" displayname="MILJØMÆSSIGE BEMÆRKNINGER TIL TILSYNET"/>
+            <input type="dropdown" displayname="Har gennemgangen af virksomheden har givet anledning til bemærkninger?" id="miljoemaessige_bemaerkninger" urlparam="miljoemaessige_bemaerkninger" regexp=".+" validate="Vælg Ja eller Nej!">
+                <option value="" name="Vælg"/>
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>
+            </input>          
+<!--
+            <input type="checkbox" displayname="Gennemgangen af virksomheden har givet anledning til bemærkninger." id="miljoemaessige_bemaerkninger" urlparam="miljoemaessige_bemaerkninger" defaultvalue="false"/>
+            <input type="checkbox" displayname="Sagsbehandler har gennemgået virksomheden og ikke fundet anledning til bemærkninger til tilsynet." id="miljoemaessige_bemaerkninger" urlparam="miljoemaessige_bemaerkninger" defaultvalue="false" condition="jQuery('#miljoemaessige_bemaerkninger_tekst').val() ==  ''"/>
+            <input type="textarea" displayname="Tilsynet har givet anledning til følgende bemærkninger:" id="miljoemaessige_bemaerkninger_tekst" urlparam="miljoemaessige_bemaerkninger_tekst" condition="!jQuery('#miljoemaessige_bemaerkninger').is(':checked')"/>
+-->
+            <input type="textarea" displayname="Bemærkninger:" id="miljoemaessige_bemaerkninger_tekst" urlparam="miljoemaessige_bemaerkninger_tekst" condition="jQuery('#miljoemaessige_bemaerkninger').val() == 'Ja'"/>
+			<input type="text" displayname=" "/>
+			<input type="text" displayname=" "/>
+			<input type="text" displayname=" "/>
+			<input type="text" displayname=" "/>
+			<input type="text" displayname="JORDFORURENING"/>
+            <input type="dropdown" displayname="Er der ved gennemgangen af virksomheden konstateret tegn på jordforurening?" id="jordforurening_bemaerkninger" urlparam="jordforurening_bemaerkninger" regexp=".+" validate="Vælg Ja eller Nej!">
+                <option value="" name="Vælg"/>
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>
+            </input>          
+            <input type="textarea" displayname="Bemærkninger:" id="jordforurening_bem_tekst" urlparam="jordforurening_bem_tekst" condition="jQuery('#jordforurening_bemaerkninger').val() == 'Ja'"/>
+			<input type="text" displayname=" "/>
+			<input type="text" displayname=" "/>
+			<input type="text" displayname=" "/>
+			<input type="text" displayname=" "/>
+			<input type="text" displayname="HÅNDHÆVELSER"/>
+<!--
+            <input type="checkbox" displayname="Miljøtilsynet har medført påbud, forbud eller indskærpelser til virksomheden." id="haandhaevelser" urlparam="haandhaevelser" defaultvalue="false"/>
+            <input type="checkbox" displayname="Der er ved miljøtilsynet ikke meddelt påbud, forbud eller indskærpelser til virksomheden." id="haandhaevelser" urlparam="haandhaevelser" defaultvalue="false" condition="jQuery('#haandhaevelser_tekst').val() ==  ''"/>
+            <input type="textarea" displayname="Påbud, forbud eller indskærpelser:" id="haandhaevelser_tekst" urlparam="haandhaevelser_tekst" condition="!jQuery('#haandhaevelser').is(':checked')"/>
+-->
+            <input type="dropdown" displayname="Skal der ifm. miljøtilsynet meddeles påbud, forbud eller indskærpelser til virksomheden?" id="haandhaevelser" urlparam="haandhaevelser" regexp=".+" validate="Vælg Ja eller Nej!">
+                <option value="" name="Vælg"/>
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>
+            </input>          
+            <input type="textarea" displayname="Påbud, forbud eller indskærpelser:" id="haandhaevelser_tekst" urlparam="haandhaevelser_tekst" condition="jQuery('#haandhaevelser').val() == 'Ja'"/>
+			<input type="text" displayname=" "/>
+			<input type="text" displayname=" "/>
+			<input type="text" displayname=" "/>
+			<input type="text" displayname=" "/>
+			<input type="text" displayname="ØVRIGE BEMÆRKNINGER"/>
+            <input type="textarea" displayname="Eventuelle øvrige bemærkninger:" id="oevrige_bemaerkninger" urlparam="oevrige_bemaerkninger"/>
+			<input type="text" displayname=" "/>
+			<confirm displayname="Følgende oplysninger er indtastet. Er det korrekt?"/>
+            <submitbutton displayname="Tilbage til forsiden" function="window.location.assign('http://webkort.randers.dk/?page=formular&amp;formular=miljoetilsyn','_blank');"/>
+        </content>  
+   </formular>
+
+</config>

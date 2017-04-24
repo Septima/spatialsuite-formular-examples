@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+     <formular name="faerdigmelding_nedsivningsanlaeg">
+        <header>Færdigmelding af nedsivningsanlæg</header>
+        
+	
+		<submitpages>
+			<page parser="setFrid">sbsys.faerdigmelding_nedsivningsanlaeg.get.eks_sag</page>
+			<!-- <page parser="setFrid"  urlparam="journalnr">sbsys.faerdigmelding_nedsivningsanlaeg.journalNr</page> -->
+			<page>formular.send.faerdigmelding_nedsivningsanlaeg.save</page>
+			<page parser="setPdf">formular.send.faerdigmelding_nedsivningsanlaeg.pdf</page>
+			<page>formular.move.pdf</page>
+            <page>sbsys.faerdigmelding_nedsivningsanlaeg.attach-document</page>
+            <page>sbsys.faerdigmelding_nedsivningsanlaeg.attach-document.kvittering</page>
+			<page>formular.send.faerdigmelding_nedsivningsanlaeg.mail.advi</page> 
+			<page>formular.send.faerdigmelding_nedsivningsanlaeg.mail</page> 
+        </submitpages>
+        
+        <!-- <reportmapscale>500</reportmapscale> -->
+        <reportprofile>ekstern_all</reportprofile>
+        <reportlayers>default</reportlayers>
+        <reportxsl>faerdigmelding_nedsivningsanlaeg</reportxsl>
+		<js>/modules/formular/formular-config/js/fardigmeldning_nedsivningsanlaeg.js</js>
+        <css>/modules/formular/formular-config/css/buttons.css</css>
+        
+		<tabs class="smalltabs">true</tabs>
+
+		<content displayname="Login">
+			<input type="input" displayname="Login" id="login" urlparam="login" onkeyup="login();" />
+			<input type="text" displayname="Har du ikke et login, så &lt;a href=&quot;https://ddr.randers.dk/FrontEnd.aspx&#63;id=157542&quot; target=&quot;_new&quot;&gt;klik her&lt;/a&gt; for at tilmelde firmaet og få tilsendt en kode pr. mail" />
+		</content>
+
+		<content displayname="Hvor og hvad">
+            <input type="hidden" id="klenummer" urlparam="klenummer" defaultvalue="06.01.05"/>
+			<input type="hidden" id="facetnummer" urlparam="facetnummer" defaultvalue="P19"/>
+			<input type="hidden" urlparam="dagsdato" id="dagsdato" defaultvalue="-"/>
+			<!-- <input type="hidden" id="journalnr" urlparam="journalnr" defaultvalue=""/> -->
+			<input type="hidden" id="sbsys_brugerid" urlparam="sbsys_brugerid" defaultvalue=""/>
+			<input type="hidden" urlparam="mail_intern" id="mail_intern" default="" />
+			
+            <input type="hidden" urlparam="pdfheadertext1" defaultvalue="Dette er en tekst, der skal sættes ind i kviteringen."/>
+            <input type="text" displayname=" "/>
+            <!-- <geosearch urlparam="address" displayname="Adresse:" resources="Adresser" filter="muncode0730" usegeometry="true"/> -->
+			<!-- <address urlparam="address" displayname="Adresse:" apikey="[module.spatialaddress.apikey]" filter="[module.spatialaddress.filter]"></address> -->
+			<geosearch id="address_soeg" urlparam="address" displayname="Adresse:" resources="Adresser" filter="muncode0730" geometry_selected="updateAdr();"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Vælg pilknappen og udpeg et af de felter på kortet - hvis du kun skal bruge en del af arealet kan du ved at vælge retteknappen tilpasse pmrådet. Hvis du tegner forkert kan du altid starte forfra ved at bruge viskelæderet.
+            											&lt;ul&gt; 
+												&lt;li&gt;Du kan udvælge areal ved at trykke på pilknappen. &lt;div class='button_in_help button_select'&gt;&lt;/div&gt; &lt;/li&gt; 
+												&lt;li&gt;Hvis du i stedet ønsker at indtegne et eller flere arealer skal du vælge knappen med den første firkant. &lt;div class='button_in_help button_polygon'&gt;&lt;/div&gt; &lt;/li&gt; 
+												&lt;li&gt;Du kan tilpasse de udvalgte arealer ved at tykke på den næste knap med firkant, og markere det areal du ønsker ændret. &lt;div class='button_in_help button_modify'&gt;&lt;/div&gt; &lt;/li&gt; 
+												&lt;li&gt;Du kan slette ved at trykke på knappen med viskelæderet og markere det areal, du ønsker at slette. &lt;div class='button_in_help button_delete'&gt;&lt;/div&gt; &lt;/li&gt; 
+											&lt;/ul&gt;
+	"/>
+            <maptools>
+                <maptool displayname="Slet en markering" name="delete"  />
+			    <maptool displayname="Tilpas udvalgt areal" name="modify"/>
+                <maptool name="polygon"/>
+			    <maptool displayname="Udvælg areal" name="select" datasource="ds_formular_etabler_nedsivningsanlaeg" />
+            </maptools>
+            <map required="true">
+                <extent>539430.4,6237856,591859.2,6290284.8</extent>
+                <resolutions>0.2,0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4</resolutions>
+                <themes>
+                    <theme name="theme-ddoland2012" host="//tile2.randers.dk/service/wms"/>
+                    <theme name="theme-formular_etabler_nedsivningsanlaeg" host="/wms?servicename=selvbetjening_wms"/>
+                </themes>
+            </map>
+            <area urlparam="areal" displayname="Areal:"/>
+            <conflicts urlparam="konflikttekst1" displayname="Det ansøgte vedrører følgende ejendom(e):" targerset="ejendom"/>
+            <conflicts urlparam="formular_faerdig_nedsivning_journalnummer" displayname="Eksisterende data:" targerset="formular_faerdig_nedsivning" onconflict="haandterSBSYS(this);"/>
+	      	<conflicts urlparam="ejer" displayname="Ejerinformationer:" targerset="ejendomhovedejer" onconflict="haandterEjer(this);"/>
+			<conflicts urlparam="sagsbehandler" id="sagsbehandler" displayname="" targerset="kloaksagsbehandler" onconflict="setSagsbehandler(this,true)" onnoconflict="setSagsbehandler(this,false)" />
+            
+			<input type="dropdown" displayname="Hvad færdigmeldes:" urlparam="hvad">
+                <option value="Etablering af et nedsivningsanlæg" name="Etablering af et nedsivningsanlæg"/>
+                <option value="Arbejde på et eksisterende nedsivningsanlæg" name="Arbejde på et eksisterende nedsivningsanlæg"/>
+            </input>
+			<input type="text" displayname="Kontrol venligst, at journalnummeret stemmer overens med det modtaget i forbindelse med ansøgningen"/>
+			<input type="input" id="journalnr" urlparam="journalnr" defaultvalue="" displayname="Journalnummer" regexp=".+" validate="Journalnummeret skal indtastes"/>
+            <input type="input" displayname="Tanktype:" urlparam="tanktype" regexp=".+" validate="Indtast tanktypen!"/>
+            <input type="input" displayname="Antal kamre:" urlparam="antal_kamre" regexp=".+" validate="Indtast antallet af kamre!"/>
+            <input type="input" displayname="Volumen ialt (m3):" urlparam="volumen" id="volumen" regexp=".+" validate="Indtast volumen ialt i m3!" onkeyup="updateValue('volumen');"/>
+            <input type="date"  displayname="Arbejdet er afsluttet d.:" urlparam="afslutningsdato"/>
+            <input type="date"  displayname="Tilladelse meddelt d.:" urlparam="tilladelsesdato"/>
+            <input type="dropdown" displayname="Er anlægget i overenstemmelse med tilladelsen?" urlparam="overenstemmelse">
+                <option value="Ja" name="Ja"/>
+				        <option value="Nej" name="Nej"/>
+            </input>	
+   <!--         <input type="input" displayname="Navn:" urlparam="navn" regexp=".+" validate="Indtast navn!"/>
+            <input type="input" displayname="E-mail:" id="email1" urlparam="email"/>
+            <input type="input" displayname="Gentag e-mail:" id="email2" urlparam="email" onkeyup="formular.compare('email1','email2','De to skal være ens')"/>
+            <input type="input" displayname="Tlf. nr.:" urlparam="tlf"/>-->
+            <input type="file" displayname="Vedhæft kloakplan:" urlparam="filnavn" regexp=".+" validate="Der skal vedhæftes en´ fil" />
+        </content>
+		<content displayname="Kontaktoplysninger">
+			<!-- <input type="input" displayname="Ejendommens adresse:" id="ejendommens_adresse" urlparam="ejendommens_adresse" regexp=".+" validate="Indtast ejendommens adresse!"/> -->
+			<geosearch id="ejendommens_adresse" urlparam="ejendommens_adresse" displayname="Ejendommens adresse:" resources="Adresser" filter="muncode0730" regexp=".+" validate="Indtast ejendommens adresse!" />
+			<input type="input" displayname="Ejers navn:" id="enavn" urlparam="navn"  regexp=".+" validate="Indtast ejerens navn!"/>
+			<input type="input" displayname="Ejers adresse:" id="eadresse" urlparam="adresse"  regexp=".+" validate="Indtast ejerens adresse!"/>
+			<input type="input" displayname="Ejers e-mail:" id="eemail1" urlparam="email" regexp="[a-z0-9!#$%'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?" validate="Indtast ejerens email!"/>
+			<input type="text" displayname="Gentag email:" />
+			<input type="input" displayname="Ejers e-mail:" id="eemail2" urlparam="email" onkeyup="formular.compare('eemail1','eemail2','De to skal være ens')"  regexp=".+" validate="Gentag mailadresse!" />
+			<input type="input" displayname="Ejers tlf:" urlparam="eejers_tlf" regexp="^[0-9]{8}$" validate="Indtast korrekt telefonnummer (8 tal)" />
+			<input type="text" displayname="" />
+			<input type="input" displayname="Kloakmesters navn:" id="navn" urlparam="km_navn"  />
+			<input type="input" displayname="Kloakmesters adresse:" id="adresse" urlparam="km_adr"  />
+			<input type="input" displayname="Kloakmesters email:" id="email1" urlparam="km_email"  />
+			<input type="input" displayname="Kloakmesters CVR:" id="cvrnr" urlparam="km_cvr"  />
+		</content>
+    </formular>
+</config>

@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+      <formular name="etabler_nedsivningsanlaeg">
+        <header>Ansøgning om etablering af nedsivningsanlæg</header>
+        <!-- <help displayname="Hjælp"><![CDATA[<b>Hjælp</b><br/>Her står der hvordan du kan bruge siden. Man kan skrive HTML ind i hjælpeteksten. Det kunne også være billeder og <a href="http://spatialmap.com">links</a>]]></help> -->
+		<submitpages>
+			<page parser="setFrid" errortype="warning" errormessage="Fejl i create-case">sbsys.etabler_nedsivningsanlaeg.create-case</page>
+			<page parser="setFrid" errortype="warning" errormessage="Fejl i journalNr" urlparam="journalnr">sbsys.etabler_nedsivningsanlaeg.journalNr</page>
+			<page errortype="warning" errormessage="Fejl i gemning">formular.send.etabler_nedsivningsanlaeg.save</page>
+			<page parser="setPdf" errortype="warning" errormessage="Fejl i PDF">formular.send.etabler_nedsivningsanlaeg.pdf</page>
+			<page errortype="warning" errormessage="Fejl i flytning af PDF">formular.send.etabler_nedsivningsanlaeg.pdf.move</page>
+
+			
+            <page errortype="warning" errormessage="Fejl i attach-document/PDF">sbsys.etabler_nedsivningsanlaeg.attach-document.pdf</page>
+			<page errortype="warning" errormessage="Fejl i attach-document/andet" condition="jQuery('#frem_forh_accpet').val() != ''">sbsys.etabler_nedsivningsanlaeg.attach-document.frem_forh_accpet</page> 
+			<page errortype="warning" errormessage="Fejl i attach-document/sigteanalyse" condition="jQuery('#frem_forh_sigteanalyse').val() != ''">sbsys.etabler_nedsivningsanlaeg.attach-document.sigteanalyse</page> 
+			<page errortype="warning" errormessage="Fejl i attach-document/kloakplan" condition="jQuery('#kloakplan').val() != ''">sbsys.etabler_nedsivningsanlaeg.attach-document.kloakplan</page> 
+			<page errortype="warning" errormessage="Fejl i attach-document/andre_dok" condition="jQuery('#andre_dok').val() != ''">sbsys.etabler_nedsivningsanlaeg.attach-document.andre_dok</page> 
+			<page errortype="warning" errormessage="Fejl i mail">formular.send.etabler_nedsivningsanlaeg.mail</page>
+        </submitpages>
+
+        <!-- <reportmapscale>500</reportmapscale> -->
+        <reportprofile>ekstern_all</reportprofile>
+        <reportlayers>default</reportlayers>
+        <reportxsl>etabler_nedsivningsanlaeg</reportxsl>
+		<js>/modules/formular/formular-config/js/etabler_nedsivningsanlaeg.js</js>
+        <css>/modules/formular/formular-config/css/buttons.css</css>
+		<localstore>true</localstore>
+		<tabs class="smalltabs">true</tabs>
+
+		<content displayname="Login">
+			<input type="input" displayname="Login" id="login" urlparam="login" onkeyup="login();" />
+			<input type="text" displayname="Har du ikke et login, så &lt;a href=&quot;https://ddr.randers.dk/FrontEnd.aspx&#63;id=157542&quot; target=&quot;_new&quot;&gt;klik her&lt;/a&gt; for at tilmelde firmaet og få tilsendt en kode pr. mail" />
+		</content>
+
+		
+		<content displayname="Hvor?">
+			<input type="hidden" urlparam="sbsys_brugerid" id="sbsys_brugerid" default="DQ21989" />
+			<input type="hidden" urlparam="mail_intern" id="mail_intern" default="" />
+			<input type="hidden" urlparam="dagsdato" id="dagsdato" defaultvalue="-"/>
+            <geosearch id="address_soeg" urlparam="address_soeg" displayname="Adresse:" resources="Adresser" filter="muncode0730" geometry_selected="updateAdr();"/>
+			
+            <input type="text" displayname=" "/>
+            <!-- <input type="text" displayname="Angiv på kortet, hvor anlægget ønskes placeret. Brug polygonknappen til at tegne med og viskelæderet til at slette med"/> -->
+            <input type="text" displayname="Angiv på kortet, hvor anlægget ønskes placeret.&lt;br&gt;
+											&lt;ul&gt; 
+												&lt;li&gt;Brug polygonknappen til at tegne med &lt;div class='button_in_help button_polygon'&gt;&lt;/div&gt;, du afslutter ved at dobbeltklikke på højre musetast &lt;/li&gt; 
+												&lt;li&gt;Du kan tilpasse arealet ved at trykke på den næste knap med firkant, og markere det areal du ønsker ændret &lt;div class='button_in_help button_modify'&gt;&lt;/div&gt; &lt;/li&gt; 
+												&lt;li&gt;Du kan slette ved at trykke på knappen med viskelæderet og markere det areal, du ønsker at slette &lt;div class='button_in_help button_delete'&gt;&lt;/div&gt; &lt;/li&gt; 
+											&lt;/ul&gt;
+			"/>
+            <maptools>
+                <maptool displayname="Slet et areal" name="delete"/>
+				<maptool displayname="Ret et areal" name="modify"/>
+				<maptool displayname="Tegn et areal" name="polygon"/>                
+				
+            </maptools>
+            <map required="true">
+                <extent>539430.4,6237856,591859.2,6290284.8</extent>
+                <resolutions>0.2,0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4</resolutions>
+                <themes>
+                    <theme name="theme-ddoland2012" host="//tile2.randers.dk/service/wms"/>
+					<theme name="theme-jordstykke_sb" host="/wms?servicename=selvbetjening_wms" singleTile="true"/>
+                </themes>
+            </map>
+			<areal urlparam="areal" />
+            <conflicts urlparam="matrikelnr" displayname="Erklæringen vedrører følgende ejendom(e):" targerset="ejendom"/>
+			<!-- <conflicts urlparam="ansoegt_adr" displayname="Adresseinformation:" targerset="adresse_via_matrikel_begraenset" onconflict="updateEjdAdr(this,true)" onnoconflict="updateEjdAdr(this,false)" /> -->
+			<conflicts urlparam="ejer" displayname="Ejerinformationer:" targerset="ejendomhovedejer" onconflict="haandterEjer(this);"/>
+			<conflicts urlparam="sagsbehandler" id="sagsbehandler" displayname="" targerset="kloaksagsbehandler" onconflict="setSagsbehandler(this,true)" onnoconflict="setSagsbehandler(this,false)" />
+		</content>	
+
+		<content displayname="Kontaktoplysninger">
+			<!-- <input type="input" displayname="Ejendommens adresse:" id="ejendommens_adresse" urlparam="ejendommens_adresse" regexp=".+" validate="Indtast ejendommens adresse!"/> -->
+			<geosearch id="ejendommens_adresse" urlparam="ejendommens_adresse" displayname="Ejendommens adresse:" resources="Adresser" filter="muncode0730" regexp=".+" validate="Indtast ejendommens adresse!" />
+			<input type="input" displayname="Ejers navn:" id="enavn" urlparam="navn"  regexp=".+" validate="Indtast ejerens navn!"/>
+			<input type="input" displayname="Ejers adresse:" id="eadresse" urlparam="adresse"  regexp=".+" validate="Indtast ejerens adresse!"/>
+			<input type="input" displayname="Ejers e-mail:" id="eemail1" urlparam="email" regexp="[a-z0-9!#$%'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?" validate="Indtast ejerens email!"/>
+			<input type="text" displayname="Gentag email:" />
+			<input type="input" displayname="Ejers e-mail:" id="eemail2" urlparam="email" onkeyup="formular.compare('eemail1','eemail2','De to skal være ens')"  regexp=".+" validate="Gentag mailadresse!" />
+			<input type="input" displayname="Ejers tlf:" id="eejers_tlf" urlparam="ejers_tlf" regexp="^[0-9]{8}$" validate="Indtast korrekt telefonnummer (8 tal)" />
+			<input type="text" displayname="" />
+			<input type="input" displayname="Kloakmesters navn:" id="navn" urlparam="km_navn"  />
+			<input type="input" displayname="Kloakmesters adresse:" id="adresse" urlparam="km_adr"  />
+			<input type="input" displayname="Kloakmesters email:" id="email1" urlparam="km_email"  />
+			<input type="input" displayname="Kloakmesters CVR:" id="cvrnr" urlparam="km_cvr"  />
+		</content>
+
+		<content displayname="Eksisterende forhold">
+			<input type="text" displayname="Ved husspildevand forståes &lt;u&gt;alt&lt;/u&gt; spildevand fra beboelsen, d.v.s. fra toiletter, køkken, håndvask, gulvafløb, bad, vaskemaskiner o.lign." />
+			<!-- 1. -->
+			<input type="dropdown" displayname="1. Benyttes ejendommen som:" urlparam="eks_forh_benyttelse" >
+				<option value="helaar" name="Helårsbeboelse"/>
+				<option value="fritid" name="Fritidsbeboelse"/>
+            </input>
+			<input type="input" displayname="Belastning af anlægget - antal PE:" urlparam="eks_forh_antalpe" />
+
+			<input type="dropdown" displayname="Er der spabad:" urlparam="eks_forh_spabad" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="ja"/>
+            </input>
+
+			<!-- 2. -->
+			<input type="dropdown" displayname="2. Ejendommens nuværende vandforsyning:" urlparam="eks_forh_vandforsyning" id="vandforsyning">
+				<option value="egenboring" name="Egen boring"/>
+				<option value="egenbroend" name="Egen brønd"/>
+				<option value="faellesvandvaerk" name="Fælles vandværk"/>
+            </input>
+			<input type="input" displayname="Vandværkekts navn:" urlparam="eks_forh_vandvaerk" condition="jQuery('#vandforsyning').val() == 'faellesvandvaerk'" />
+			
+			<input type="text" displayname="3. Nuværende afledning af spildevand fra beboelsen:" />
+			<input type="dropdown" displayname="Passerer alt spildevand en bundfælningstank:" urlparam="eks_forh_bundfaeldning" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+            </input>
+			<input type="dropdown" displayname="Ledes andet end husspildevand til tanken:" urlparam="eks_forh_husspildevand" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+            </input>
+			
+			
+			<input type="dropdown" displayname="4. Hvorledes bortskaffes slam fra bundfældningstanken:" urlparam="eks_forh_bortskaffelse"  id="slambortskaffelse">
+				<option value="kommunaltoemning" name="Kommunal tømningsordning"/>
+				<option value="kommunalanvisning" name="Efter kommunens anvisning"/>
+				<option value="andenvis" name="På anden måde, hvilken"/>
+            </input>
+			<input type="input" displayname="Angiv:" urlparam="eks_forh_bortskaf_beskrivelse"  condition="jQuery('#slambortskaffelse').val() == 'andenvis'" />
+			
+			<!-- 3. -->
+			<input type="textarea" displayname="5. Er der særlige forhold:" urlparam="eks_forh_saerlige_forhold"  />
+		</content>
+		<content displayname="Fremtidige forhold">
+			<!-- 4. -->
+			<input type="dropdown" displayname="6. Placeres nedsivningsanlægget på egen grund:" id="frem_forh_placering" urlparam="frem_forh_placering" >
+				<option value="ja" name="Ja"/>
+				<option value="nej" name="Nej"/>
+            </input>
+			
+			<input type="text" displayname="6.1. Hvis dele af nedsivningsanlægget placeres på anden mands grund, skal der vedhæftes en kopi af accept fra ejeren. Forholdet skal efterfølgende tinglyses:" condition="jQuery('#frem_forh_placering').val() == 'nej'" />
+			<input type="file" displayname="Angiv:" urlparam="frem_forh_accpet" id="frem_forh_accpet" condition="jQuery('#frem_forh_placering').val() == 'nej'"/>
+			
+			<!-- 5. -->
+			<input type="dropdown" displayname="7. Tryksat siveanlæg:" urlparam="frem_forh_tryksat" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+            </input>
+			<!-- 6. -->
+			<input type="dropdown" displayname="8. Er nedsivningsanlægget hævet over terræn?:" id="frem_forh_overterraen" urlparam="frem_forh_overterraen" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+            </input>
+			<input type="input" displayname="8.1 Højde af mile i forhold til terræn i m (angiv med en decimal):" urlparam="frem_forh_mile" regexp="^[0-9]+(\.[0-9]{1})?$" validate="Indtast venligst en værdi med en decimal (punktum i stedet for komma)" defaultvalue="0.0"  condition="jQuery('#frem_forh_overterraen').val() == 'ja'" />			
+			<input type="input" displayname="8.2 Afstand fra sivdræn til højeste grundvandsspejl i m (angiv med en decimal):" urlparam="frem_forh_afstand_sivdraen_gvs" regexp="^[0-9]+(\.[0-9]{1})?$"  validate="Indtast venligst en værdi med en decimal (punktum i stedet for komma)" defaultvalue="0.0"  />
+			<input type="input" displayname="8.3 Afstand fra sivdræn til terræn i m (angiv med en decimal):" urlparam="frem_forh_afstand_sivdraen_ter" regexp="^[0-9]+(\.[0-9]{1})?$"  validate="Indtast venligst en værdi med en decimal (punktum i stedet for komma)" defaultvalue="0.0"  />
+			<input type="date" displayname="8.4 dato for pejling af grundvandsstanden:" urlparam="frem_forh_pejling_dato" regexp=".+" validate="Vælg en pejledato" />
+
+			
+			
+			<!-- 7. -->
+			<input type="dropdown" displayname="9. Skal der tilsluttes mere end 1 husstand til nedsivningsanlægget?:" urlparam="frem_forh_flerehusstande" id="flerehusstande" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+            </input>
+			<input type="input" displayname="9.1 Hvor mange husstande?:" urlparam="frem_forh_antalhusstande"  condition="jQuery('#flerehusstande').val() == 'ja'"  regexp="^[0-9]*$" validate="Angiv et heltal"  /> <!-- regexp="^(\d?[1-9]|[1-9]0)$" validate="Angiv et tal mellem 1 og 99 " -->
+			<!-- 8. -->
+			<input type="dropdown" displayname="10. Hvilken slags spildevand skal ledes til nedsivningsanlægget:" urlparam="frem_forh_spildvandstype" >
+				<option value="medWCspildevand" name="Husspildevand med WC-afløb"/>
+				<option value="udenWCspildevand" name="Husspildevand uden WC-afløb"/>
+            </input>
+			<!-- 9. -->
+			<input type="dropdown" displayname="11. Sivedræn eller siveareal?:" urlparam="frem_forh_groeftareal" id="groeftareal" >
+				<option value="draen" name="Dræn"/>
+				<option value="areal" name="Areal"/>
+            </input>
+			<input type="input" displayname="Drænets samlede længde (m):" urlparam="frem_forh_sivelaengde"  regexp="^[0-9]+(\.[0-9]{1})?$" validate="Indtast venligst en værdi med en decimal" defaultvalue="0.0"  condition="jQuery('#groeftareal').val() == 'draen'" /> <!-- regexp="^(\d?[0-9]|[1-9]0)$" validate="Angiv et tal mellem 0 og 99 " -->
+			<input type="input" displayname="Sivearealets størrelse (m&lt;sup&gt;2&lt;/sup&gt;):" urlparam="frem_forh_siveareal" condition="jQuery('#groeftareal').val() == 'areal'"  regexp="^[0-9]*$" validate="Angiv et heltal"  defaultvalue="0" />
+			<!-- 10. -->
+			<input type="dropdown" displayname="12. Indgår eksisterende bundfældningstanke i anlægget?:" urlparam="frem_forh_eksisterendebundtanke">
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+            </input>
+			<!-- 11. -->
+			<input type="text" displayname="13. Bundfældningstank:" />
+			<input type="input" displayname="Antal kamre:" urlparam="frem_forh_nytank_kamre" regexp="^[1-9]{1}$" validate="Angiv et tal mellem 1 og 9" />
+			<input type="input" displayname="Volumen i alt (m&lt;sup&gt;3&lt;/sup&gt;):" id="frem_forh_nytank_vol" urlparam="frem_forh_nytank_vol" onkeyup="updateValue('frem_forh_nytank_vol');" regexp="^[0-9]+(\.[0-9]{1})?$"  validate="Indtast venligst en værdi med en decimal (punktum i stedet for komma)" default="0.0" />
+			<input type="dropdown" displayname="Tanktype:" urlparam="frem_forh_nytank_type" id="frem_forh_nytank_type" >
+				<option value="KWH-Pipe, Type Wehoseptic" name="KWH-Pipe, Type Wehoseptic" />
+				<option value="Uponor, Type bundfældningstank" name="Uponor, Type bundfældningstank" />
+				<option value="Wavin, Type 3-kammer 2 m3 lav model" name="Wavin, Type 3-kammer 2 m3 lav model" />
+				<option value="Wavin, Type Labko - Sako" name="Wavin, Type Labko - Sako" />
+				<option value="ScanPipe, Type SeptiClean" name="ScanPipe, Type SeptiClean" />
+				<option value="Watercare, Type 3-K" name="Watercare, Type 3-K" />
+				<option value="Watercare, Type Watercare Septiktank" name="Watercare, Type Watercare Septiktank" />
+				<option value="BioKube, Type VPI BAGA" name="BioKube, Type VPI BAGA" />
+				<option value="Bokn Plast, Type F-2 H" name="Bokn Plast, Type F-2 H" />
+				<option value="Bokn Plast, Type C-3 og Type NC" name="Bokn Plast, Type C-3 og Type NC" />
+				<option value="New-Line Bundfældningstank, Type BF" name="New-Line Bundfældningstank, Type BF" />
+				<option value="Watersystems, Type ws biotank" name="Watersystems, Type ws biotank" />
+				<option value="anden" name="Anden" />
+            </input>
+			<input type="input" displayname="Anden tank type:" urlparam="frem_forh_nytank_type_txt" condition="jQuery('#frem_forh_nytank_type').val() =='anden'" />
+			<input type="checkbox" displayname="Bundfældningstanken overholder §30 i spildevandsbekendtgørelsen:" id="frem_forh_tro_og_love" urlparam="frem_forh_tro_og_love" defaultvalue="false" />
+			<!-- 12. -->
+			<input type="dropdown" displayname="14. Vil nedsivningsanlægget blive udsat for nogen form for belastning (trafik eller andet)?:" urlparam="frem_forh_belastning" id="frem_forh_belastning">
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+            </input>
+
+			<input type="input" displayname="Angiv venligst typen af belastning:" urlparam="frem_forh_belastning_detalje" condition="jQuery('#frem_forh_belastning').val() == 'ja'" />
+			
+			<input type="text" displayname="15. Vedhæft sigteanalyse"/>
+			<input type="file" displayname="Vedhæft:" urlparam="frem_forh_sigteanalyse" id="frem_forh_sigteanalyse" regexp=".+" validate="Der skal vedhæftes en fil" />
+
+		</content>
+		<content displayname="Afstande">
+			<input type="text" displayname="Hvis de angivne afstande ikke kan overholdes, kan der ikke umiddelbart forventes en tilladelse, Dette afgøres ved kommunens behandling af sagen"/>
+			<input type="text" displayname="16. Ligger der indenfor en afstand på 5 m fra det projekterede:" />
+			<input type="input" displayname="Nærmeste bygning (m):" urlparam="afstand_naermestebygning"  regexp="^[0-9]*$" validate="Angiv et heltal" /> <!-- regexp="^[1-9][0-9]*$" validate="Angiv et tal større end 0"/> -->
+			<input type="input" displayname="Nærmeste nabo- eller vejskel (m):" urlparam="afstand_naermesteskel"  regexp="^[0-9]*$" validate="Angiv et heltal"  /> <!-- regexp="^[1-9][0-9]*$" validate="Angiv et tal større end 0"/> -->
+			<input type="input" displayname="Egen privat drikkevandsboring/brønd (m): " urlparam="afstand_naermesteboring"  regexp="^[0-9]*$" validate="Angiv et heltal" />
+			
+			<input type="text" displayname="Findes der indenfor 150 meter en/et af følgende" /> <!-- regexp="^[1-9][0-9]*$" validate="Angiv et tal større end 0"/> -->
+			<input type="dropdown" displayname="Markvandingsboringer/ andre boringer:" urlparam="afstand_markvandingsboringer" id="afstand_markvandingsboringer" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+				<option value="ved ikke" name="Ved ikke"/>
+            </input>
+
+			<input type="text" displayname="Findes der indenfor 300 meter en/et af følgende" /> <!-- regexp="^[1-9][0-9]*$" validate="Angiv et tal større end 0"/> -->
+			<input type="dropdown" displayname="Private drikkevandsboringer :" urlparam="afstand_naermesteandenboring" id="afstand_naermesteandenboring" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+				<option value="ved ikke" name="Ved ikke"/>
+            </input>
+			
+			<input type="dropdown" displayname="Fælles vandværk, der forsyner mindre end 10 ejendomme:" urlparam="afstand_vandvaerkmindre" id="afstand_vandvaerkmindre" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+				<option value="ved ikke" name="Ved ikke"/>
+            </input>
+			<input type="input" displayname="Vandværkets navn: " urlparam="afstand_vandvaerkmindrenavn" condition="jQuery('#afstand_vandvaerkmindre').val() == 'ja'"/>
+			
+			<input type="dropdown" displayname="Fælles vandværk, der forsyner 10 eller flere ejendomme:" urlparam="afstand_vandvaerkmere" id="afstand_vandvaerkmere" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+				<option value="ved ikke" name="Ved ikke"/>
+            </input>
+			<input type="input" displayname="Vandværkets navn: " urlparam="afstand_vandvaerkmerenavn" condition="jQuery('#afstand_vandvaerkmere').val() == 'ja'"/>
+			
+			<input type="text" displayname="" />
+			<input type="text" displayname="17. Ligger der, indenfor en afstand af 25 meter, fra det projekterede nedsivningsanlæg?:" />
+			<input type="dropdown" displayname=" - Kyst:" urlparam="afstand_proj_kyst" id="proj_kyst" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+				<option value="ved ikke" name="Ved ikke"/>
+            </input>
+			<input type="input" displayname=" - Afstand til kysten (m): " urlparam="afstand_proj_kyst_meter" condition="jQuery('#proj_kyst').val() == 'ja'" regexp="^[0-9]*$" validate="Angiv et heltal" />  <!--   -->
+
+			<input type="dropdown" displayname=" - Sø(er):" urlparam="afstand_proj_soe" id="proj_soe" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+				<option value="ved ikke" name="Ved ikke"/>
+            </input>
+			<input type="input" displayname=" - Afstand til søen/søerne (m): " urlparam="afstand_proj_soe_meter"  condition="jQuery('#proj_soe').val() == 'ja'"  regexp="^[0-9]*$" validate="Angiv et heltal" />  <!-- regexp="^([1-9]|1[0-9]|2[0-5])$" validate="Angiv et tal mellem 1 og 25" -->
+
+			<input type="dropdown" displayname=" - Vandløb:" urlparam="afstand_proj_vandloeb" id="proj_vandloeb" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+				<option value="ved ikke" name="Ved ikke"/>
+            </input>
+			<input type="input" displayname=" - Afstand til vandløbet (m): " urlparam="afstand_proj_vandloeb_meter" regexp="^[0-9]*$" validate="Angiv et heltal" condition="jQuery('#proj_vandloeb').val() == 'ja'"   />  <!-- regexp="^([1-9]|1[0-9]|2[0-5])$" -->
+
+			<input type="dropdown" displayname=" - Grøfter langs offentlig vej:" urlparam="afstand_proj_groeft" id="proj_offvej" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+				<option value="ved ikke" name="Ved ikke"/>
+            </input>
+			<input type="input" displayname=" - Afstand til grøften (m): " urlparam="afstand_proj_groeft_meter"  condition="jQuery('#proj_offvej').val() == 'ja'"  regexp="^[0-9]*$" validate="Angiv et heltal" />  <!-- regexp="^([1-9]|1[0-9]|2[0-5])$" validate="Angiv et tal mellem 1 og 25" -->
+			
+			<input type="dropdown" displayname=" - Drænledninger" urlparam="afstand_proj_draenled" id="proj_draenled" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+				<option value="ved ikke" name="Ved ikke"/>
+            </input>
+			<input type="input" displayname=" - Afstand til drænledning (m): " urlparam="afstand_proj_draenled_meter"  condition="jQuery('#proj_draenled').val() == 'ja'"  regexp="^[0-9]*$" validate="Angiv et heltal" />  <!-- regexp="^([1-9]|1[0-9]|2[0-5])$" validate="Angiv et tal mellem 1 og 25" -->
+			
+			<input type="dropdown" displayname=" - Stejle skråninger( > 250 ‰ fald)" urlparam="afstand_proj_stejle" id="proj_stejle" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+				<option value="ved ikke" name="Ved ikke"/>
+            </input>
+			<input type="input" displayname=" - Afstand til skråninger (m): " urlparam="afstand_proj_stejle_meter"  condition="jQuery('#proj_stejle').val() == 'ja'"  regexp="^[0-9]*$" validate="Angiv et heltal" /> <!-- regexp="^([1-9]|1[0-9]|2[0-5])$" validate="Angiv et tal mellem 1 og 25" -->
+			
+			<input type="text" displayname="" />
+			<input type="text" displayname="18. Andre afstande:" />
+			<input type="dropdown" displayname="Gravhøje/fortidsminder (indenfor 100 m):" urlparam="afstand_proj_fortidsminder" id="afstand_proj_fortidsminder" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+				<option value="ved ikke" name="Ved ikke"/>
+            </input>
+			<input type="dropdown" displayname="Andre nedsivningsanlæg (indenfor 50 m):" urlparam="afstand_proj_andre_nedsivningsanlaeg" id="afstand_proj_andre_nedsivningsanlaeg" >
+				<option value="nej" name="Nej"/>
+				<option value="ja" name="Ja"/>
+				<option value="ved ikke" name="Ved ikke"/>
+            </input>
+			
+			<input type="file" displayname="19. Angiv kloakplan:" urlparam="kloakplan" id="kloakplan" regexp=".+" validate="Angiv en kloakplan" />
+			<input type="file" displayname="20. Andre relevante dokumenter:" urlparam="andre_dok" id="andre_dok"/>
+		</content>
+		
+		<!-- <content displayname="Regnvand"> -->
+		<!-- mangler afklaring - er det relevant? -->
+		<!-- </content> -->
+
+     </formular>
+</config>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+    <endpoint endpointtype="postgis" name="mailsender">
+        <connect>[module.formular-config.connection]</connect>
+        <user>[module.formular-config.user]</user>
+        <pwd>[module.formular-config.pwd]</pwd>
+        <srid>25832</srid>
+        <table geometrycolumn="the_geom" pkcolumn="ogc_fid"/>
+    </endpoint>
+    <datasource displayname="Ansøgning om tilladelse til etablering af jordvarmeanlæg" endpoint="selvbetjening" name="ds_formular_jordvarmeanlaeg">
+        <sql command="write">insert into formular_jordvarmeanlaeg
+							(formular, 
+							ref, 
+							address, 
+							areal, 
+							foedeledningnorm, 
+							foedeledningens_dimension, 
+							foedeledningens_laengde, 
+							varmeslangensnorm, 
+							varmeslangens_dimension, 
+							varmeslangens_laengde, 
+							antal_sloejfer, 
+							laengde_sloejfer, 
+							nedgravningsdybde, 
+							inspektionsgang, 
+							frostmiddel, 
+							frostmiddel_maengde, 
+							varmepumpe, 
+							trykovervaagning, 
+							alarm, 
+							sikkerhedsanordning, 
+							installatoer_navn, 
+							vandforsyning, 
+							broend_boring, 
+							navn, 
+							email, 
+							tlf, 
+							filnavn, 
+							journalnummer,
+							wkb_geometry) 
+							values
+							([string: formular],
+							[string: sessionid],
+							[string: if isDefined(address) then address else "Ikke oplyst" endif],
+							[string: areal],
+							[string: foedeledningnorm],
+							[string: foedeledningens_dimension],
+							[string: foedeledningens_laengde],
+							[string: varmeslangensnorm],
+							[string: varmeslangens_dimension],
+							[string: varmeslangens_laengde ],
+							[string: antal_sloejfer],
+							[string: laengde_sloejfer],
+							[string: nedgravningsdybde],
+							[string: inspektionsgang],
+							[string: frostmiddel],
+							[number: ToNumber(frostmiddel_maengde) ],
+							[string: if isDefined(varmepumpe) then varmepumpe else "" endif],
+							[string: trykovervaagning],
+							[string: alarm],
+							[string: sikkerhedsanordning],
+							[string: installatoer_navn],
+							[string: vandforsyning],
+							[string: broend_boring],
+							[string: navn],
+							[string: if isDefined(email) then email else "Ikke oplyst" endif],
+							[string: if isDefined(tlf) then tlf else "Ikke oplyst" endif],
+							[string: if isDefined(filnavn) then filnavn else "Ikke oplyst" endif], 
+							[string: if isDefined(journalnr) then journalnr else "" endif], 
+							[geometry: ToGeometry(wkt)])</sql>
+        <table geometrycolumn="wkb_geometry" name="formular_jordvarmeanlaeg" pkcolumn="ogc_fid"/>
+    </datasource>
+</datasources>

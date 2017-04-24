@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages>
+
+	<page name="sbsys.faerdigmelding_nedsivningsanlaeg.get.eks_sag" contenttype="application/json" sessionrequired="false">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="get" />
+			<url-parameters>
+				<url-parameter name="brugerid" value="dq10305" /> 
+				<!-- <url-parameter name="journalnummer" value="82.16.05-Ø54-26-14" />  -->
+				<url-parameter name="journalnummer">journalnr</url-parameter>
+				<!-- FRID skulle gerne være: 139350 -->
+			</url-parameters>
+	</page>    
+		
+	<!--
+	Denne del skabet selve PDF´en. Det er ligesom i gamledag, blot ligger den i en PAGE for sig selv
+	-->
+    <page name="formular.send.faerdigmelding_nedsivningsanlaeg.pdf" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+        <include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+
+	<!--
+	Denne del gemmer i databasen. Det er ligesom i gamle dage, med en datasource - blot ligger den i en PAGE for sig selv
+	-->
+	<page name="formular.send.faerdigmelding_nedsivningsanlaeg.save" contenttype="application/json" sessionrequired="true">
+		<data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_faerdig_nedsivning"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>
+    </page>
+	
+	<!--
+	Denne del sender en mail. Det er ligesom i gamle dage - blot ligger den i en PAGE for sig selv. 
+	Dette giver også mulighed for at sende flere mail til forskellige personer og med forskelligt indhold
+	-->
+	<page name="formular.send.faerdigmelding_nedsivningsanlaeg.mail.advi" contenttype="application/json" sessionrequired="true">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">sessionid</url-parameter>
+                <url-parameter name="sendto_email">'to:'+mail_intern</url-parameter>
+                <url-parameter name="sendto_subject">'Ansøgning om ' + hvad + ' (journalnr:' + journalnr +')'</url-parameter>
+                <url-parameter name="sendto_content">'Der er kommet en ansøgning om færdigmelding af nedsivningsanlæg. Mail med PDF kommer umiddelbart efter, såfremt der ikke er opstået fejl'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+	<page name="formular.send.faerdigmelding_nedsivningsanlaeg.mail" contenttype="application/json" sessionrequired="true">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">sessionid</url-parameter>
+                <url-parameter name="sendto_email">'to:'+email+',bcc:'+mail_intern</url-parameter>
+                <url-parameter name="sendto_subject">'Ansøgning om ' + hvad + ' (journalnr:' + journalnr +')'</url-parameter>
+                <url-parameter name="sendto_content">'Til '+navn+'
+                
+Tak for ansøgning
+
+Randers Kommune har modtaget din færdigmeldning af nedsivningsanlæg.
+
+
+Med venlig hilsen
+Randers kommune'
+</url-parameter>
+                <url-parameter name="sendto_attached">'kvittering.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+frid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+
+	<page name="sbsys.faerdigmelding_nedsivningsanlaeg.attach-document" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel">'Kloakplan (færdigmeldning)'</url-parameter>
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.upload.dir]/'+filnavn</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+
+	<page name="sbsys.faerdigmelding_nedsivningsanlaeg.attach-document.kvittering" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel">'Færdigmelding af nedsivningsanlæg'</url-parameter>
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.pdf.dir]/'+formular+'_'+frid+'.pdf'</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+
+
+ <!--   <page name="formular.send.faerdigmelding_nedsivningsanlaeg" contenttype="text/xml" resultpassing="pass-all">
+          <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_faerdig_nedsivning"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data> 
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">sessionid</url-parameter>
+                <url-parameter name="sendto_email">'to:'+email+',bcc:jr@randers.dk'</url-parameter>
+                <url-parameter name="sendto_subject">'Færdigmelding af nedsivningsanlæg'</url-parameter>
+                <url-parameter name="sendto_content">'Til '+navn+'
+                
+                Tak for din henvendelse.
+                
+                Dine oplysninger vil nu blive opdateret i BBR.
+                
+                
+                Venlig hilsen
+                
+                Natur og Miljø
+                Randers Kommune'</url-parameter>
+                <url-parameter name="sendto_ref">sessionid</url-parameter>
+                <url-parameter name="sendto_attached">'kvittering.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+sessionid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+        
+         
+        <include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>-->
+</pages>

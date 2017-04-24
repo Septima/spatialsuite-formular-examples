@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages>
+    <page name="formular.send.faerdigmeld_separering_kloak.old_fashion" contenttype="text/xml" resultpassing="pass-all">
+		<data handler="datasource" operation="execute-command">	
+			<url-parameters>
+                <url-parameter name="datasource" value="ds_formular_faerdig_sep_kloak"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>  
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">sessionid</url-parameter>
+                <url-parameter name="sendto_email">'to:' + email + ',bcc:separeringkloak@randers.dk,bcc:tilslutning@randersspildevand.dk'</url-parameter>
+                <url-parameter name="sendto_subject">'Separering af kloak - erhvervsareal: ' + erhvervsareal</url-parameter>
+                <url-parameter name="sendto_content">'Tak for din henvendelse ang. færdigmelding af separering af kloak for ejendommen
+
+' + address + '
+				
+Venlig hilsen
+                
+Randers Kommune'</url-parameter>
+                <url-parameter name="sendto_ref">sessionid</url-parameter>
+                <url-parameter name="sendto_attached">filnavn1+';[cbinfo.wwwroot.dir]/formular/upload/'+filnavn1+',kvittering.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+sessionid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+
+		<include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+
+	
+    <page name="formular.send.faerdigmeld_separering_kloak.save" contenttype="application/json" resultpassing="pass-all">
+		<data handler="datasource" operation="execute-command">	
+			<url-parameters>
+                <url-parameter name="datasource" value="ds_formular_faerdig_sep_kloak"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>  
+	</page>
+
+    <page name="formular.send.faerdigmeld_separering_kloak.pdf" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+        <include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+	
+    <page name="formular.send.faerdigmeld_separering_kloak.pdf.kvittering_uden_kort" contenttype="application/json" sessionrequired="false" resultpassing="pass-all">
+        <data handler="PDFFormatter" operation="format-pdf">
+            <url-parameters>
+                <url-parameter name="formularxsl" value="pdf"/>
+                <url-parameter name="nomap" value="false"/>
+                <url-parameter name="stylesheet" value="[module:formular-randers.dir]/xsl/faerdigmeld_separaring_kloak.xsl"/>
+            </url-parameters>
+        </data>
+	</page>
+	<page name="formular.faerdigmeld_separering_kloak.sendmail.intern.advi" contenttype="application/json" sessionrequired="true">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">frid+'_2'</url-parameter>
+                <url-parameter name="sendto_email">'to:separeringkloak@randers.dk,bcc:tilslutning@randersspildevand.dk'</url-parameter>
+                <url-parameter name="sendto_subject">'Separering af kloak'</url-parameter>
+                <url-parameter name="sendto_content">'Der er kommet en ansøgning om færdigmelding af separering af kloak. Mail med PDF kommer umiddelbart efter, såfremt der ikke er opstået fejl'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+	
+	<page name="formular.faerdigmeld_separering_kloak.sendmail.intern" contenttype="application/json" sessionrequired="true">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">frid</url-parameter>
+                <url-parameter name="sendto_email">'to:' + email + ',bcc:separeringkloak@randers.dk'</url-parameter>
+                <url-parameter name="sendto_subject">'Separering af kloak'</url-parameter>
+                <url-parameter name="sendto_content">'Tak for din henvendelse ang. færdigmelding af separering af kloak for ejendommen
+
+' + address + '
+				
+Venlig hilsen
+                
+Randers Kommune'</url-parameter>
+                <url-parameter name="sendto_attached">filnavn1+';[cbinfo.wwwroot.dir]/formular/upload/'+filnavn1+',kvittering.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+frid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+	<page name="formular.faerdigmeld_separering_kloak.sendmail.extern" contenttype="application/json" sessionrequired="true">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">frid+'_1'</url-parameter>
+                <url-parameter name="sendto_email">'to:tilslutning@randersspildevand.dk'</url-parameter>
+                <url-parameter name="sendto_subject">'Separering af kloak - erhvervsareal: ' + erhvervsareal</url-parameter>
+                <url-parameter name="sendto_content">'Tak for din henvendelse ang. færdigmelding af separering af kloak for ejendommen
+
+' + address + '
+				
+Venlig hilsen
+                
+Randers Kommune'</url-parameter>
+                <url-parameter name="sendto_attached">filnavn1+';[cbinfo.wwwroot.dir]/formular/upload/'+filnavn1+',kvittering.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+frid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+
+    <page name="formular.send.faerdigmeld_separering_kloak.demo" contenttype="text/xml" resultpassing="pass-all">
+		<data handler="datasource" operation="execute-command">	
+			<url-parameters>
+                <url-parameter name="datasource" value="ds_formular_faerdig_sep_kloak"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>  
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">sessionid</url-parameter>
+                <url-parameter name="sendto_email">'to:' + email</url-parameter>
+                <url-parameter name="sendto_subject">'Separering af kloak - erhvervsareal: ' + erhvervsareal</url-parameter>
+                <url-parameter name="sendto_content">'Tak for din henvendelse ang. færdigmelding af separering af kloak for ejendommen
+
+' + address + '
+				
+Venlig hilsen
+                
+Randers Kommune'</url-parameter>
+                <url-parameter name="sendto_ref">sessionid</url-parameter>
+                <url-parameter name="sendto_attached">filnavn1+';[cbinfo.wwwroot.dir]/formular/upload/'+filnavn1+',kvittering.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+sessionid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+
+		<include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+
+</pages>

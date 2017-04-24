@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+    <endpoint endpointtype="postgis" name="mailsender">
+        <connect>[module.formular-config.connection]</connect>
+        <user>[module.formular-config.user]</user>
+        <pwd>[module.formular-config.pwd]</pwd>
+        <srid>25832</srid>
+        <table geometrycolumn="the_geom" pkcolumn="ogc_fid"/>
+    </endpoint>
+	<datasource displayname="Drikkevandskvalitet" endpoint="selvbetjening" name="ds_formular_drikkevandsanalyse">
+       <sql command="write">insert into formular_drikkevandsanalyse (
+			analysebehov, 
+			analyseaarsag, 
+			analysefil, 
+			ikkealmentvv, 
+			standardanalyse, 
+			laboratorium, 
+			laboratorium_andet, 
+			kontrolniveau, 
+			navn, 
+			adresse, 
+			email, 
+			tlf, 
+			wkb_geometry, 
+			ref, 
+			levering_til_naboer,
+			antal_adresser, 
+			andre_adresserEt, 
+			andre_adresserTo, 
+			adresse_boring, 
+			mobilnummer, 
+			traeffetid, 
+			jupiterid, 
+			bemaerkning, 
+			adresse_ejer, 
+			dagsdato,
+			aar) 
+			values 
+			([string: if isDefined(analysebehov_tekst) then analysebehov_tekst else "---" endif],
+			[string: analyseaarsag],
+			[string: if isDefined(analysefil) then analysefil else "Ikke angivet" endif],
+			[string: if isDefined(ikkealmentvvadresse) then ikkealmentvvadresse else "Ikke angivet" endif],
+			[string: if isDefined(standardanalyse_tekst) then standardanalyse_tekst else "---" endif],
+			[string: if isDefined(laboratorium)  then laboratorium else "Ikke angivet" endif ],
+			[string: if isDefined(laboratorium_andet)  then laboratorium_andet else "Ikke angivet" endif ],
+			[string: if isDefined(kontrolniv)  then kontrolniv else "Ikke angivet" endif ],
+			[string: navn],
+			[string: adresse],
+			[string: email],
+			[number: tlf],
+			[geometry: ToGeometry(wkt)],
+			[string: sessionid],
+			[string: if isDefined(andre_adresser) then andre_adresser else "" endif ],
+			[number: ToNumber(antal_adresser) ],
+			[string: if isDefined(andre_adresserEt) then andre_adresserEt else "" endif ],
+			[string: if isDefined(andre_adresserTo) then andre_adresserTo else "" endif ],
+			[string: if isDefined(adresse) then adresse else "" endif ],
+			[string: if isDefined(mobilnummer) then mobilnummer else "" endif ],
+			[string: if isDefined(traeffetid) then traeffetid else "" endif ],
+			[string: if isDefined(jupiterid) then jupiterid else "" endif ],
+			[string: if isDefined(bemaerkning) then bemaerkning else "" endif ],
+			[string: if isDefined(adresse_ejer) then adresse_ejer else "" endif ],
+			[string: if isDefined(dagsdato) then dagsdato else "" endif ],
+			[number: if isDefined(hid_aar) then hid_aar else 0 endif ]
+			)</sql>
+        <table geometrycolumn="wkb_geometry" name="formular_drikkevandsanalyse" pkcolumn="ogc_fid"/>
+    </datasource>
+</datasources>

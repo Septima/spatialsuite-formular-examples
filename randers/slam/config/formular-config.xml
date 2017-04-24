@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+     <formular name="slam">
+        <header>Anmeldelse af udbringning af spildevandsslam</header>
+        <subheader>Anmeldelse i henhold til §13 stk. 4 i Slambekendtgørelsen</subheader>
+        <help displayname="Hjælp"><![CDATA[<b>Hjælp</b><br/>Yderligere information om <a href="https://www.retsinformation.dk/Forms/R0710.aspx?id=13056">"Bekendtgørelse om anvendelse af affald til jordbrugsformål"</a>]]></help>        
+        <!-- <submitpage>formular.send.slam.oldfashion</submitpage> -->
+
+		<submitpages>
+			<page parser="setFrid">sbsys.slam.create-case</page>
+			<page parser="setFrid" urlparam="journalnr">sbsys.slam.journalNr</page>
+			<page>formular.send.slam.save</page>
+			<page parser="setPdf">formular.send.slam.pdf.kvittering</page>
+			<page>formular.send.slam.pdf.move.kvittering</page>
+			<page parser="setPdf">formular.send.slam.pdf</page>
+			<page>formular.send.slam.pdf.move</page>
+
+			
+            <page>sbsys.slam.attach-document.kvittering</page>
+			<page>sbsys.slam.attach-document.ansoegning</page>
+			<page condition="jQuery('#filnavn1').val() != ''">sbsys.slam.attach-document.fil1</page> 
+			<page condition="jQuery('#filnavn2').val() != ''">sbsys.slam.attach-document.fil2</page>
+			<page condition="jQuery('#filnavn3').val() != ''">sbsys.slam.attach-document.fil3</page>
+			<page condition="jQuery('#filnavn4').val() != ''">sbsys.slam.attach-document.fil4</page>
+			<page condition="jQuery('#filnavn5').val() != ''">sbsys.slam.attach-document.fil5</page>
+			<page condition="jQuery('#filnavn6').val() != ''">sbsys.slam.attach-document.fil6</page>
+			<page>formular.send.slam.mail</page>
+			<page>formular.send.slam.mail.ansoeger</page>
+        </submitpages>
+
+        <!-- <reportmapscale>5000</reportmapscale> -->
+        <reportprofile>ekstern_all</reportprofile>
+        <reportlayers>default</reportlayers>
+        <reportxsl>slam</reportxsl>
+		<js>/modules/formular/formular-config/js/slam.js</js>
+        <css>/modules/formular/formular-config/js/buttons.css</css>
+		<localstore clear="true">false</localstore>
+		<messages>
+			<message name="done">Ansøgningen er nu registreret. Du vil modtage en kopi af din ansøgning, samt en kvittering, i din mailboks&lt;br/&gt;Du kan også åbne ansøgningen &lt;a href=&quot;{{pdf}}&quot; target=&quot;_blank&quot;&gt;her&lt;/a&gt;</message>
+			<message name="error">Der er opstået en fejl! Send os venligst en besked via &lt;a href=&quot;mailto:selvbetjeningssupport@randers.dk&quot;&gt;denne adresse&lt;/a&gt;</message>
+		</messages>
+
+   		<tabs class="smalltabs">true</tabs>
+		<content displayname="Login">
+			<input type="input" displayname="Login" id="login" urlparam="login" onkeyup="login();" />
+			<input type="text" displayname="Har du ikke et login, så &lt;a href=&quot;https://ddr.randers.dk/FrontEnd.aspx&#63;id=157542&quot; target=&quot;_new&quot;&gt;klik her&lt;/a&gt; for at tilmelde firmaet og få tilsendt en kode pr. mail" />
+		</content>
+
+		<content displayname="Hvor">
+			<input type="hidden" urlparam="sbsys_brugerid" defaultvalue="DQ15586"/>
+			<input type="hidden" urlparam="sbsys_title" defaultvalue="Udbringelse af spildevandsslam"/>
+			<!-- <input type="hidden" urlparam="sbsys_brugerid" defaultvalue="DQ21989"/> -->
+			<input type="hidden" urlparam="doktitel" defaultvalue="Udbringelse af spildevandsslam"/>
+			<input type="hidden" urlparam="dagsdato" id="dagsdato" defaultvalue="-"/>
+			<input type="hidden" urlparam="sortdato" id="sortdato" defaultvalue="-"/>
+            <input type="hidden" urlparam="konfussing" id="konfussing"/>
+			
+			<input type="hidden" urlparam="leverandoer" id="leverandoer" defaultvalue="HedeDanmark A/S"/>
+			
+			<input type="hidden" urlparam="slamproducent" id="slamproducent"/>
+			<input type="hidden" urlparam="maengdefosforha" id="maengdefosforha"/>
+
+			<input type="hidden" urlparam="slamproducent2" id="slamproducent2" defaultvalue=""/>
+			<input type="hidden" urlparam="maengdefosforha2" id="maengdefosforha2" defaultvalue="0"/>
+			
+			<input type="hidden" urlparam="maengdeslam" id="maengdeslam" defaultvalue="0"/>
+			<input type="hidden" urlparam="maengdeslam2" id="maengdeslam2" defaultvalue="0"/>
+			
+            <input type="text" displayname=" "/>
+            
+			<input type="text" displayname="Fremsøg sted via vejnavn, vejnavn+husnummer eller zoom direkte i kortet"/>
+			<!-- <address urlparam="address" displayname="Søg her:" apikey="[module.spatialaddress.apikey]" filter="[module.spatialaddress.filter]"></address> -->
+			<geosearch urlparam="address" displayname="Adresse:" resources="Adresser,Matrikelnumre" filter="muncode0730"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Du skal på kortet angive de arealer slammet skal udspredes på.&lt;br&gt;
+											&lt;ul&gt; 
+												&lt;li&gt;Du kan enten udvælge markblokke ved at trykke på pilknappen &lt;div class='button_in_help button_select'&gt;&lt;/div&gt; &lt;/li&gt; 
+												&lt;li&gt;Hvis du i stedet ønsker at indtegne et eller flere arealer skal du vælge knappen med den første firkant &lt;div class='button_in_help button_polygon'&gt;&lt;/div&gt; &lt;/li&gt; 
+												&lt;li&gt;Du kan tilpasse de udvalgte arealer ved at tykke på den næste knap med firkant, og markere det areal du ønsker ændret &lt;div class='button_in_help button_modify'&gt;&lt;/div&gt; &lt;/li&gt; 
+												&lt;li&gt;Du kan slette ved at trykke på knappen med viskelæderet og markere det areal, du ønsker at slette &lt;div class='button_in_help button_delete'&gt;&lt;/div&gt; &lt;/li&gt; 
+												&lt;li&gt;AREALER MED GUL SKRAVERING ER EKSISTERENDE SLAMAREALER &lt;/li&gt; 
+											&lt;/ul&gt;
+			"/>
+            <maptools>
+                <maptool displayname="Slet en markering" name="delete"  />
+				<maptool displayname="Tilpas udvalgt areal" name="modify"/>
+				<maptool displayname="Tegn areal" name="polygon"/>                
+				<maptool displayname="Udvælg eksisterende markblok" name="select" datasource="ds_markblokkort2012" />
+            </maptools>
+            <map multiplegeometries="true" required="true">
+                <extent>539430.4,6237856,591859.2,6290284.8</extent>
+                <resolutions>1.6,3.2,6.4,12.8,25.6,51.2,102.4</resolutions>
+                <themes>
+                    <theme name="theme-ddoland2012" host="//tile2.randers.dk/service/wms"/>
+                    <theme name="theme-markblokkort2012" host="/wms?servicename=selvbetjening_wms"/>
+					<theme name="theme-slamarealer" host="/wms?servicename=selvbetjening_wms"/>
+					
+                </themes>
+            </map>
+            <area urlparam="areal" displayname="Areal:"/>
+            <conflicts urlparam="konflikttekst1" displayname="Det ansøgte vedrører følgende ejendom(e):" targerset="ejendom" onconflict="skjulKonflit(this);"/>
+            <conflicts urlparam="konflikttekst2" displayname="Forspørgsel vedrører følgende markblok:" targerset="markblokkort_begraenset"/>
+			<conflicts urlparam="konflikttekst3" displayname="Forspørgsel vedrører følgende sø:" targerset="fussing_soe" id="konfliktFussing" />
+			<!-- <conflicts urlparam="konflikttekst4" displayname="Forspørgsel vedrører følgende ejer:" targerset="ejendomhovedejer"  /> -->
+		</content>
+		<content displayname="Producenter og mængder">
+            <input type="checkbox" displayname="Mere end en´ producent:" id="flere_producenter" urlparam="flere_producenter" defaultvalue="false" />
+			
+			<input type="dropdown" displayname="Vælg slamproducent:" id="slamproducent_valg" onchange="setSlamProducent();">
+				<option value="---" name="Vælg" />
+				<option value="Aquadjurs A/S" name="Aquadjurs A/S" />
+				<option value="Billund Vand A/S" name="Billund Vand A/S"  />
+				<option value="Esbjerg Forsyning A/S" name="Esbjerg Forsyning A/S"  />
+				<option value="Favrskov Forsyning A/S" name="Favrskov Forsyning A/S" />
+				<option value="Fredericia Spildevand A/S" name="Fredericia Spildevand A/S"  />
+				<option value="Hedensted Spildevand A/S" name="Hedensted Spildevand A/S"  />
+				<option value="Horsens Vand A/S" name="Horsens Vand A/S"  />
+				<option value="Kolding Spildevand A/S" name="Kolding Spildevand A/S"  />
+				<option value="Odder Spildevand A/S" name="Odder Spildevand A/"  />
+				<option value="Provas - Haderslev  Spildevand A/S" name="Provas - Haderslev  Spildevand A/S"  />
+				<option value="Randers Spildevand A/S" name="Randers Spildevand A/S"  />
+				<option value="Samsø Spildevand A/S" name="Samsø Spildevand A/S"  />
+				<option value="Silkeborg Spildevand A/S" name="Silkeborg Spildevand A/S"  />
+				<option value="Skanderborg Forsyningsvirksomhed A/S" name="Skanderborg Forsyningsvirksomhed A/S"  />
+				<option value="Struer Forsyning Spildevand A/S" name="Struer Forsyning Spildevand A/S"  />
+				<option value="Syddjurs Spildevand A/S" name="Syddjurs Spildevand A/S"  />
+				<option value="Sønderborg Forsyning" name="Sønderborg Forsyning"  />
+				<option value="Tønder Forsyning A/S" name="Tønder Forsyning A/S" />
+				<option value="Varde Forsyning" name="Varde Forsyning" />
+				<option value="Vejen Forsyning A/S" name="Vejen Forsyning A/S" />
+				<option value="Vejle Spildevand A/S" name="Vejle Spildevand A/S" />
+				<option value="Vestforsyning Spildevand A/S" name="Vestforsyning Spildevand A/S" />
+				<option value="Aarhus Vand A/S" name="Aarhus Vand A/S"  />
+				<option value="Thisted Vand A/S" name="Thisted Vand A/S"  />
+				<option value="Anden" name="Anden Kommuner i DK"/>
+            </input>
+			<input type="input" displayname="Angiv anden producent:" id="slamproducent_ind" condition="jQuery('#slamproducent_valg').val() == 'Anden'" onkeyup="setSlamProducent();"/>
+			<input type="dropdown" displayname="Mængde fosfor i kg/Ha:" id="maengdefosforha_valg" onchange="setFosfor();">
+                <option value="-" name="Vælg"/>
+				<option value="30" name="30"/>
+                <option value="90" name="90"/>
+				<option value="Anden" name="Anden"/>
+			</input>
+			<input type="input" displayname="Angiv mængde fosfor i kg/Ha:" id="maengdefosforha_ind"   condition="jQuery('#maengdefosforha_valg').val() == 'Anden'" onkeyup="setFosfor();"/>
+			<input type="input" displayname="Angiv den totale mængde slam i ton:" id="slam"  urlparam="slam" onkeyup="setVaerdi('slam');" />			
+			<input type="input" displayname="Antal ton tørstof/ha:" id="ton_toerstof" urlparam="ton_toerstof" onkeyup="setVaerdi('ton_toerstof');" />			
+			
+			<input type="text" displayname="" condition="jQuery('#flere_producenter').is(':checked')" />
+			<input type="text" displayname="Angiv anden producent" condition="jQuery('#flere_producenter').is(':checked')" />
+			
+			<input type="dropdown" displayname="Vælg slamproducent 2:" id="slamproducent_valg2" onchange="setSlamProducent();" condition="jQuery('#flere_producenter').is(':checked')">
+				<option value="---" name="Vælg" />
+				<option value="Aquadjurs A/S" name="Aquadjurs A/S" />
+				<option value="Billund Vand A/S" name="Billund Vand A/S"  />
+				<option value="Esbjerg Forsyning A/S" name="Esbjerg Forsyning A/S"  />
+				<option value="Favrskov Forsyning A/S" name="Favrskov Forsyning A/S" />
+				<option value="Fredericia Spildevand A/S" name="Fredericia Spildevand A/S"  />
+				<option value="Hedensted Spildevand A/S" name="Hedensted Spildevand A/S"  />
+				<option value="Horsens Vand A/S" name="Horsens Vand A/S"  />
+				<option value="Kolding Spildevand A/S" name="Kolding Spildevand A/S"  />
+				<option value="Odder Spildevand A/S" name="Odder Spildevand A/"  />
+				<option value="Provas - Haderslev  Spildevand A/S" name="Provas - Haderslev  Spildevand A/S"  />
+				<option value="Randers Spildevand A/S" name="Randers Spildevand A/S"  />
+				<option value="Samsø Spildevand A/S" name="Samsø Spildevand A/S"  />
+				<option value="Silkeborg Spildevand A/S" name="Silkeborg Spildevand A/S"  />
+				<option value="Skanderborg Forsyningsvirksomhed A/S" name="Skanderborg Forsyningsvirksomhed A/S"  />
+				<option value="Struer Forsyning Spildevand A/S" name="Struer Forsyning Spildevand A/S"  />
+				<option value="Syddjurs Spildevand A/S" name="Syddjurs Spildevand A/S"  />
+				<option value="Sønderborg Forsyning" name="Sønderborg Forsyning"  />
+				<option value="Tønder Forsyning A/S" name="Tønder Forsyning A/S" />
+				<option value="Varde Forsyning" name="Varde Forsyning" />
+				<option value="Vejen Forsyning A/S" name="Vejen Forsyning A/S" />
+				<option value="Vejle Spildevand A/S" name="Vejle Spildevand A/S" />
+				<option value="Vestforsyning Spildevand A/S" name="Vestforsyning Spildevand A/S" />
+				<option value="Aarhus Vand A/S" name="Aarhus Vand A/S"  />
+				<option value="Thisted Vand A/S" name="Thisted Vand A/S"  />
+				<option value="Anden" name="Anden Kommuner i DK"/>
+            </input>
+			<input type="input" displayname="Angiv anden producent 2:" id="slamproducent_ind2" condition="jQuery('#slamproducent_valg').val() == 'Anden' &amp;&amp; jQuery('#flere_producenter').is(':checked')" onkeyup="setSlamProducent();"/>
+			<input type="dropdown" displayname="Mængde fosfor i kg/Ha (producent 2):" id="maengdefosforha_valg2" onchange="setFosfor();" condition="jQuery('#flere_producenter').is(':checked')">
+                <option value="-" name="Vælg"/>
+				<option value="30" name="30"/>
+                <option value="90" name="90"/>
+				<option value="Anden" name="Anden"/>
+			</input>
+			<input type="input" displayname="Angiv mængde fosfor i kg/Ha (producent 2):" id="maengdefosforha_ind2"  condition="jQuery('#maengdefosforha_valg2').val() == 'Anden' &amp;&amp; jQuery('#flere_producenter').is(':checked')" onkeyup="setFosfor();"/>
+			<input type="input" displayname="Angiv den totale mængde slam i ton (producent 2):" id="slam2" urlparam="slam2" onkeyup="setVaerdi('slam2');"  condition="jQuery('#flere_producenter').is(':checked')"/>			
+			<input type="input" displayname="Antal ton tørstof/ha (producent 2):" id="ton_toerstof2" urlparam="ton_toerstof2" onkeyup="setVaerdi('ton_toerstof2');" condition="jQuery('#flere_producenter').is(':checked')" />			
+			
+			<input type="input" displayname="Arealstørrelse jf. enkeltbetaling/hektarstøtte:" id="angivet_areal" urlparam="angivet_areal" onkeyup="handleArea();" />			
+			<!-- <input id="date1" type="date" displayname="Dato for udbringelse:" urlparam="udbringdato" regexp="[0-3][0-9]\.[0-1][0-9]\.[2][0][0-1][0-9]" validate="Vælg en dato!" onchange="formular.setDatepickerLimit('date2',{end: jQuery('#date1').val()})"  /> -->
+            <input type="dropdown" displayname="År for planlagt udbringelse:" urlparam="aar">
+                <option value="-" name="VÆLG"/>
+				<option value="2016" name="2016"/>
+				<option value="2017" name="2017"/>
+				<option value="2018" name="2018"/>
+				<option value="2019" name="2019"/>
+				<option value="2020" name="2020"/>
+				<option value="2021" name="2021"/>
+            </input>
+            <input type="dropdown" displayname="Halvår for planlagt udbringelse:" urlparam="kvartal">
+                <option value="1" name="1. halvår"/>
+				<option value="2" name="2. halvår"/>
+            </input>
+			
+            <input type="dropdown" displayname="Type af affald:" urlparam="typeafslam">
+                <option value="Spildevandsslam" name="Spildevandsslam"/>
+                <option value="Biokompost" name="Biokompost"/>             
+            </input>
+		</content>
+		
+		<content displayname="Kontaktoplysninger">
+			<input type="input" displayname="Slam modtagerens navn:" id="slamnavn" urlparam="slamnavn" regexp=".+" validate="Indtast navn"/> 
+			<!-- <geosearch displayname="Slam modtagerens adresse:" id="slamadresse" urlparam="slamadresse" resources="Adresser" filter="muncode0730"/>  -->
+			<geosearch urlparam="slamadresse" displayname="Slam modtagerens adresse::" resources="Adresser" filter="muncode0730" regexp=".+" validate="Indtast adresse"/>
+			<!-- <input type="input" displayname="Slam modtagerens adresse:" id="slamadresse" urlparam="slamadresse" regexp=".+" validate="Indtast adresse"/>  -->
+			<input type="input" displayname="Slam modtagerens email:" id="slammail" urlparam="slammail" /> 
+            <input type="dropdown" displayname="Leverandør:" id="firma"  onchange="setLeverandoer();">
+				<option value="-" name="Vælg"/>
+				<option value="HedeDanmark A/S" name="HedeDanmark A/S"/>
+				<option value="Miljøservice A/S" name="Miljøservice A/S"/>
+                <option value="CompSoil Denmark A/S" name="CompSoil Denmark A/S"/>
+				<option value="Kom-Tek Miljø" name="Kom-Tek Miljø"/>
+				<option value="Anden" name="Anden leverandør"/>
+            </input>
+			<input type="input" displayname="Angiv anden leverandør:" id="leverandoer_ind" condition="jQuery('#leverandoer_valg').val() == 'Anden'" onkeyup="setLeverandoer();"/>            
+			<!-- RegExpr fundet her: http://www.regular-expressions.info/email.html - dog er '&' fjernet da det gav problemer-->
+			<input type="input" displayname="Leverandørens e-mail:" id="email" urlparam="email" regexp="[a-z0-9!#$%'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?" validate="Indtast mailadresse!"/> 
+            <!-- <input type="input" displayname="Gentag e-mail:" id="email2" urlparam="email" onkeyup="formular.compare('email1','email2','De to skal være ens')"  regexp=".+" validate="Gentag mailadresse!"/> -->
+			            
+			<input type="input" class="Red" displayname="Leverandørens tlf. nr.:" urlparam="tlf" regexp="^[0-9]{8}$" validate="Indtast korrekt telefonnummer (8 tal)" />
+
+		</content>
+		<content displayname="Bilag">
+			<input type ="text" displayname="Vedhæftet deklaration jf. §12 i Slambekendtgørelsen:"/>
+			<input type="file" displayname="Vedhæft analyseresultat" urlparam="filnavn1" id="filnavn1" />
+			<input type="file" displayname="Vedhæft underskrevet leveringsaftale" urlparam="filnavn2" id="filnavn2" />
+			<input type="file" displayname="Vedhæft øvrige bilag" urlparam="filnavn5" id="filnavn5" />
+			<input type="file" displayname="Vedhæft analyseresultat (producent 2)" urlparam="filnavn3" id="filnavn3" condition="jQuery('#flere_producenter').is(':checked')" />
+			<input type="file" displayname="Vedhæft underskrevet leveringsaftale (producent 2)" urlparam="filnavn4" id="filnavn4" condition="jQuery('#flere_producenter').is(':checked')"/>
+			<input type="file" displayname="Vedhæft øvrige bilag (producent 2)" urlparam="filnavn6" id="filnavn6" />
+			<input type="checkbox" displayname="Filer eftersendes" id="accBoxFile" defaultvalue="false" urlparam="filer_eftersendes" onchange="enableSend('accBox')" />		
+			<input type="text" className="Red" displayname="Som leverandør står jeg indenfor, at de gældende kvalitetskrav til affaldsprodukter er overholdt jf. bilag 2 til slambekendtgørelsen"/>
+			<input type="checkbox" displayname="Jeg accepterer krav og betingelser" id="accBox" defaultvalue="false" urlparam="accepterer"  onchange="enableSend('accBox')" validate="Jeg accepterer krav og betingelser"/>		
+        <confirm displayname="Følgende oplysninger er indtastet. Er det korrekt?"/>
+        <submitbutton displayname="Opret endnu en ansøgning" function="formular.start();"/>
+      </content>
+   </formular>
+
+</config>

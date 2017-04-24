@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+     <formular name="ejendomsavancebeskatning">
+        <header>Ejendomsavancebeskatning</header>
+<!--        <subheader>Jeg bekræfter herved, at olietanken er sløjfet i overenstemmelse med Bekendtgørelse. nr. 1321 af 21. december 2011</subheader>-->
+        <submitpages>
+			<page parser="setFrid" errortype="warning" errormessage="Fejl i create-case">sbsys.ejendomsavancebeskatning.create-case</page>
+			<page parser="setFrid" urlparam="journalnr" errortype="warning" errormessage="Fejl i journalNr">sbsys.ejendomsavancebeskatning.journalNr</page>
+			<page errortype="warning" errormessage="Fejl i skrivning til databasen">formular.send.ejendomsavancebeskatning.save</page>
+			<!-- <page parser="setPdf" errormessage="Fejl i skrivning af kvitteringspdf">formular.send.ejendomsavancebeskatning.pdf.kvittering</page> -->
+			<!-- <page errortype="warning" errormessage="Fejl i flytning af kvitteringspdf"> formular.send.ejendomsavancebeskatning.pdf.kvittering.move</page> -->
+			<page parser="setPdf" errortype="warning" errormessage="Fejl i skrivning af ansøgningspdf">formular.send.ejendomsavancebeskatning.pdf.ansoegning</page>
+			<page errortype="warning" errormessage="Fejl i flytning af ansøgningspdf">formular.send.ejendomsavancebeskatning.pdf.ansoegning.move</page>
+			<page errortype="warning" errormessage="Fejl i flytning af ansøgningspdf til SBSys">sbsys.ejendomsavancebeskatning.attach-document.ansoegning</page>
+			<!-- <page errortype="warning" errormessage="Fejl i flytning af kvitteringspdf til SBSys"> sbsys.ejendomsavancebeskatning.attach-document.kvittering</page> -->
+			<page parser="setFrid" urlparam="mailid">formular.create-frid</page>
+			<page errortype="warning" errormessage="Fejl i afsendelse af mail til ansøger">formular.send.ejendomsavancebeskatning.mail_ansoeger</page>
+			<page errortype="warning" errormessage="Fejl i afsendelse af intern mail">formular.send.ejendomsavancebeskatning.mail_intern</page>
+		</submitpages>
+        <!-- <reportmapscale>500</reportmapscale> -->
+        <reportprofile>ekstern_all</reportprofile>
+        <reportlayers>default</reportlayers>
+        <reportxsl>ejendomsavancebeskatning</reportxsl>
+   		<js>/modules/formular/formular-config/js/ejendomsavancebeskatning.js</js>
+		<css>/modules/formular/formular-config/css/buttons.css</css>
+		<messages>
+			<message name="done">Ansøgningen er nu registreret. Du vil modtage en kopi af din ansøgning i din mailboks&lt;br/&gt;Du kan også åbne kvitteringen &lt;a href=&quot;{{pdf}}&quot; target=&quot;_blank&quot;&gt;her&lt;/a&gt;</message>
+			<message name="error">Der er opstået en fejl! Send os venligst en besked via &lt;a href=&quot;mailto:selvbetjeningssupport@randers.dk&quot;&gt;denne adresse&lt;/a&gt;</message>
+		</messages>
+   		<tabs class="smalltabs">true</tabs>
+		
+  		<content displayname="Login">
+			<input type="input" displayname="Login" id="login" urlparam="login" onkeyup="login();" />
+			<input type="text" displayname="Har du ikke et login, så &lt;a href=&quot;https://ddr.randers.dk/FrontEnd.aspx&#63;id=157542&quot; target=&quot;_new&quot;&gt;klik her&lt;/a&gt; for at tilmelde firmaet og få tilsendt en kode pr. mail" />
+		</content>
+		
+		<content displayname="Hvor?">
+            
+            <input type="text" displayname=" "/>
+			<input type="hidden" id="klenummer" urlparam="klenummer" defaultvalue="01.04.00" />
+			<input type="hidden" id="facetnummer" urlparam="facetnummer" defaultvalue="G01"/>
+			<input type="hidden" id="sbsys_brugerid" urlparam="sbsys_brugerid" defaultvalue="DQ10979"/>
+			<input type="hidden" id="dagsdato" urlparam="dagsdato" defaultvalue="-"/>
+			
+			<input type="hidden" id="landzone" urlparam="landzone" defaultvalue="-"/>
+			<input type="hidden" id="lokalplan" urlparam="lokalplan" defaultvalue="-"/>
+			<input type="hidden" id="kommuneplan" urlparam="kommuneplan" defaultvalue="-"/>
+			<input type="hidden" id="samletareal" urlparam="samletareal" defaultvalue="0"/>
+			<input type="hidden" id="samletmatr" urlparam="samletmatr" defaultvalue="0"/>
+			<input type="hidden" id="straksafg" urlparam="straksafg" defaultvalue="n/a"/>
+			<input type="hidden" id="ejendomadr" urlparam="ejendomadr" defaultvalue=""/>
+			
+            <input type="text" displayname="Fremsøg sted via matrikelopplysninger,vejnavn, vejnavn+husnummer eller zoom direkte i kortet:"/>
+            <geosearch urlparam="address" displayname="Søg her:" resources="Adresser,Matrikelnumre" filter="muncode0730"  />
+
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Du skal på kortet angive ejendommen(e).&lt;br&gt;
+											&lt;ul&gt; 
+												&lt;li&gt;Du kan enten udvælge matriklen ved at vælge på pilknappen &lt;div class='button_in_help button_select'&gt;&lt;/div&gt; herunder og derefter klikke i kortet&lt;/li&gt; 
+												&lt;li&gt;Du kan slette ved at trykke på knappen med viskelæderet &lt;div class='button_in_help button_delete'&gt;&lt;/div&gt; og markere det areal, du ønsker at slette  &lt;/li&gt; 
+											&lt;/ul&gt;
+			"/>
+
+            <maptools>
+                <maptool displayname="Slet" name="delete"/>
+				<maptool name="select" displayname="Udvælg eksisterende matrikel" datasource="ds_jordstykke" />
+            </maptools>
+            <map multiplegeometries="true" required="true">
+                <extent>539430.4,6237856,591859.2,6290284.8</extent>
+                <resolutions>0.2,0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4</resolutions>
+                <themes>
+                    <theme name="theme-grundkort_graa" host="//tile2.randers.dk/service/wms"/>
+                    <theme name="theme-projekterede_bygninger" host="/wms?servicename=randers_wms" singleTile="true" maxScale="8000"/>
+                    <theme name="theme-vejnavne" host="/wms?servicename=randers_wms" singleTile="true"/>
+                    <theme name="theme-nybbr_adgadrgeoview" host="/wms?servicename=randers_wms" singleTile="true" maxScale="3000"/>
+					<theme name="theme-jordstykke_fed" host="/wms?servicename=selvbetjening_wms"/>
+                </themes>
+            </map>
+            <conflicts urlparam="konflikttekst1" displayname="Erklæringen vedrører følgende ejendom(e):" targerset="ejendom_lejemaal" onconflict="handleEjendom(this);" onnoconflict="resetEjendom();"/>
+			<conflicts urlparam="konflikttekst2" displayname="" targerset="lokalplan_noshow" onconflict="handleConflict('lokalplan');" onnoconflict="resetConflict('lokalplan');"/>
+			<conflicts urlparam="konflikttekst3" displayname="" targerset="kommuneplan_noshow" onconflict="handleConflict('kommuneplan');" onnoconflict="resetConflict('kommuneplan');"/>
+			<conflicts urlparam="konflikttekst4" displayname="" targerset="landzone_noshow" onconflict="handleConflict('landzone');" onnoconflict="resetConflict('landzone');"/>
+			<conflicts urlparam="konflikttekst5" displayname="Matriklens adresse:" targerset="adresse_via_matrikel_begraenset" onconflict="handleAddress(this);" onnoconflict="handleAddress(this);"/>
+			<!-- <conflicts urlparam="konflikttekst5" displayname="" targerset="adresse_via_matrikel_begraenset" /> -->
+			<!-- <input type="input" displayname="Status:" id="status"/> -->
+		</content>
+		<content displayname="Kontakt">	
+			<input type="text" displayname="Angiv firmainformationer:"/>
+			<input type="input" displayname="Navn:" urlparam="firma" id="firma"/>
+			<input type="input" displayname="Adresse:" urlparam="firmaadresse" id="firmaadresse" regexp=".+" validate="Angiv adressen på firmaet/kontoret"/>
+			<input type="input" displayname="CVR:" urlparam="cvrnr" id="cvrnr" regexp="^[0-9]{8,8}$" validate="CVR nr. har nøjatigt 8 tal"/>
+			<input type="input" displayname="Kontaktperson:" urlparam="navn" id="navn"/>
+			<input type="input" displayname="Kontaktpersonens telefon:" urlparam="tlf" id="tlf" regexp=".+" validate="Angiv venligst et telefonnummer" />
+			<input type="input" displayname="Email:" urlparam="email" id="email"/>
+            <confirm displayname="Følgende oplysninger er indtastet. Er det korrekt?"/>
+        </content>
+     </formular>
+
+</config>

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages>
+	<page name="sbsys.miljoetilsyn.create-case" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="create">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="statuskode" value="Created"/>
+				<url-parameter name="beskyttet" value="0"/>										
+				<url-parameter name="klenummer">klenr</url-parameter>
+				<url-parameter name="facetnummer">facetnr</url-parameter>
+				<url-parameter name="titel">'Miljøtilsyn ' + aar + ', ' + virksomhed + ', ' + virksomhed_adresse + ', ' + virksomhed_postnr_by + ', ' + virksomhedstype + ', ' + konflikttekst1</url-parameter>
+				<url-parameter name="sagsbehandler" value="demo1"/>								
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="bortskaffelseskode" value="K"/>							
+			</url-parameters>
+		</data>
+	</page>
+
+	<page name="sbsys.miljoetilsyn.create-case.static" contenttype="application/json" sessionrequired="false">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="create">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="statuskode" value="Created"/>
+				<url-parameter name="beskyttet" value="0"/>										
+				<url-parameter name="klenummer">'06.01.05'</url-parameter>
+				<url-parameter name="facetnummer">'k08'</url-parameter>
+				<url-parameter name="titel">'Miljøtilsyn'</url-parameter>
+				<url-parameter name="sagsbehandler" value="demo1"/>								
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="bortskaffelseskode" value="K"/>							
+			</url-parameters>
+		</data>
+	</page>
+
+	<page name="sbsys.miljoetilsyn.journalNr" contenttype="application/json" >
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="get">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="sagsnummer">frid</url-parameter>
+			</url-parameters>
+		</data>		
+	</page>
+
+	<page name="sbsys.miljoetilsyn.get.eks_sag" contenttype="application/json" sessionrequired="false">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="get" />
+			<url-parameters>
+				<url-parameter name="brugerid" value="dq10981" /> 
+				<url-parameter name="journalnummer">journalnr</url-parameter>
+			</url-parameters>
+	</page>    
+	
+	
+    <page name="formular.send.miljoetilsyn.save" contenttype="application/json" sessionrequired="true">
+		<data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_miljoetilsyn"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>
+    </page>
+
+    <page name="formular.send.miljoetilsyn.pdf1" contenttype="application/json" sessionrequired="false" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_miljoetilsyn"/>
+                <url-parameter name="command" value="read-all"/>
+				<url-parameter name="nogle">sessionid</url-parameter>
+            </url-parameters>
+        </data>
+        
+        <data handler="PDFFormatter" operation="format-pdf">
+            <url-parameters>
+                <url-parameter name="formularxsl" value="pdf"/>
+                <url-parameter name="nomap" value="false"/>
+                <url-parameter name="stylesheet" value="[module:formular-randers.dir]/xsl/miljoetilsyn.xsl"/>
+            </url-parameters>
+        </data>
+    </page>
+    <page name="formular.send.miljoetilsyn.pdf1.test" contenttype="application/json" sessionrequired="false" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_miljoetilsyn"/>
+                <url-parameter name="command" value="read-all"/>
+				<url-parameter name="nogle">testid</url-parameter>
+            </url-parameters>
+        </data>
+        
+        <data handler="PDFFormatter" operation="format-pdf">
+            <url-parameters>
+                <url-parameter name="formularxsl" value="pdf"/>
+                <url-parameter name="nomap" value="false"/>
+                <url-parameter name="stylesheet" value="[module:formular-randers.dir]/xsl/miljoetilsyn_test.xsl"/>
+            </url-parameters>
+        </data>
+		
+    </page>
+    <page name="formular.send.miljoetilsyn.pdf1.move" contenttype="application/json" sessionrequired="false" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+           <url-parameters>
+                <url-parameter name="datasource" value="formular-final"/>
+                <url-parameter name="command" value="move"/>
+				<url-parameter name="frid">sessionid</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+	<page name="formular.send.miljoetilsyn.pdf2" contenttype="application/json" sessionrequired="false" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_miljoetilsyn"/>
+                <url-parameter name="command" value="read-all"/>
+				<url-parameter name="nogle">sessionid</url-parameter>
+            </url-parameters>
+        </data>
+        
+        <data handler="PDFFormatter" operation="format-pdf">
+            <url-parameters>
+                <url-parameter name="formularxsl" value="pdf"/>
+                <url-parameter name="nomap" value="false"/>
+                <url-parameter name="stylesheet" value="[module:formular-randers.dir]/xsl/miljoetilsyn_notat.xsl"/>
+            </url-parameters>
+        </data>
+    </page>
+	
+    <page name="formular.send.miljoetilsyn.pdf2.move" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+           <url-parameters>
+                <url-parameter name="datasource" value="formular-final"/>
+                <url-parameter name="command" value="move"/>
+				<url-parameter name="frid">sessionid+'_2'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+	<page name="sbsys.miljoetilsyn.attach-document.pdf" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Tilsynsnotat"/>
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.pdf.dir]/'+formular+'_'+sessionid+'.pdf'</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+
+	<page name="sbsys.miljoetilsyn.attach-document.pdf2" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Baggrundsdata til tilsynsnotat"/>
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.pdf.dir]/'+formular+'_'+sessionid+'_2.pdf'</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+
+	
+	<page name="formular.send.miljoetilsyn.mail.virksomhed" contenttype="application/json" sessionrequired="true">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">sessionid</url-parameter>
+                <url-parameter name="sendto_email">'to:'+sagsbehandler_mail</url-parameter>
+                <url-parameter name="sendto_subject">'Test af Miljøtilsyn'</url-parameter>
+                <url-parameter name="sendto_content">'
+                Dette er en test af miljøtilsyn. 
+
+Begge pdf-filer med medsendt.
+
+
+Venlig hilsen
+
+Rene Jensen
+Digitalisering og GIS
+Randers Kommune'</url-parameter>
+                <url-parameter name="sendto_attached">'Baggrundsdata_til_tilsynsnotat.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+sessionid+'_2.pdf,Tilsynsnotat.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+sessionid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+	<page name="formular.send.tilsyn.mail.virksomhed" contenttype="application/json" sessionrequired="true">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">sessionid+'_1'</url-parameter>
+                <url-parameter name="sendto_email">'to:'+virksomhed_mail</url-parameter>
+                <url-parameter name="sendto_subject">'Mail til virksomheden med tilsynsnotatet'</url-parameter>
+                <url-parameter name="sendto_content">'
+                Dette er en mail til virksomheden med tilsynsnotatet. 
+
+Filen med notatet med medsendt.
+
+
+Venlig hilsen
+
+Rene Jensen
+Digitalisering og GIS
+Randers Kommune'</url-parameter>
+                <url-parameter name="sendto_attached">'Tilsynsnotat.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+sessionid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+	<page name="formular.send.miljoetilsyn.readall" contenttype="text/xml" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_lois_cvrproduktionsenhedview"/>
+                <url-parameter name="command">if isdefined(command) then command else 'readall' endif</url-parameter>
+				<url-parameter name="id">if isdefined(pnr) then pnr else '0' endif</url-parameter>
+				<url-parameter name="hovedtp">if isdefined(hovedtp) then hovedtp else '' endif</url-parameter>
+				<url-parameter name="undertp">if isdefined(undertp) then undertp else '' endif</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+	<page name="formular.send.miljoetilsyn.virksomhed.readall" contenttype="text/xml" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_miljoetilsyn_virksomhedstyper"/>
+                <url-parameter name="command">if isdefined(command) then command else 'readall' endif</url-parameter>
+				<url-parameter name="hovedtp">if isdefined(hovedtp) then hovedtp else '' endif</url-parameter>
+				<url-parameter name="undertp">if isdefined(undertp) then undertp else '' endif</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+
+    <page name="formular.send.miljoetilsyn.debug" contenttype="application/json" sessionrequired="false" resultpassing="pass-all">
+        <stylesheet>[module:formular-randers.dir]/xsl/printredirect.xsl</stylesheet >
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_miljoetilsyn"/>
+                <url-parameter name="command" value="read-all"/>
+				<url-parameter name="nogle">nogle</url-parameter>
+            </url-parameters>
+        </data>
+        <data handler="PDFFormatter" operation="format-pdf">
+            <url-parameters>
+                <url-parameter name="formularxsl" value="pdf"/>
+                <url-parameter name="nomap" value="false"/>
+                <url-parameter name="stylesheet" value="[module:formular-randers.dir]/xsl/miljoetilsyn.xsl"/>
+            </url-parameters>
+        </data>
+    </page>
+
+
+
+
+
+
+
+</pages>

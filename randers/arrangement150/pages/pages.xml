@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages>
+	<!--
+	Generelt er der ikke lavet om i indholdet af en PAGE - den gamle page bliver blot splittet op i flere PAGES.
+	I gamle dag ville en PAGE står for at gemme i databse, skabe en PDF og sende den.
+	Vi kan stadig det samme - blot skal hvert enkelt funktion lagres i en selvstaendig PAGE.
+	Herunder er der:
+		en PAGE til at oprette sagen i SBSys: sbsys.arrangement150.create-case
+		en PAGE til at skabe PDF´en: formular.send.arrangement150.pdf
+		en PAGE til at gemme i database: formular.send.arrangement150.save
+		en PAGE til at gemme i database: formular.send.arrangement150.save
+		en PAGE til at forbinde PDF´en til SBSys sagen: sbsys.arrangement150.attach-document
+		
+	-->
+	<!--
+	Denne del gemmer i SBSys. De elementer der skal pilles ved er: brugerid,klenummer,facetnummer,titel
+	-->
+	<page name="sbsys.arrangement150.create-case" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="create">
+			<url-parameters>
+				<url-parameter name="brugerid" value="DQ16332" />
+				<url-parameter name="statuskode" value="Created"/>
+				<url-parameter name="beskyttet" value="0"/>										
+				<url-parameter name="klenummer" value="14.12.19" />								
+				<url-parameter name="facetnummer" value="G00"/>									
+				<!-- <url-parameter name="titel">'Ansøgning om arrangement over 150 personer  - adr: ' + address + ' - dato:" + date1 </url-parameter> -->
+				<url-parameter name="titel">'Ansøgning om arrangement over 150 personer</url-parameter>
+				<url-parameter name="sagsbehandler" value="demo1"/>								
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="bortskaffelseskode" value="K"/>							
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.arrangement150.journalNr" contenttype="application/json" >
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="get">
+			<url-parameters>
+				<url-parameter name="brugerid" value="DQ16332" />
+				<url-parameter name="sagsnummer">frid</url-parameter>
+			</url-parameters>
+		</data>		
+	</page>
+
+	<!--
+	Denne del skabet selve PDF´en. Det er ligesom i gamledag, blot ligger den i en PAGE for sig selv
+	-->
+    <page name="formular.send.arrangement150.pdf" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+        <include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+
+	<!--
+	Denne del gemmer i databasen. Det er ligesom i gamle dage, med en datasource - blot ligger den i en PAGE for sig selv
+	-->
+	<page name="formular.send.arrangement150.save" contenttype="application/json" sessionrequired="true">
+		<data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_arrangement150"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>
+    </page>
+	
+	<!--
+	Denne del sender en mail. Det er ligesom i gamle dage - blot ligger den i en PAGE for sig selv. 
+	Dette giver også mulighed for at sende flere mail til forskellige personer og med forskelligt indhold
+	-->
+	<page name="formular.send.arrangement150.mail" contenttype="application/json" sessionrequired="true">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">frid+'_10'</url-parameter>
+                <url-parameter name="sendto_email">'to:'+email+',bcc:'+bsikmail</url-parameter>
+                <url-parameter name="sendto_subject">'Ansøgning om afvikling af indendørs arrangementer for mere end 150 personer - navn:' + navn+ ' - adr:' + address + ' - dato:' + startdato +' (journalnr:' + journalnr +')'</url-parameter>
+                <url-parameter name="sendto_content">'Til '+navn+'
+                
+Tak for ansøgningen
+
+Du vil modtage din tilladelse på den mailadresse, du har opgivet til os.
+Tilladelsen skal printes ud og medbringes ved arrangementet, da den skal kunne fremvises til brandmyndigheden ved et evt. kontrolbesøg.
+
+For at være klar over dit ansvar, skal du gennemlæse følgende reglsæt:
+https://www.retsinformation.dk/Forms/R0710.aspx?id=116228
+
+
+Med venlig hilsen
+
+Beredskab &amp; Sikkerhed
+Randers-Favrskov-Djursland'</url-parameter>
+                <url-parameter name="sendto_attached">'kvittering.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+frid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+	<page name="sbsys.arrangement150.attach-document" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid" value="DQ16332" />
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel">'Ansøgning - arrangement for 150+ personer'</url-parameter>
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.pdf.dir]/'+formular+'_'+frid+'.pdf'</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+	
+	<page name="sbsys.arrangement150.attach-document.plads" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid" value="DQ16332" />
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Pladsfordelingsplan - arrangement for 150+ personer" />
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.upload.dir]/'+filnavn2</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.arrangement150.attach-document.brand" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid" value="DQ16332" />
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Brand- og Evakueringsinstruks  - arrangement for 150+ personer" />
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.upload.dir]/'+filnavn</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+
+			</url-parameters>
+		</data>
+	</page>
+
+	<page name="formular.arrangement150.pdf.test" contenttype="application/json" sessionrequired="false">
+        <data handler="PDFFormatter" operation="format-pdf">
+            <url-parameters>
+                <url-parameter name="formularxsl" value="pdf"/>
+                <url-parameter name="nomap" value="false"/>
+                <url-parameter name="stylesheet" value="[module:formular-randers.dir]/xsl/arrangement150.xsl"/>
+            </url-parameters>
+        </data>
+	</page>
+
+	<!--
+	Gammel opsaetning - omdoebes til <originalt navn>.oldfashion
+	-->
+    <page name="formular.send.arrangement150.oldfashion" contenttype="text/xml" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_arrangement150"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>  
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">sessionid</url-parameter>
+                <url-parameter name="sendto_email">'to:'+email+',bcc:beredskab@randers.dk'</url-parameter>
+                <url-parameter name="sendto_subject">'Ansøgning om afvikling af arrangementer for mere end 150 personer'</url-parameter>
+                <url-parameter name="sendto_content">'Til '+navn+'
+                
+Tak for ansøgning
+
+Du vil modtage din tilladelse inden 15 dage, på den mailadresse, du har opgivet til os.
+Tilladelsen skal printers ud og medbringes ved arrangementet, da den skal kunne fremvises
+til brandmyndigheden ved et evt. kontrolbesøg.
+
+
+
+Med venlig hilsen
+
+Randers Brandvæsen
+Randers Kommune'</url-parameter>
+                <url-parameter name="sendto_attached">filnavn+';[cbinfo.wwwroot.dir]/formular/upload/'+filnavn+',kvittering.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+sessionid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+        <include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+
+</pages>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <formular name="faerdigmeld_separering_kloak">
+        <header>Færdigmelding af separering af kloak</header>
+        <subheader>Færdigmelding af udført separat kloaksystem på ejendom</subheader>
+        <help displayname="Hjælp"><![CDATA[<b>Hjælp</b><br/>Miljøbeskyttelsesloven § 30. <a href="https://www.retsinformation.dk/Forms/R0900.aspx?s21=milj%c3%b8beskyttelsesloven&s22=%7c10%7c&s113=0">links</a>]]></help>         -->
+
+         <submitpages>
+			<page parser="setFrid">formular.create-frid</page>
+			<page>formular.send.faerdigmeld_separering_kloak.save</page>
+			<page parser="setPdf">formular.send.faerdigmeld_separering_kloak.pdf</page>
+			<page>formular.move.pdf</page>
+			<page>formular.faerdigmeld_separering_kloak.sendmail.intern.advi</page>
+			<page>formular.faerdigmeld_separering_kloak.sendmail.intern</page>
+			<page>formular.faerdigmeld_separering_kloak.sendmail.extern</page>
+		</submitpages>
+ 		
+
+
+		
+		<!-- <submitpage>formular.send.faerdigmeld_separering_kloak.old_fashion</submitpage> -->
+		
+		
+		<!-- <reportmapscale>500</reportmapscale> -->
+        <reportprofile>ekstern_all</reportprofile>
+        <reportlayers>default</reportlayers>
+        <reportxsl>faerdigmeld_separaring_kloak</reportxsl>
+		<js>/modules/formular/formular-config/js/faerdigmeld_separering_kloak.js</js>
+		
+		<tabs class="smalltabs">true</tabs>
+		<content displayname="Login">
+			<input type="hidden" id="cont" urlparam="cont" defaultvalue="0" />
+			<input type="input" displayname="Login" id="login" urlparam="login" onkeyup="login();" />
+			<input type="text" displayname="Har du ikke et login, så &lt;a href=&quot;https://ddr.randers.dk/FrontEnd.aspx&#63;id=157542&quot; target=&quot;_new&quot;&gt;klik her&lt;/a&gt; for at tilmelde firmaet og få tilsendt en kode pr. mail" />
+		</content>
+        <content displayname="Hvor">
+
+            <input type="hidden" id="bbrkode" urlparam="bbrkode" defaultvalue="-1" />
+			<input type="hidden" id="bbrtekst" urlparam="bbrtekst" defaultvalue="ukendt" />
+			<input type="hidden" id="erhvervsareal" urlparam="erhvervsareal" defaultvalue="0" />
+			<input type="text" displayname="Denne formular skal udfyldes af kloakmesteren"  />
+			<input type="text" displayname=" "/>
+			<address urlparam="address" displayname="Ansøgningsadresse (skal udfyldes):" apikey="[module.spatialaddress.apikey]" filter="[module.spatialaddress.filter]" regexp="[a-zæøå]" validate="Det skal være indtastet en adresse!" ></address>
+            <!-- <geosearch urlparam="address" displayname="Ansøgningsadresse:" resources="Adresser" filter="muncode0730" regexp=".+" validate="Der skal være indtastet en adresse!"/> -->
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Tryk på knappen over kortet (til højre) og tegn det areal, hvor der er foretaget separat kloakering. Afslut med dobbeltklik." />
+			<input type="text" displayname="For at komme videre trykkes 'Næste' nederst på siden." />
+            <maptools>
+                <maptool name="polygon" />               
+            </maptools>
+            <map requied='true'>
+                <extent>539430.4,6237856,591859.2,6290284.8</extent>
+                <resolutions>0.2,0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4</resolutions>
+                <themes>
+                    <theme name="theme-grundkort_graa" host="//tile2.randers.dk/service/wms"/>
+                    <theme name="theme-projekterede_bygninger" host="/wms?servicename=randers_wms" singleTile="true" maxScale="8000"/>
+                    <theme name="theme-vejnavne" host="/wms?servicename=randers_wms" singleTile="true"/>
+                    <theme name="theme-nybbr_adgadrgeoview" host="/wms?servicename=randers_wms" singleTile="true" maxScale="3000"/>
+					<theme name="theme-jordstykke" host="/wms?servicename=selvbetjening_wms"/>
+                </themes>
+            </map>
+            <area id="area" urlparam="areal" displayname="Areal:" /> <!-- onchange="update();" -->
+            <conflicts urlparam="konflikttekst1" displayname="Det ansøgte vedrører følgende ejendom(e):" targerset="ejendom"/>
+			<conflicts urlparam="konflikttekst2" id="konflikttekst2" displayname="Erhvervsareal:" targerset="erhvervsarealer" onconflict="setErhversAreal();" onnoconflict="setErhversAreal();"/>
+			<!-- OBS OBS OBS - denne mystiske streng sikre, at adressesoegningsfeltet kommer til at se fornuftigt ud (KMR - 8/8-2013) -->)
+			<input type="text" id="dummy1" displayname="&lt;tr&gt;	&lt;td&gt;&lt;div class=&quot;labeldiv&quot;)&gt;&lt;/div&gt;&lt;/td&gt;	&lt;td&gt;&lt;div class=&quot;valuediv&quot;&gt;&lt;input type=&quot;hidden&quot; value=&quot;dummy&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;"/>
+
+		</content>
+		<content displayname="Informationer">
+			<input id="bygherre" type="input" displayname="Ejer/bygherre:" urlparam="bygherre" regexp=".+" validate="Angiv navnet på ejeren/bygherren" />
+
+			<input id="kloakmestersoegtekst" type="text" displayname="Søg efter autoriseret kloakmester (firmanavn) herunder - angive minimum fire karakterer" />
+			<input id="kloakmestersoeg" type="input" displayname="Søg på autoriseret kloakmester:" urlparam="tmp" onkeyup="updateVVS(this.formular);" /> <!--  -->
+            <input id="kloakmester" type="dropdown" displayname="Vælg kloakmester:" urlparam="kloakmester_tmp" onchange="updateEmail(this.formular)" />
+			<input id="kloakmestersoegtekst2" type="text" displayname="Såfremt kloakmesteren ikke findes i listen, indtastes den blot i feltet herunder" />
+			<input id="kloakmesterto" type="input" displayname="Indtast kloakmester:" urlparam="kloakmester"  regexp=".+" validate="Indtast kloakmester"/>
+			<input type="text" id="dummy2" displayname="Såfremt firmaets email findes i systemet, vil det dukker op i nedenstående felt. Ellers skal den indtastes" />
+            <input id="email" type="input" displayname="Angiv firma email:" urlparam="email"  />
+            <input id="dato_faerdig" type="date" displayname="Dato for færdigmelding:" urlparam="dato_faerdig"  regexp="[0-3][0-9]\.[0-1][0-9]\.[2][0][0-1][0-9]"  validate="Vælg en dato!" />
+
+ 			<input id="tagfladevand" type="dropdown" displayname="Vand fra tagflader afledes til:" urlparam="tagfladevand" onchange="updateBBR();"  >
+				<option value="Vælg" name="Vælg"/>
+				<option value="Kloak" name="Kloak"/>
+                <option value="Faskine" name="Faskine"/>
+                <option value="Terræn" name="Terræn"/>
+				<option value="Kloak og faskine" name="Kloak og faskine"/>
+				<option value="Kloak og terræn" name="Kloak og terræn"/>
+				<option value="Kloak,faskine og terræn" name="Kloak,faskine og terræn"/>
+				<option value="Faskine og terræn" name="Faskine og terræn"/>
+            </input>
+
+ 			<input id="vaskeplads" type="dropdown" displayname="Vaskeplads tilsluttet:" urlparam="vaskeplads"  >
+				<option value="Nej" name="Nej"/>
+                <option value="Ja - med udskiller" name="Ja - med udskiller"/>
+				<option value="Ja - uden udskiller" name="Ja - uden udskiller"/>
+            </input>
+ 			
+			<input id="areal_vaskeplads" type="dropdown" displayname="Areal af uoverdækket vaskeplads> 20m&lt;sup&gt;2&lt;/sup&gt;:" urlparam="areal_vaskeplads" >
+				<option value="Nej" name="Nej"/>
+                <option value="Ja" name="Ja"/>
+            </input>
+			
+			<input id="moedding" type="checkbox" regexp="true" validate=" "  displayname="Jeg erklærer hermed på tro og love, at eventuelle møddingpladser IKKE er tilsluttet kloaken" urlparam="moedding" defaultvalue="false" />
+			<input type="file" displayname="Vedhæft kopi af tegningen over anlæget" urlparam="filnavn1" regexp=".+" validate="Udpeg fil"  /> <!---->
+			
+			<input type="textarea" displayname="Kommentar:" urlparam="kommentar"  /> <!---->
+			
+			<input type="text" displayname="" />
+			<input id="trooglove" type="checkbox" regexp="true" validate=" " displayname="Autoriseret kloakmester erklærer at arbejdet er udført efter Dansk ingeniørforenings norm DS432 for afløbsinstallationer og i overensstemmelse med vilkår i evt. påbud om separering af kloak." urlparam="trooglove" defaultvalue="false"  />
+            <confirm displayname="Følgende oplysninger er indtastet. Er det korrekt?"/>
+        </content>
+    </formular>
+
+</config>

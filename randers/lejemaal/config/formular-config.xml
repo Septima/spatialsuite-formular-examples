@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <formular name="lejemaal">
+        <header>Lejemål</header>
+        <subheader>Håndtering af lejemål</subheader>
+        <!-- <submitpage>formular.send.lejemaal.oldfashion</submitpage> -->
+		
+		<submitpages>
+			<!-- <page parser="setFrid">sbsys.lejemaal.create-case</page> -->
+			<page parser="setFrid">formular.create-frid</page>
+			<page parser="setPdf">formular.send.lejemaal.pdf</page>
+            <page>formular.send.lejemaal.save</page>
+            <page>formular.move.pdf</page>
+            <!-- <page>sbsys.lejemaal.attach-document</page> -->
+        </submitpages>
+		
+        
+		<!-- <reportmapscale>500</reportmapscale> -->
+        <reportprofile>ekstern_all</reportprofile>
+        <reportlayers>default</reportlayers>
+        <reportxsl>lejemaal</reportxsl> 
+		<localstore>true</localstore>
+		
+		<js>/modules/formular/formular-config/js/lejemaal.js</js>
+		<tabs class="smalltabs">true</tabs>
+        <content displayname="Hvor">
+			<input id="hiddenAarsag" type="hidden" urlparam="hiddenAarsag" defaultvalue="" />
+			<input id="hiddenBeregning" type="hidden" urlparam="hiddenBeregning" defaultvalue="" />
+			<input id="klenr" type="hidden" urlparam="klenr" defaultvalue="" />
+			<input id="facetnr" type="hidden" urlparam="facetnr" defaultvalue="" />
+			<input id="sbsys_brugerid" type="hidden" urlparam="sbsys_brugerid" defaultvalue="" />
+			<input id="doktitel" type="hidden" urlparam="doktitel" defaultvalue="Lejemål" />
+			<input id="lejemaal_type_val" type="hidden" urlparam="lejemaal_type_val" defaultvalue="" />
+            <geosearch urlparam="address" displayname="Adresse:" resources="Adresser,Matrikelnumre" filter="muncode0730" regexp="[a-zæøå]" validate="Der skal være indtastet en adresse!" />
+			<input id="etage" type="input" urlparam="etage" displayname="Etage:" />
+			<!-- <address urlparam="address" displayname="Ansøgningsadresse:" apikey="[module.spatialaddress.apikey]" filter="[module.spatialaddress.filter]" regexp="[a-zæøå]" validate="Det skal være indtastet en adresse!"></address> -->
+            <input id="txt1" type="text" displayname="Tryk på knappen over kortet og tegn arealet i kortet."  />
+			<maptools >
+                <maptool name="polygon" displayname="Tegn egen geometri"/>
+				<maptool name="delete" displayname="Slet egen geometri"/>
+				<maptool name="select" displayname="Udvælg eksisterende geometri" datasource="ds_jordstykke"/>
+				<maptool name="modify" displayname="Ret egen geometri"/>
+            </maptools>
+			
+            <map multiplegeometries="true">
+                <extent>539430.4,6237856,591859.2,6290284.8</extent>
+                <resolutions>0.1,0.2,0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4</resolutions>
+                <themes>
+                    <!-- <theme name="theme-grundkort_graa" host="//tile2.randers.dk/service/wms"/> -->
+					<theme name="theme-luftfoto" host="//tile2.randers.dk/service/wms?FORMAT=image%2Fjpeg"/>
+					<theme name="theme-jordstykke" host="/wms?servicename=selvbetjening_wms"/>
+					<theme name="theme-matrnr" host="/wms?servicename=selvbetjening_wms"/>
+					<!-- <theme name="theme-randers_kommunes_arealer" host="/wms?servicename=randers_wms"/> -->
+					<!-- <theme name="theme-kommunal_p_plads" host="/wms?servicename=selvbetjening_wms"/> -->
+					
+                </themes>
+            </map>
+            <area id="area" urlparam="areal" displayname="Areal:" onchange="update();"/>
+
+            <conflicts urlparam="konflikttekst1" displayname="Det ansøgte vedrører følgende ejendom(e):" targerset="ejendom_lejemaal"/>
+			<!-- OBS OBS OBS - denne mystiske streng sikre, at adressesoegningsfeltet kommer til at se fornuftigt ud (KMR - 8/8-2013) -->)
+			<input type="text" id="dummy1" displayname="&lt;tr&gt;	&lt;td&gt;&lt;div class=&quot;labeldiv&quot;)&gt;&lt;/div&gt;&lt;/td&gt;	&lt;td&gt;&lt;div class=&quot;valuediv&quot;&gt;&lt;input type=&quot;hidden&quot; value=&quot;dummy&quot;&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;"/>
+
+		</content>
+		<content displayname="Standard informationer">
+			<input id="jrnr" type="input" displayname="Journalnummer" urlparam="jrnr" regexp=".+" />
+			<input id="navn" type="input" displayname="Forpagter/lejer" urlparam="navn" regexp=".+" />
+			<geosearch urlparam="lejer_adr" disablemap="true" displayname="Forpagter/lejer adresse:" resources="Adresser" filter="muncode0730" regexp="[a-zæøå]" validate="Der skal være indtastet en adresse!" />
+			<input id="lejestatus" type="dropdown" displayname="Status:" urlparam="lejestatus" onchange="update();">
+				<option value="---" name="Vælg"/>
+                <option value="Ledig" name="Ledig"/>
+                <option value="Udlejet" name="Udlejet"/>
+            </input>
+            <input id="lejemaal_type" type="dropdown" datasource="ds_sbsysopslag" displayname="Lejemålets type:" urlparam="lejemaal_type" onchange="update();"  />
+			<!--
+                <option value="Beboelse" name="Beboelse"/> lejekontrakter udlejning
+				<option value="Erhverv" name="Erhverv"/> lejekontrakter udlejning
+                <option value="Bruger aftale - vederlags frie" name="Bruger aftale - vederlags frie"/> lejekontrakter udlejning
+                <option value="Garage" name="Garage"/> lejekontrakter udlejning
+                <option value="Kolonihave" name="Kolonihave"/> lejekontrakter udlejning
+				<option value="flyvepladshangar" name="flyvepladshangar"/> lejekontrakter udlejning
+				
+				<option value="Forpagtning" name="Forpagtning"/> 
+                <option value="Antenner" name="Antenner"/>
+				<option value="Stadeplads" name="Stadeplads"/>
+				
+
+				</input>
+			-->
+			<input id="dato" type="date" displayname="Udlejet fra" urlparam="udlej_dato" condition="jQuery('#lejestatus').val() == 'Udlejet'" onchange="opdaterAar();" onshow="jQuery('#dato').datepicker('option', 'changeYear', true );"/>
+			
+			<input id="udlejetAar" type="dropdown" displayname="Antal år:" urlparam="udlej_aar" condition="jQuery('#lejestatus').val() == 'Udlejet'" onchange="opdaterAar();" >
+                <option value="1" name="1 år"/>
+				<option value="2" name="2 år"/>
+                <option value="3" name="3 år"/>
+                <option value="4" name="4 år"/>
+				<option value="5" name="5 år"/>
+				<option value="6" name="6 år"/>
+				<option value="kontraktudløb" name="Indtil kontrakten opsiges"/>
+            </input>			
+			<input id="gyldig_til" type="hidden" urlparam="gyldig_til" defaultvalue="" />
+            
+            <input id="aftale_type" type="dropdown" displayname="Aftaletype:" urlparam="aftale_type" onchange="update();">
+                <option value="Ikke standard" name="Ikke standard"/>
+				<option value="Standard" name="Standard"/>
+                <option value="allonge" name="allonge"/>				
+                <option value="Tillæg" name="Tillæg"/>				
+            </input>
+
+			<input type="text" displayname="" />
+			<input type="text" displayname="Vælg årsagen til opkøbet i nedenstående rulleliste, eller tast en passende tekst i nedenstående felt" />
+            <input id="henblik" type="dropdown" displayname="Vælg årsag:" urlparam="henblik" onchange="update();">
+                <option value="---" name="Vælg"/>
+				<option value="Salg" name="Salg"/>
+				<option value="Byudvikling" name="Byudvikling"/>
+                <option value="Nedrivning" name="Nedrivning"/>
+				<option value="Modning" name="Modning"/>
+				<option value="Andet" name="Andet"/>
+            </input>
+			<input id="henblik_andet" type="input" displayname="Opkøbt med henblik på:" urlparam="henblik_andet" onkeyup="update();" condition="jQuery('#henblik').val() == 'Andet'" />
+
+            <input id="reguleres_lejemaal" type="dropdown" displayname="Reguleres lejemålet:" urlparam="reguleres_lejemaal" >
+                <option value="Nej" name="Nej"/>
+				<option value="Ja" name="Ja"/>
+            </input>
+			<input type="text" displayname="" />
+			
+			<input id="beregningsmetode" type="dropdown" displayname="Vælg metode:" urlparam="beregningsmetode" condition="jQuery('#reguleres_lejemaal').val() == 'Ja'" onchange="update();">
+                <option value="Nettoprisindex" name="Nettoprisindex"/>
+                <option value="Diskonto" name="Diskonto"/>
+				<option value="Forpagningsafgift" name="Forpagningsafgift"/>
+				<option value="procentvis stigning" name="procentvis stigning"/>
+				<option value="Andet" name="Andet"/>
+            </input>
+			
+			<input id="regulering_hvor" type="dropdown" displayname="Hvor tit reguleres:" urlparam="regulering_hvor" condition="jQuery('#beregningsmetode').val() == 'Andet' &amp;&amp; jQuery('#reguleres_lejemaal').val() == 'Ja'" onkeyup="update();">
+                <option value="Årlig" name="Årlig"/>
+                <option value="Hver 2. år" name="Hver 2. år"/>
+				<option value="Andet" name="Andet"/>
+			</input>	
+			<input id="andet_tekst" type="textarea" displayname="Andet:" urlparam="andet_tekst"  condition="jQuery('#regulering_hvor').val() == 'Andet' &amp;&amp; jQuery('#reguleres_lejemaal').val() == 'Ja' &amp;&amp; jQuery('#beregningsmetode').val() == 'Andet'" /> 
+			
+			<input id="regulering_dato" type="dropdown" displayname="Reguleringstidspunkt:" urlparam="regulering" condition="jQuery('#reguleres_lejemaal').val() == 'Ja'" onchange="opdaterRegDato();">
+				<option value="månedligt" name="Månedelig"/>
+				<option value="halvårligt" name="Halvårligt"/>
+                <option value="årligt" name="Årligt" />
+                <option value="fjerdeår" name="Hvert fjerde år"/>
+			</input>
+			<input id="sidst_regulet" type="date" displayname="Sidst regulet:" urlparam="sidst_regulet" condition="jQuery('#reguleres_lejemaal').val() == 'Ja'" onshow="jQuery('#sidst_regulet').datepicker('option', 'changeYear', true );" onchange="opdaterRegDato();" />
+			<input id="naeste_regulering" type="date" displayname="Næste regulering:" urlparam="naeste_regulering" condition="jQuery('#reguleres_lejemaal').val() == 'Ja'" onshow="jQuery('#naeste_regulering').datepicker('option', 'changeYear', true );" />
+			<input id="kommentar" type="textarea" displayname="Kommentar:" urlparam="kommentar" />
+		</content>
+		<content  displayname="Ansvar">
+            <!-- ansvar for afgoeder og ejendomsskat er kun relevant for forpagtning og brugeraftaler -->
+
+			<input id="ansv_afgroeder" type="dropdown" displayname="Forsikring af afgrøder:" urlparam="ansv_afgroeder" condition="jQuery('#lejemaal_type option:selected').text() == 'Forpagtning' || jQuery('#lejemaal_type option:selected').text() == 'Bruger aftale - vederlags frie'" >
+				<option value="Lejer" name="Lejer"/>
+				<option value="Kommune" name="Kommune"/>
+            </input>				
+
+			<input id="ansv_ejdskat" type="dropdown" displayname="Ejendomsskat:" urlparam="ansv_ejdskat" condition="jQuery('#lejemaal_type option:selected').text() == 'Forpagtning' || jQuery('#lejemaal_type option:selected').text() == 'Bruger aftale - vederlags frie'" >
+				<option value="Lejer" name="Lejer"/>
+				<option value="Kommune" name="Kommune"/>
+            </input>				
+
+			
+			<input id="ansv_husleje" type="dropdown" displayname="Forpagtningsafgift:" urlparam="ansv_husleje" condition="jQuery('#lejemaal_type option:selected').text() == 'Forpagtning'">
+                <option value="---" name="Vælg"/>
+				<option value="Lejer" name="Lejer"/>
+				<option value="Kommune" name="Kommune"/>
+            </input>
+			
+			<!-- ANDRE AFTALETYPER HAANDTERES HER -->
+			<input id="ansv_vand" type="dropdown" displayname="Vand betales af:" urlparam="ansv_vand" condition="jQuery('#lejemaal_type option:selected').text() != 'Forpagtning' &amp;&amp; jQuery('#lejemaal_type option:selected').text() != 'Bruger aftale - vederlags frie'" >
+                <option value="Kommunen" name="Kommunen"/>               
+				<option value="Lejer - opkrævning via forsyningsselskab" name="Lejer - opkrævning via forsyningsselskab"/>
+				<option value="Lejer - opkrævning via kommunen" name="Lejer - opkrævning via kommunen"/>
+            </input>				
+		
+			<input id="ansv_varme" type="dropdown" displayname="Varme betales af:" urlparam="ansv_varme" condition="jQuery('#lejemaal_type option:selected').text() != 'Forpagtning' &amp;&amp; jQuery('#lejemaal_type option:selected').text() != 'Bruger aftale - vederlags frie'" >
+                <option value="Kommunen" name="Kommunen"/>
+				<option value="Lejer - opkrævning via forsyningsselskab" name="Lejer - opkrævning via forsyningsselskab"/>
+				<option value="Lejer - opkrævning via kommunen" name="Lejer - opkrævning via kommunen"/>
+            </input>				
+		
+			<input id="ansv_el" type="dropdown" displayname="El betales af:" urlparam="ansv_el" condition="jQuery('#lejemaal_type option:selected').text() != 'Forpagtning' &amp;&amp; jQuery('#lejemaal_type option:selected').text() != 'Bruger aftale - vederlags frie'" >
+                <option value="Kommunen" name="Kommunen"/>
+				<option value="Lejer - opkrævning via forsyningsselskab" name="Lejer - opkrævning via forsyningsselskab"/>
+				<option value="Lejer - opkrævning via kommunen" name="Lejer - opkrævning via kommunen"/>
+            </input>				
+			
+			<input id="ansv_renovation" type="dropdown" displayname="Renovation betales af:" urlparam="ansv_renovation" condition="jQuery('#lejemaal_type option:selected').text() != 'Forpagtning' &amp;&amp; jQuery('#lejemaal_type option:selected').text() != 'Bruger aftale - vederlags frie'" >
+                <option value="Kommunen" name="Kommunen"/>
+				<option value="Lejer - opkrævning via husleje eller årlig regulering" name="Lejer - opkrævning via husleje eller årlig regulering"/>
+                <option value="Lejer - inkl. i lejen" name="Lejer - inkl. i lejen"/>
+            </input>
+			
+			<input id="ansv_forsikring" type="dropdown" displayname="Forsikring betales af:" urlparam="ansv_forsikring" condition="jQuery('#lejemaal_type option:selected').text() != 'Forpagtning' &amp;&amp; jQuery('#lejemaal_type option:selected').text() != 'Bruger aftale - vederlags frie'" >
+                <option value="Kommunen" name="Kommunen"/>
+				<option value="Lejer - inkl. i lejen" name="Lejer - inkl. i lejen"/>
+				<option value="Lejer" name="Lejer"/>
+            </input>
+
+			<input id="ansv_skatafgift" type="dropdown" displayname="Skatter og afgifter betales af:" urlparam="ansv_skatafgift" condition="jQuery('#lejemaal_type option:selected').text() != 'Forpagtning' &amp;&amp; jQuery('#lejemaal_type option:selected').text() != 'Bruger aftale - vederlags frie'" >
+                <option value="Kommunen" name="Kommunen"/>
+				<option value="Lejer - inkl. i lejen" name="Lejer - inkl. i lejen"/>
+            </input>	
+	
+			<input id="moms" type="dropdown" displayname="Moms opkræves af kommunen:" urlparam="moms" condition="jQuery('#lejemaal_type option:selected').text() != 'Forpagtning' &amp;&amp; jQuery('#lejemaal_type option:selected').text() != 'Bruger aftale - vederlags frie'" >
+                <option value="Ja" name="Ja"/>
+				<option value="Nej" name="Nej"/>
+            </input>	
+
+			<input id="faelles_afgift" type="dropdown" displayname="Fællesafgifter betales af lejer:" urlparam="faelles_afgift" condition="jQuery('#lejemaal_type option:selected').text() != 'Forpagtning' &amp;&amp; jQuery('#lejemaal_type option:selected').text() != 'Bruger aftale - vederlags frie'" >
+                <option value="Ja" name="Ja"/>
+				<option value="Nej" name="Nej - opkræves ikke"/>
+            </input>
+			<!-- SLUT MED ELEMENTER DER IKKE HAR MED FORPAGTNING OG BRUGER AFTALER -->
+			
+			<input type="text" displayname="" />
+			<input id="samlet_aarlig_leje" type="input" displayname="Samlet årlig leje" urlparam="samlet_aarlig_leje" regexp="^[0-9]+$" validate="Angiv et heltal" onkeyup="beregnLeje();" /> <!-- onkeyup="jQuery('#samlet_maaned_leje').val(jQuery('#samlet_aarlig_leje').val()/12)" /> -->	
+		
+			<input type="text" displayname="" />	
+			<input id="opkraeves" type="dropdown" displayname="Opkræves:" urlparam="opkraeves" onchange="beregnLeje();">
+                <option value="Månedlig" name="Månedlig"/>
+                <option value="Kvatal" name="Kvatal"/>
+                <option value="halvårlig" name="halvårlig"/>
+                <option value="Årlig" name="Årlig"/>
+                <option value="Andet" name="Andet"/>				
+            </input>	
+			
+			<input id="andet_tekst2" type="textarea" displayname="Andet:" urlparam="andet_tekst2"  condition="jQuery('#opkraeves').val() == 'Andet'" /> 
+			
+			<input id="belob" type="input" displayname="udregnet beløb" urlparam="belob"/>	<!--	condition="jQuery('#lejestatus').val() == 'Udlejet'" 			
+			 <input id="samlet_maaned_leje" type="input" displayname="Månedelig leje:" urlparam="samlet_maaned_leje" onchange="reduceNr();" />	 "auto udfyldelse ved hjælp af aarlig_leje" onkeyup="jQuery('#samlet_maaned_leje').val(jQuery('#samlet_aarlig_leje').val()/12)" />	 --> 
+	
+            <confirm displayname="Følgende oplysninger er indtastet. Er det korrekt?"/>			
+			<submitbutton displayname="Ny registrering" function="formular.start();"/>
+        </content>
+    </formular>
+
+</config>

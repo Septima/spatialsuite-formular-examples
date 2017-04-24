@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+     <formular name="jordflytning">
+        <header>Håndtering af jordflytning</header>
+        <!-- <submitpage>formular.send.tilsyns_notat</submitpage> -->
+
+ 		<submitpages>
+			<page parser="setFrid">sbsys.jordflytning.create-case</page>
+			<page parser="setFrid" urlparam="journalnr">sbsys.jordflytning.journalNr</page>
+			<page>formular.send.jordflytning.save</page>
+			<page parser="setPdf">formular.send.jordflytning.pdf</page>
+			<page>formular.move.pdf</page>
+			<page>sbsys.jordflytning.attach-document.ansoegning</page>
+			<page condition="jQuery('#fil_plan').val() != ''">sbsys.jordflytning.attach-document.fil_plan</page>
+			<page condition="jQuery('#fil_analyse').val() != ''">sbsys.jordflytning.attach-document.fil_analyse</page>
+			<page>formular.send.jordflytning.mail</page>
+        </submitpages>
+
+        <!-- <reportmapscale>1000</reportmapscale> -->
+        <reportprofile>ekstern_all</reportprofile>
+        <reportlayers>default</reportlayers>
+        <reportxsl>jordflytning</reportxsl>
+		<js>/modules/formular/formular-config/js/jordflytning.js</js>
+        
+		<tabs class="smalltabs">true</tabs>
+        <content displayname="Hvor og hvad">
+			<input type="hidden" urlparam="dagsdato" id="dagsdato" defaultvalue="-"/>
+			<input type="hidden" urlparam="formaal_final" id="formaal_final" defaultvalue="tebbestrupjordtip"/>
+			<input type="hidden" urlparam="sbsys_brugerid" id="sbsys_brugerid" defaultvalue="DQ16567"/>
+            <input type="text" displayname="Tast en del af vejnavnet og vælg vejen i listen. Tast herefter husnummeret." />
+			<geosearch urlparam="address" id="soeg_adr" displayname="Adresse:" resources="Adresser" filter="muncode0730" usegeometry="true"/>            
+			<input type="text" displayname="Med pilen kan en eksisterende matrikel udpeges. Alternativt kan man tegne en polygon - dobbeltklik for at afslutte. Med viskelæderet slettes polygonerne en efter en." />
+			<maptools>
+                <maptool displayname="Slet en markering" name="delete"  />
+				<maptool displayname="Tilpas udvalgt areal" name="modify"/>
+				<maptool displayname="Tegn areal" name="polygon"/>                
+				<maptool displayname="Udvælg eksisterende matrikel" name="select" datasource="ds_jordstykke" />
+            </maptools>
+            <map>
+                <extent>556287,6249146,571602,6264462</extent>
+				<!-- <extent>534000.4,6237856,591859.2,6290284.8</extent> -->
+                <resolutions>0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4</resolutions>
+                <themes>
+                    <theme name="theme-grundkort_dynamisk" host="//tile.randers.dk/service/wms?FORMAT=image%2Fpng"/>
+                    <theme name="theme-projekterede_bygninger" host="/wms?servicename=randers_wms" singleTile="true" maxScale="8000"/>
+                    <theme name="theme-vejnavne" host="/wms?servicename=randers_wms" singleTile="true"/>
+                    <theme name="theme-nybbr_adgadrgeoview" host="/wms?servicename=randers_wms" singleTile="true" maxScale="3000"/>
+					<!-- <theme name="theme-matrnr" host="/wms?servicename=selvbetjening_wms"/> -->
+					<theme name="theme-jar_omraadeklassificering_sb_dai" host="/wms?servicename=selvbetjening_wms" singleTile="true"/>
+					<theme name="theme-jordstykke_sb" host="/wms?servicename=selvbetjening_wms" singleTile="true"/>
+					
+                </themes>
+            </map>	
+			<input type="text" displayname="&lt;img src=&quot;http://webkort.randers.dk/images/custom/omr_klass.png&quot;&gt;" />
+			<conflicts urlparam="konflikttekst1" displayname="Det ansøgte vedrører følgende ejendom(e):" targerset="ejendom_lejemaal"/>
+			<conflicts urlparam="konflikttekst2" displayname="Det ansøgte vedrører følgende ejer:" targerset="ejendomhovedejer_adresse_begraenset"/>
+			<conflicts urlparam="konflikttekst3" displayname="Områdeklassifikation:" targerset="jord_omraadeklassificering_dai"/>
+			<conflicts urlparam="konflikttekst7" displayname="Kortlægningsnummer V1:" targerset="jord_v1_kortlaegninsnr_dai"/>
+			<conflicts urlparam="konflikttekst4" displayname="Kortlægningsnummer V2:" targerset="jord_v2_kortlaegninsnr_dai"/>
+			<conflicts urlparam="konflikttekst5" displayname="Kortlægning V1:" targerset="dk_jord_v1"/>
+			<conflicts urlparam="konflikttekst6" displayname="Kortlægning V2:" targerset="dk_jord_v2"/>
+			
+          </content>
+		  <content displayname="Jordtype">
+			<input type="text" displayname="Jordtype" />
+			<input type="checkbox" displayname="Fyldjord" id="fyldjord" urlparam="fyldjord" defaultvalue="false" />
+			<input type="checkbox" displayname="Intakt jord" id="intaktjord" urlparam="intaktjord" defaultvalue="false" />
+			<input type="checkbox" displayname="Indhold af byggeaffald" id="byggeaffald" urlparam="byggeaffald" defaultvalue="false" />
+			<input type="checkbox" displayname="Indhold af organisk materiale" id="organiskmateriale" urlparam="organiskmateriale" defaultvalue="false" />
+			<input type="checkbox" displayname="Boreslam" id="boreslam" urlparam="boreslam" defaultvalue="false" />
+			<input type="checkbox" displayname="Andet" id="jordtype_andet" urlparam="jordtype_andet" defaultvalue="false" />
+			<input type="input" displayname="Jordtype andet" id="jordtype_andet_txt" urlparam="jordtype_andet_txt" condition="jQuery('#jordtype_andet').is(':checked');" />
+			<input type="text" displayname="Akutflytning?" />
+			<input type="checkbox" displayname="Ja" id="akutflytning" urlparam="akutflytning" defaultvalue="false" />		
+			
+			<input type="input" displayname="Begrundelse for akutflytning" id="akutflytning_begrundelse" urlparam="akutflytning_begrundelse" condition="jQuery('#akutflytning').is(':checked');" />
+			<input type="dropdown" displayname="Kategori:" urlparam="kategori" id="kategori" onchange="updateFormaal('');">
+                <option value="kategori1" name="Kategori 1"/>
+                <option value="kategori2" name="Kategori 2"/>
+				<option value="andet" name="Andet"/>
+            </input>
+			<input type="text" displayname="Godkendt jordhåndteringsplan?" />
+			<input type="checkbox" displayname="Ja" id="godkendtplan" urlparam="godkendtplan" defaultvalue="false" />		
+			<input type="file" displayname="Vedhæft plan:" urlparam="fil_plan" id="fil_plan" condition="jQuery('#godkendtplan').is(':checked');"/>
+			<input type="file" displayname="Vedhæft analyseresultat:" urlparam="fil_analyse" id="fil_analyse" />
+		</content>
+		<content displayname="Formål og mængde">
+			<input type="input" displayname="Forvent jordmænge i M3" id="kubikmeter" urlparam="kubikmeter" regexp="^[0-9]+$" validate="Der skal være indtastet et heltal!"  />
+			<input type="input" displayname="Forvent jordmænge i ton" id="ton" urlparam="ton" regexp="^[0-9]+$" validate="Der skal være indtastet et heltal!" />
+			
+			<input type="dropdown" displayname="Anvisnings formål:" urlparam="formaal" id="formaal1" condition="jQuery('#kategori').val() == 'kategori1'  &amp;&amp; !jQuery('#formaalfri').is(':checked')" onchange="updateFormaal('formaal1');">
+                <option value="tebbestrupjordtip" name="Tebbestrup Jordtip v. Jakob Schatz, Tebbestrupvej 178, 8940 Randers SV"/>
+				<option value="oustmollevejstojvold" name="Oust Møllevej Støjvold, Oustmøllevej 11, 8920 Randers NV"/>
+				<option value="randershavnjordtip" name="Randers Havn Jordtip, Tronholmen 28 a, 8900 Randers"/>
+            </input>
+			
+			<input type="dropdown" displayname="Anvisnings formål:" urlparam="formaal" id="formaal2" condition="jQuery('#kategori').val() == 'kategori2' &amp;&amp; !jQuery('#formaalfri').is(':checked')" onchange="updateFormaal('formaal2');">
+				<option value="randershavnjordtip" name="Randers Havn Jordtip, Tronholmen 28 a, 8900 Randers"/>
+				<option value="randersaffaldsterminal" name="Randers Affaldsterminal, Romalt Boulevard 64, 8960 Randers SØ"/>
+            </input>
+			<input type="dropdown" displayname="Anvisnings formål:" urlparam="formaal" id="formaal3" condition="jQuery('#kategori').val() == 'andet'  &amp;&amp; !jQuery('#formaalfri').is(':checked')" onchange="updateFormaal('formaal3');">
+				<option value="rgs90jordrensning" name="RGS 90 jordrensning, Nymannsvej 11, 8444 Balle"/>
+            </input>
+			<input type="checkbox" displayname="Anvisnings formål efter eget valg" id="formaalfri" urlparam="formaalfri" defaultvalue="false" onchange="updateFormaal('')"/>
+			<input type="input" displayname="Anvisnings formål (fritekst)" id="formaal4" urlparam="formaal" condition="jQuery('#formaalfri').is(':checked');" onkeyup="updateFormaal('formaalfri')" />
+
+<!-- 
+			<input type="dropdown" displayname="Anvisnings formål:" urlparam="formaal" id="formaal" >
+                <option value="jordtip" name="Jordtip"/>
+				<option value="deponi" name="Deponi"/>
+				<option value="tilladt efter MBL" name="Tilladt efter MBL § 19"/>
+				<option value="midlertidig oplag" name="Midlertidig oplag"/>
+				<option value="kartering" name="Kartering"/>
+				<option value="jordrensning" name="Jordrensning"/>
+				<option value="genanvendelse" name="Genanvendelse"/>
+				<option value="anvisning_kommune" name="Jordens placering ønskes anvist af kommunen"/>
+				<option value="forslag_anvisning" name="Forslag til modtager"/>
+            </input>
+ -->
+			<input type="dropdown" displayname="Modtager:" urlparam="modtager" id="modtager" condition="jQuery('#formaal').val() == 'forslag_anvisning' ">
+                <option value="firma1" name="Firma1"/>
+				<option value="firma2" name="Firma2"/>
+            </input>
+			<input type="input" displayname="Andet formål" id="andet_formaal" urlparam="andet_formaal" condition="jQuery('#oplag').val() == 'andet';" />
+			<input type="date" displayname="Kørsel start:" id="datestart"   urlparam="datostart" />
+			<input type="date" displayname="Kørsel slut:" id="dateslut"   urlparam="datoslut" />
+		</content>
+		<content displayname="Kontaktoplysninger">
+			<input type="text" displayname="Tast de første tre cifre af CVRnummeret herunder" />
+			<input type="input" displayname="Anmelder CVR" id="anmeldcvr" urlparam="anmeldcvr" onkeyup="readCVR('anmeld');" />
+			<input type="input" displayname="Anmelders navn" id="anmeldnavn" urlparam="anmeldnavn" />
+			<input type="input" displayname="Anmelders adresse" id="anmeldadr" urlparam="anmeldadr" />
+			<input type="input" displayname="Anmelders telefon" id="anmeldtlf" urlparam="anmeldtlf" />
+			<input type="input" displayname="Anmelders email" id="anmeldemail" urlparam="anmeldemail" />
+			<input type="input" displayname="Kontaktpersons navn" id="anmeldkontaktnavn" urlparam="anmeldkontaktnavn" />
+			<input type="input" displayname="Kontaktpersons tlf" id="anmeldkontakttlf" urlparam="anmeldkontakttlf" />
+			<input type="checkbox" displayname="Anmelder og transportør er ens" id="anmeld_og_trans_ens" urlparam="anmeld_og_trans_ens" defaultvalue="false" />
+			<input type="input" displayname="Transportør CVR" id="transcvr" urlparam="transcvr" onkeyup="readCVR('trans');" condition="!jQuery('#anmeld_og_trans_ens').is(':checked')" />
+			<input type="input" displayname="Transportørs navn" id="transnavn" urlparam="transnavn" condition="!jQuery('#anmeld_og_trans_ens').is(':checked')" />
+			<input type="input" displayname="Transportørs adresse" id="transadr" urlparam="transadr" condition="!jQuery('#anmeld_og_trans_ens').is(':checked')" />
+			<input type="input" displayname="Transportørs telefon" id="transtlf" urlparam="transtlf" condition="!jQuery('#anmeld_og_trans_ens').is(':checked')" />
+			<input type="input" displayname="Transportørs email" id="transemail" urlparam="transemail" condition="!jQuery('#anmeld_og_trans_ens').is(':checked')" />
+			<input type="input" displayname="Transportørens kontaktpersons navn" id="transkontaktnavn" urlparam="transkontaktnavn" condition="!jQuery('#anmeld_og_trans_ens').is(':checked')" />
+			<input type="input" displayname="Transportørens kontaktpersons tlf" id="transkontakttlf" urlparam="transkontakttlf" condition="!jQuery('#anmeld_og_trans_ens').is(':checked')" />
+		</content>
+   </formular>
+</config>

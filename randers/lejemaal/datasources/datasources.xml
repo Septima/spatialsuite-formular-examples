@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+    <endpoint endpointtype="postgis" name="mailsender">
+        <connect>[module.formular-config.connection]</connect>
+        <user>[module.formular-config.user]</user>
+        <pwd>[module.formular-config.pwd]</pwd>
+        <srid>25832</srid>
+        <table geometrycolumn="the_geom" pkcolumn="ogc_fid"/>
+    </endpoint>
+    <datasource displayname="Kommunale lejemål" endpoint="selvbetjening" name="ds_formular_kommunale_lejemaal">
+        <sql command="write">INSERT INTO formular_kommunale_lejemaal (jrnr,navn,lejer_adr,lejestatus, lejemaal_type, udlej_dato, udlej_aar, gyldig_til, aftale_type, henblik, henblik_andet, reguleres_lejemaal, beregningsmetode, regulering_hvor, andet_tekst,
+		regulering, sidst_regulet, naeste_regulering, ansv_husleje, ansv_vand, ansv_varme, ansv_el, ansv_renovation, ansv_forsikring,ansv_skatafgift, moms, faelles_afgift,ansv_afgroeder, ansv_ejdskat, samlet_aarlig_leje, opkraeves, belob, andet_tekst2, areal,beroerteejendom,ref,wkb_geometry,klenr,facetnr,dqnummer,etage,adresse,kommentar) 
+		VALUES 
+		([string: jrnr],
+		[string: navn],
+		[string: lejer_adr],
+		[string: lejestatus],
+		[string: lejemaal_type_val],
+		[string: if isdefined(udlej_dato) then udlej_dato else "Ikke oplyst" endif],
+		[string: if isdefined(udlej_aar) then udlej_aar else "Ikke oplyst" endif],
+		[string: if isdefined(gyldig_til) then gyldig_til else "Ikke oplyst" endif],
+		[string: aftale_type],
+		[string: if isdefined(henblik) then henblik else "Ikke oplyst" endif],
+		[string: if isdefined(henblik_andet) then henblik_andet else "Ikke oplyst" endif],		
+		[string: reguleres_lejemaal],
+		[string: if isdefined(beregningsmetode) then beregningsmetode else "Ikke oplyst" endif ],
+		[string: if isdefined(regulering_hvor) then regulering_hvor else "Ikke oplyst" endif ],
+		[string: if isdefined(andet_tekst) then andet_tekst else "Ikke oplyst" endif ],
+		[string: if isdefined(regulering_dato) then regulering_dato else "Ikke oplyst" endif ],
+		[string: if isdefined(sidst_regulet) then sidst_regulet else "Ikke oplyst" endif ],
+		[string: if isdefined(naeste_regulering) then naeste_regulering else "Ikke oplyst" endif ],
+		
+		[string: if isdefined(ansv_husleje) then ansv_husleje  else "" endif],
+		[string: if isdefined(ansv_vand) then ansv_vand  else "" endif],
+		[string: if isdefined(ansv_varme) then ansv_varme else "" endif],
+		[string: if isdefined(ansv_el) then ansv_el  else "" endif],
+		[string: if isdefined(ansv_renovation) then ansv_renovation else "" endif],
+		[string: if isdefined(ansv_forsikring) then ansv_forsikring  else "" endif],
+		[string: if isdefined(ansv_skatafgift) then ansv_skatafgift else "" endif],
+		[string: if isdefined(moms) then moms else "" endif],
+		[string: if isdefined(faelles_afgift) then faelles_afgift else "" endif],		
+		[string: if isdefined(ansv_afgroeder) then ansv_afgroeder else "" endif],
+		[string: if isdefined(ansv_ejdskat) then ansv_ejdskat else "" endif],
+
+		[number: ToNumber(samlet_aarlig_leje)],
+		[string: opkraeves],	
+		[number: ToNumber(belob)],	
+		[string: if isdefined(andet_tekst2) then andet_tekst2 else "Ikke oplyst" endif ],		
+		[number: ToNumber(areal)],
+		[string: if isdefined(konflikttekst1) then konflikttekst1 else "Ikke oplyst" endif],
+		[string: sessionid],
+		[geometry: ToGeometry(wkt)],
+		[string: if isdefined(klenr) then klenr else "" endif],
+		[string: if isdefined(facetnr) then facetnr else "" endif],
+		[string: if isdefined(sbsys_brugerid) then sbsys_brugerid else "" endif],
+		[string: if isdefined(etage) then etage else "" endif],
+		[string: if isdefined(address) then address else "" endif],
+		[string: if isdefined(kommentar) then kommentar else "" endif])</sql>
+        <sql command="read">select * from formular_kommunale_lejemaal</sql>
+        <sql command="updaterow">update formular_kommunale_lejemaal set
+		jrnr = [string: jrnr],
+		navn = [string: navn],
+		lejer_adr = [string: lejer_adr],
+		lejestatus = [string: lejestatus],
+		lejemaal_type = [string: lejemaal_type],
+		udlej_dato = [string: if isdefined(udlej_dato) then udlej_dato else "Ikke oplyst" endif],
+		udlej_aar = [string: if isdefined(udlej_aar) then udlej_aar else "Ikke oplyst" endif],
+		gyldig_til = [string: if isdefined(gyldig_til) then gyldig_til else "Ikke oplyst" endif],
+		aftale_type = [string: aftale_type], 
+		henblik = [string: if isdefined(henblik) then henblik else "Ikke oplyst" endif],
+		henblik_andet = [string: if isdefined(henblik_andet) then henblik_andet else "Ikke oplyst" endif],		
+		reguleres_lejemaal = [string: reguleres_lejemaal],
+		beregningsmetode = [string: if isdefined(beregningsmetode) then beregningsmetode else "Ikke oplyst" endif ],
+		regulering_hvor = [string: if isdefined(regulering_hvor) then regulering_hvor else "Ikke oplyst" endif ], 
+		andet_tekst = [string: if isdefined(andet_tekst) then andet_tekst else "Ikke oplyst" endif ],
+		regulering = [string: if isdefined(regulering_dato) then regulering_dato else "Ikke oplyst" endif ],
+		sidst_regulet = [string: if isdefined(sidst_regulet) then sidst_regulet else "Ikke oplyst" endif ],
+		naeste_regulering = [string: if isdefined(naeste_regulering) then naeste_regulering else "Ikke oplyst" endif ], 
+		ansv_husleje = [string: if isdefined(ansv_husleje) then ansv_husleje  else "" endif],
+		ansv_vand = [string: if isdefined(ansv_vand) then ansv_vand  else "" endif],
+		ansv_varme = [string: if isdefined(ansv_varme) then ansv_varme else "" endif], 
+		ansv_el = [string: if isdefined(ansv_el) then ansv_el  else "" endif], 
+		ansv_renovation = [string: if isdefined(ansv_renovation) then ansv_renovation else "" endif],
+		ansv_forsikring = [string: if isdefined(ansv_forsikring) then ansv_forsikring  else "" endif],
+		ansv_skatafgift = [string: if isdefined(ansv_skatafgift) then ansv_skatafgift else "" endif], 
+		moms = [string: if isdefined(moms) then moms else "" endif],
+		faelles_afgift = [string: if isdefined(faelles_afgift) then faelles_afgift else "" endif],		
+		ansv_afgroeder = [string: if isdefined(ansv_afgroeder) then ansv_afgroeder else "" endif],
+		ansv_ejdskat = [string: if isdefined(ansv_ejdskat) then ansv_ejdskat else "" endif],
+		samlet_aarlig_leje = REPLACE([string: samlet_aarlig_leje],',','.'),
+		opkraeves = [string: opkraeves],
+		belob = REPLACE([string: belob],',','.'),
+		andet_tekst2 = [string: if isdefined(andet_tekst2) then andet_tekst else "Ikke oplyst" endif ],		
+		areal = [number: ToNumber(areal)],
+		beroerteejendom = [string: beroerteejendom],
+		klenr =	[string: if isdefined(klenr) then klenr else "" endif],
+		facetnr = [string: if isdefined(facetnr) then facetnr else "" endif],
+		dqnummer = [string: if isdefined(dqnummer) then dqnummer else "" endif],
+		etage = [string: if isdefined(etage) then etage else "" endif],
+		adresse = [string: if isdefined(address) then address else "" endif],
+		kommentar = [string: if isdefined(kommentar) then kommentar else "" endif]
+		WHERE ogc_fid = [number: ToNumber(ogc_fid)]
+		</sql>
+        <table geometrycolumn="wkb_geometry" name="formular_kommunale_lejemaal" pkcolumn="ogc_fid"/>
+    </datasource>
+</datasources>

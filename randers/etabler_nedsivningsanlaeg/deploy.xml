@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy>
+
+    <version>0.0.1</version>
+
+    <copydir fromdir="[module:formular-etabler_nedsivningsanlaeg.dir]/css"    todir="[cbinfo.wwwroot.dir]/modules/formular/formular-config/css" replacetext="false"/>
+    <copydir fromdir="[module:formular-etabler_nedsivningsanlaeg.dir]/js"     todir="[cbinfo.wwwroot.dir]/modules/formular/formular-config/js" replacetext="false"/>
+
+</deploy>

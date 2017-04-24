@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+     <formular name="erklaering_teknisk_doku">
+        <header>Erklæring om teknisk dokumentation</header>
+        <submitpages>
+			<page parser="setFrid" errortype="warning" errormessage="Fejl i FRID">formular.erklaering_teknisk_doku.get.eks_sag</page>
+			<page errortype="warning" errormessage="Fejl i skrivning til databasen">formular.erklaering_teknisk_doku.save</page>
+			<page parser="setPdf" errortype="warning" errormessage="Fejl i skrivning til PDF">formular.erklaering_teknisk_doku.pdf</page>
+			<page errortype="warning" errormessage="Fejl i flytning af PDF">formular.send.erklaering_teknisk_doku.pdf.move</page>
+			<page errortype="warning" errormessage="Fejl i afsendelse af mail">formular.send.erklaering_teknisk_doku.mail</page>
+			<page errortype="warning" errormessage="Fejl i afsendelse af intern mail">formular.send.erklaering_teknisk_doku.mail.intern</page>
+			<page errortype="warning" errormessage="Fejl i tilknytning til SBSYS">formular.send.erklaering_teknisk_doku.attach-doc</page>
+		</submitpages>
+        <reportprofile>ekstern_all</reportprofile>
+        <reportlayers>default</reportlayers>
+        <reportxsl>erklaering_teknisk_doku</reportxsl>
+		<js>/modules/formular/formular-config/js/erklaering_teknisk_doku.js</js>
+        <content>
+            <input type="hidden" id="dagsdato" urlparam="dagsdato" />
+			<input type="hidden" id="sbsys_brugerid" urlparam="sbsys_brugerid" defaultvalue="dq21989" />
+			<input type="hidden" id="sagsbehandler" urlparam="sagsbehandler" defaultvalue="Kåre Rasmussen" />
+			<input type="hidden" id="wkt" urlparam="wkt" />
+			<input type="input" displayname="Sagsnummer:" urlparam="journalnr" regexp=".+" validate="Indtast sagsnummeret!"/>
+			<geosearch urlparam="address" id="address" displayname="Adresse:" resources="Adresser" filter="[module.spatialaddress.filter]"  regexp="[a-zæøå]" validate="Der skal være indtastet en adresse!" geometry_selected="geomSelected(this.formular);"/>
+			<input type="input" displayname="Navn(e):" id="navn" urlparam="navn" regexp=".+" validate="Indtast navn!"/>
+			<input type="input" displayname="Telefon:" urlparam="tlf"/>
+			<input type="input" displayname="Mobiltelefon:" urlparam="mobil" />
+			<input type="input" displayname="Email:" urlparam="email" />
+			
+            <conflicts id="konflikt1" urlparam="konflikttekst1" displayname="" targerset="ejendomalleejer" targetsetfile="[module.formular-randers.dir]/queries/targetsets.xml" onconflict="handleOwner(this);" onnoconflict="handleOwner(null);" /> 
+			<conflicts id="konflikt2" urlparam="konflikttekst2" displayname="" targerset="sagsbehandler_dq" targetsetfile="[module.formular-randers.dir]/queries/targetsets.xml" onconflict="handleSagsbehandler(this);" onnoconflict="handleSagsbehandler(null);" /> 
+			
+			<input type="text" displayname="Undertegnede ansøger erklærer hermed:" />
+			<input type="checkbox" displayname="at bygningen er opført i overensstemmelse med byggelovens formål og bygningsreglementets bestemmelser:" urlparam="a" defaultvalue="false" />
+			<input type="checkbox" displayname="at den fornødne dokumentation vedrørende tekniske forhold er fremsendt på forhånd:" urlparam="b" defaultvalue="false" />
+			<input type="checkbox" displayname="at den fornødne dokumentation vedrørende tekniske forhold var medsendt ansøgningen om byggetilladelse:" urlparam="c" defaultvalue="false" />
+            <input type="text" displayname="Dokumentation for byggesagens tekniske forhold:" defaultvalue="false" />
+			<input type="text" displayname="Det med X markerede tegnings- og dokumentationsmateriale er fremsendt sammen med erklæringen om byggeriets tekniske forhold:" defaultvalue="false" />
+			<input type="checkbox" displayname="Tegningsmateriale, som viser niveaufri adgang" urlparam="d" defaultvalue="false" />
+			<input type="checkbox" displayname="Tegningsmateriale, der viser lydisolering mod nabo" urlparam="e" defaultvalue="false" />
+			<input type="checkbox" displayname="Tegningsmateriale, der viser bygningens tæthed mod jord" urlparam="f" defaultvalue="false" />
+			<input type="checkbox" displayname="Dokumentation for, at bygningens bærende konstruktioner opfylder bestemmelserne i bygningsreglementets kap. 4, jf. bilag 4 om statisk dokumentation, og at konstruktionerne er udført i overensstemmelse med god byggeskik, f.eks. efter SBI-anvisning 230" urlparam="g" defaultvalue="false" />
+			<input type="checkbox" displayname="Dokumentation for, at spær er leveret fra spærfabrik" urlparam="h" defaultvalue="false" />
+			<input type="checkbox" displayname="Stabilitetsberegning" urlparam="i" defaultvalue="false" />
+			<input type="checkbox" displayname="Dokumentation for, at konstruktioner og materialer ikke har et fugtindhold, der ved indflytning medfører risiko for skimmelsvamp (målingsrapport)" urlparam="j" defaultvalue="false" />
+			<input type="checkbox" displayname="Dokumentation for at brandkravene er opfyldt, således at der haves et tilstrækkeligt sikkerhedsniveau, eksempelvis efter eksempelsamlingen for brandsikring af byggeri 2010" urlparam="k" defaultvalue="false" />
+			<input type="checkbox" displayname="Energirammeberegning" urlparam="l" defaultvalue="false" />
+			<input type="checkbox" displayname="Dokumentation for bygningens tæthed" urlparam="m" defaultvalue="false" />
+			<input type="checkbox" displayname="Energimærkning i overensstemmelse med Energistyrelsens Bekendtgørelse om energimærkning af bygninger" urlparam="n" defaultvalue="false" />
+			<input type="checkbox" displayname="Varmetabsberegning (ved ombygning)"  urlparam="o" defaultvalue="false" />
+			<input type="checkbox" displayname="Dokumentation vedrørende kloakforhold, herunder kloakplan, erklæring om arbejdernes udførelse fra autoriseret vvs-mester og kloakmester"  urlparam="p" defaultvalue="false" />
+			<input type="checkbox" displayname="Dokumentation vedrørende ventilation"   urlparam="q" defaultvalue="false" />
+			<input type="checkbox" displayname="Ekstra 1"   id="aa" urlparam="aa" defaultvalue="false" onchange="formular.checkConditions();" />
+			<input type="input" displayname="Ekstra 1 - fritekst:" urlparam="ab" condition="jQuery('#aa').is(':checked');" />
+			<input type="checkbox" displayname="Ekstra 2"   id="ba" urlparam="ba" defaultvalue="false" onchange="formular.checkConditions();"/>
+			<input type="input" displayname="Ekstra 2 - fritekst:" urlparam="bb" condition="jQuery('#ba').is(':checked');"  />
+			<input type="checkbox" displayname="Ekstra 3"   id="ca" urlparam="ca" defaultvalue="false" onchange="formular.checkConditions();" />
+			<input type="input" displayname="Ekstra 3 - fritekst:" urlparam="cb" condition="jQuery('#ca').is(':checked');" />
+			<input type="checkbox" displayname="Ekstra 4"   id="da" urlparam="da" defaultvalue="false" onchange="formular.checkConditions();"/>
+			<input type="input" displayname="Ekstra 4 - fritekst:" urlparam="db" condition="jQuery('#da').is(':checked');"  />
+			<input type="checkbox" displayname="Ekstra 5"   id="ea" urlparam="ea" defaultvalue="false" onchange="formular.checkConditions();" />
+			<input type="input" displayname="Ekstra 5 - fritekst:" urlparam="eb" condition="jQuery('#ea').is(':checked');" />
+			<input type="checkbox" displayname="Ekstra 6"   id="fa" urlparam="fa" defaultvalue="false" onchange="formular.checkConditions();"/>
+			<input type="input" displayname="Ekstra 6 - fritekst:" urlparam="fb" condition="jQuery('#fa').is(':checked');"  />
+			<input type="checkbox" displayname="Ekstra 7"   id="ga" urlparam="ga"  defaultvalue="false" onchange="formular.checkConditions();" />
+			<input type="input" displayname="Ekstra 7 - fritekst:" urlparam="gb" condition="jQuery('#ga').is(':checked');" />
+			
+			
+			<confirm displayname="Følgende oplysninger er indtastet. Er det korrekt?"/>
+        </content>
+     </formular>
+
+</config>

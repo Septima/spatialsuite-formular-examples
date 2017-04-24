@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+    <endpoint endpointtype="postgis" name="mailsender">
+        <connect>[module.formular-config.connection]</connect>
+        <user>[module.formular-config.user]</user>
+        <pwd>[module.formular-config.pwd]</pwd>
+        <srid>25832</srid>
+        <table geometrycolumn="the_geom" pkcolumn="ogc_fid"/>
+    </endpoint>
+    <datasource displayname="Tjek- og serviceliste - Ventilationsanlæg" endpoint="selvbetjening" name="ds_tjek_og_serviceliste_vent">
+        <sql command="write">insert into tjek_og_serviceliste_vent
+		(
+		wkb_geometry, 
+		dato, 
+		formular, 
+		ref,
+		anlaeg,
+		service_dato,
+		service_afsluttet,
+		udskiftning_filtre,
+		udskiftning_remme,
+		udskiftning_andet,
+		passer_serviceinterval,
+		foreslag_serviceinterval,
+		energieftersyn_lve,
+		tjek_serviceliste
+		) 
+			values 
+			(
+			[geometry: ToGeometry(anlaeg_wkt)],
+			localtimestamp,
+			[string: formular],
+			[string: sessionid],
+			[string: if isDefined(anlaeg) then anlaeg else "" endif],
+			[string: if isDefined(service_dato) then service_dato else "" endif],
+			[string: if isDefined(service_afsluttet) then service_afsluttet else "" endif],
+			[string: if isDefined(udskiftning_filtre) then udskiftning_filtre else "" endif],
+			[string: if isDefined(udskiftning_remme) then udskiftning_remme else "" endif],
+			[string: if isDefined(udskiftning_andet) then udskiftning_andet else "" endif],
+			[string: if isDefined(passer_serviceinterval) then passer_serviceinterval else "" endif],
+			[string: if isDefined(foreslag_serviceinterval) then foreslag_serviceinterval else "" endif],
+			[string: if isDefined(energieftersyn_lve) then energieftersyn_lve else "" endif],
+			[string: if isDefined(tjek_serviceliste) then tjek_serviceliste else "" endif]
+			)</sql>
+        <table geometrycolumn="wkb_geometry" name="tjek_og_serviceliste_vent" pkcolumn="ogc_fid"/>
+    </datasource>
+</datasources>

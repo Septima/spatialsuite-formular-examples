@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+    <endpoint endpointtype="postgis" name="mailsender">
+        <connect>[module.formular-config.connection]</connect>
+        <user>[module.formular-config.user]</user>
+        <pwd>[module.formular-config.pwd]</pwd>
+        <srid>25832</srid>
+        <table geometrycolumn="the_geom" pkcolumn="ogc_fid"/>
+    </endpoint>
+    <datasource displayname="Ansøgning om afvikling af arrangementer for mere end 150 personer" endpoint="selvbetjening" name="ds_formular_arrangement150">
+        <sql command="write">insert into formular_arrangement150 
+							(formular, 
+							ref, 
+							address, 
+							startdato, 
+							slutdato, 
+							antal_dage, 
+							start_tid, 
+							slut_tid, 
+							antalpersoner, 
+							art, 
+							sted, 
+							navn, 
+							adresseansvarlig, 
+							email, 
+							tlf, 
+							filnavn, 
+							filnavn2, 
+							konflikttekst1, 
+							konflikttekst2, 
+							artvalg,
+							stedvalg,
+							journalnr,
+							ts_alteret,
+							kommune,
+							wkb_geometry) 
+							values
+							([string: formular],
+							[string: sessionid],
+							[string: if isDefined(address) then address else "Ikke oplyst" endif],
+							[string: if isDefined(startdato) then startdato else "Ikke oplyst" endif],
+							[string: if isDefined(slutdato) then slutdato else "Ikke oplyst" endif],
+							[number: if isDefined(antal_dage) then ToNumber(antal_dage) else 0 endif],
+							[string: start_tid],
+							[string: slut_tid],
+							[string: antalpersoner],
+							[string: art],
+							[string: sted],
+							[string: navn],
+							[string: adresseansvarlig],
+							[string: email],
+							[string: tlf],
+							[string: if isDefined(filnavn) then filnavn else "Ikke oplyst" endif],
+							[string: if isDefined(filnavn2) then filnavn2 else "Ikke oplyst" endif],
+							[string: if isDefined(konflikttekst1) then konflikttekst1 else "Ikke oplyst" endif],
+							[string: if isDefined(konflikttekst2) then konflikttekst2 else "Ikke oplyst" endif],
+							[string: if isDefined(artvalg) then artvalg else "Ikke oplyst" endif],
+							[string: if isDefined(stedvalg) then stedvalg else "Ikke oplyst" endif],
+							[string: if isDefined(journalnr) then journalnr else "" endif],
+							localtimestamp,
+							[string: if isDefined(kommune) then kommune else "" endif],
+							[geometry: ToGeometry(wkt)])</sql>
+        <table geometrycolumn="wkb_geometry" name="formular_arrangement150" pkcolumn="ogc_fid"/>
+    </datasource>
+</datasources>

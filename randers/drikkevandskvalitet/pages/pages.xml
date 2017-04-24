@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages>
+    <page name="formular.send.drikkevandskvalitet" contenttype="text/xml" resultpassing="pass-all">
+		
+		<data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_drikkevandsanalyse"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>
+		
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">sessionid</url-parameter>
+                <url-parameter name="sendto_email">'to:'+email+',bcc:drikkevandsanalyser@randers.dk'</url-parameter>
+                <url-parameter name="sendto_subject">mailtekstoverskriftfinal</url-parameter>
+                <url-parameter name="sendto_content">mailtekstfinal</url-parameter>
+                <url-parameter name="sendto_ref">sessionid</url-parameter>
+                <url-parameter name="sendto_attached">'kvittering.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+sessionid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+         
+        <include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+
+</pages>

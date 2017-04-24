@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+    <datasource displayname="Jordflytning" endpoint="selvbetjening" name="ds_formular_jordflytning">
+        <table geometrycolumn="wkb_geometry" name="formular_jordflytning" pkcolumn="ogc_fid"/>
+		<sql command="write">INSERT INTO formular_jordflytning 
+								(
+								adresse,
+								fyldtjord,
+								INTAKTJORD,
+								BYGGEAFFALD,
+								ORGANISK_MATERIALE,
+								BORESLAM,
+								ANDET,
+								ANDET_TEKST,
+								AKUTFLYTNING,
+								AKUTFLYTNING_BEGRUND,
+								KATEGORI,
+								JORDPLAN,
+								JORDPLAN_FIL,
+								KUBIKMETER,
+								TON,
+								FORMAAL,
+								FORMAAL_andet,
+								K_START,
+								K_SLUT,
+								ANMELD_CVR,
+								ANMELD_NAVN,
+								ANMELD_ADR,
+								ANMELD_TLF,
+								ANMELD_EMAIL,
+								ANMELD_KONTAKT,
+								ANMELD_KONTAKTTLF,
+								ANMELD_OG_TRANS_ENS,
+								trans_CVR,
+								trans_NAVN,
+								trans_ADR,
+								trans_TLF,
+								trans_EMAIL,
+								trans_KONTAKT,
+								trans_KONTAKTTLF,
+								kon1_ejendom,
+								kon2_ejer,
+								kon3_omrklass,
+								kon4_anafri,
+								kon5_v1,
+								kon6_v2,
+								kon7_kortnr,
+								journalnr,
+								wkb_geometry
+								) 
+								VALUES
+								(
+								[string: if IsDefined(address)         		then address else "" endif],
+								[string: if IsDefined(fyldjord)        		then fyldjord else "" endif],
+								[string: if IsDefined(intaktjord)       	then intaktjord else "" endif],
+								[string: if IsDefined(byggeaffald)      	then byggeaffald else "" endif],
+								[string: if IsDefined(organiskmateriale)	then organiskmateriale else "" endif],
+								[string: if IsDefined(boreslam)        		then boreslam else "" endif],
+								[string: if IsDefined(jordtype_andet)       then jordtype_andet else "" endif],
+								[string: if IsDefined(jordtype_andet_txt)   then jordtype_andet_txt else "" endif],
+								
+								[string: if IsDefined(akutflytning)         		then akutflytning else "" endif],
+								[string: if IsDefined(akutflytning_begrundelse)     then akutflytning_begrundelse else "" endif],
+								[string: if IsDefined(kategori)       				then kategori else "" endif],
+								[string: if IsDefined(godkendtplan)      			then godkendtplan else "" endif],
+								[string: if IsDefined(fil_plan)						then fil_plan else "" endif],
+								[number: if IsDefined(kubikmeter)        			then ToNumber(kubikmeter) else 0 endif],
+								[number: if IsDefined(ton)       					then ToNumber(ton) else 0 endif],
+								[string: if IsDefined(formaal_final)						then formaal_final else "" endif],
+								[string: if IsDefined(formaalfri)         	  	then formaalfri else "" endif],
+								[string: if IsDefined(datostart)						then datostart else "" endif],
+								[string: if IsDefined(datoslut)						then datoslut else "" endif],
+
+								[string: if IsDefined(anmeldcvr)         then anmeldcvr else "" endif],
+								[string: if IsDefined(anmeldnavn)         then anmeldnavn else "" endif],
+								[string: if IsDefined(anmeldadr)         then anmeldadr else "" endif],
+								[string: if IsDefined(anmeldtlf)         then anmeldtlf else "" endif],
+								[string: if IsDefined(anmeldemail)         then anmeldemail else "" endif],
+								[string: if IsDefined(anmeldkontaktnavn)         then anmeldkontaktnavn else "" endif],
+								[string: if IsDefined(anmeldkontakttlf)         then anmeldkontakttlf else "" endif],
+								
+								[string: if IsDefined(anmeld_og_trans_ens)         then anmeld_og_trans_ens else "" endif],
+								
+								[string: if IsDefined(transcvr)         		then transcvr else "" endif],
+								[string: if IsDefined(transnavn)         		then transnavn else "" endif],
+								[string: if IsDefined(transadr)         		then transadr else "" endif],
+								[string: if IsDefined(transtlf)         		then transtlf else "" endif],
+								[string: if IsDefined(transemail)         	  	then transemail else "" endif],
+								[string: if IsDefined(transkontaktnavn)       	then transkontaktnavn else "" endif],
+								[string: if IsDefined(transkontakttlf)        	then transkontakttlf else "" endif],
+
+								[string: if IsDefined(konflikttekst1)         	then konflikttekst1 else "" endif],
+								[string: if IsDefined(konflikttekst2)         	then konflikttekst2 else "" endif],
+								[string: if IsDefined(konflikttekst3)         	then konflikttekst3 else "" endif],
+								[string: if IsDefined(konflikttekst4)         	then konflikttekst4 else "" endif],
+								[string: if IsDefined(konflikttekst5)         	then konflikttekst5 else "" endif],
+								[string: if IsDefined(konflikttekst6)         	then konflikttekst6 else "" endif],
+								[string: if IsDefined(konflikttekst7)         	then konflikttekst7 else "" endif],
+								[string: if IsDefined(journalnr)         	  	then journalnr else "" endif],
+								
+								
+								[geometry: ToGeometry(wkt)]
+								)
+								</sql>
+    </datasource>
+    
+</datasources>

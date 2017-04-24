@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <formular name="soe">
+    
+		<submitpages>
+			<page parser="setFrid" errortype="error" errormessage="Fejl i skabelse af SBSYS sag">sbsys.soe.create-case</page>
+			<page parser="setFrid"  urlparam="journalnr" errortype="error" errormessage="Fejl i hentning af SBSYS sag">sbsys.soe.journalNr</page>
+			<page errortype="error" errormessage="Fejl i gemning af data">formular.send.soe.save</page>
+			<page parser="setPdf" errortype="warning" errormessage="Fejl i skabelse af PDF">formular.send.soe.pdf</page>
+            <!-- Denne del (move) er general - den skal der ikke pilles ved -->
+			<page errortype="warning" errormessage="Fejl i flytning af PDF">formular.move.pdf</page>
+            <page errortype="warning" errormessage="Fejl i kobling af PDF til SBSYS">sbsys.soe.attach-document</page>
+			<page errortype="warning" errormessage="Fejl i afsendelse af mail">formular.send.soe.mail</page>
+        </submitpages>
+    
+    
+		<!-- <reportmapscale>200</reportmapscale> -->
+        <title>Ansøgningsskema til vandhuller</title>
+        <header>Ansøgningsskema til &lt;br/&gt;vandhuller</header>
+        <subheader>Ansøgning efter &lt;br/&gt;naturbeskyttelsesloven eller planloven.</subheader>
+        <submitpage>formular.send.soe</submitpage>
+        <reportprofile>ekstern_all</reportprofile>
+        <reportlayers>default</reportlayers>
+        <reportxsl>soe</reportxsl>
+        <css>/modules/formular/formular-config/css/buttons.css</css>
+		<js>/modules/formular/formular-config/js/soe.js</js>
+		
+		<messages>
+			<message name="done">Ansøgningen er nu registreret. Du vil modtage en kopi af din ansøgning i din mailboks&lt;br/&gt;Du kan også åbne kvitteringen &lt;a href=&quot;{{pdf}}&quot; target=&quot;_blank&quot;&gt;her&lt;/a&gt;</message>
+			<message name="error">Der er opstået en fejl! Send os venligst en besked via &lt;a href=&quot;mailto:selvbetjeningssupport@randers.dk&quot;&gt;denne adresse&lt;/a&gt;</message>
+		</messages>
+
+   		<tabs class="smalltabs">true</tabs>
+		<content displayname="Hvor og hvad">        
+        
+            <input type="hidden" id="klenummer" urlparam="klenummer" defaultvalue="0"/>
+			<input type="hidden" id="facetnummer" urlparam="facetnummer" defaultvalue="0"/>
+			
+			<input type="hidden" id="ejerOK" urlparam="ejerOK" defaultvalue="0" />
+			<input type="hidden" id="dagsdato" urlparam="dagsdato" defaultvalue="-" />
+            <!-- <geosearch urlparam="address" displayname="Adresse:" resources="Adresser" filter="muncode0730" usegeometry="true" regexp=".+"/> -->
+			<input type="text" displayname="Fremsøg sted via matrikelopplysninger,vejnavn, vejnavn+husnummer eller zoom direkte i kortet:"/>
+            <!-- <address urlparam="address" displayname="Søg her:" apikey="[module.spatialaddress.apikey]" filter="[module.spatialaddress.filter]"></address> -->
+			<geosearch urlparam="address" displayname="Adresse:" resources="Adresser,Matrikelnumre" filter="muncode0730"  />
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Du skal indtegne vandhullet på kortet.&lt;br&gt;
+											&lt;ul&gt; 
+												&lt;li&gt;Du kan udvælge søen ved at trykke på pilknappen &lt;div class='button_in_help button_select'&gt;&lt;/div&gt; &lt;/li&gt; 
+												&lt;li&gt;Hvis du i stedet ønsker at indtegne et eller flere arealer skal du vælge knappen med den første firkant &lt;div class='button_in_help button_polygon'&gt;&lt;/div&gt; &lt;/li&gt; 
+												&lt;li&gt;Du kan tilpasse de udvalgte arealer ved at tykke på den næste knap med firkant, og markere det areal du ønsker ændret &lt;div class='button_in_help button_modify'&gt;&lt;/div&gt; &lt;/li&gt; 
+												&lt;li&gt;Du kan slette ved at trykke på knappen med viskelæderet og markere det areal, du ønsker at slette &lt;div class='button_in_help button_delete'&gt;&lt;/div&gt; &lt;/li&gt; 
+											&lt;/ul&gt;
+			"/>
+            <maptools>
+                <maptool displayname="Slet en markering" name="delete"  />
+				<maptool displayname="Tilpas udvalgt areal" name="modify"/>
+				<maptool displayname="Tegn areal" name="polygon"/>                
+				<maptool displayname="Udvælg eksisterende sø" name="select" datasource="ds_beskyttede_naturtyper" />
+            </maptools>
+            <map multiplegeometries="true"  required="true">
+                <extent>539430.4,6237856,591859.2,6290284.8</extent>
+                <resolutions>0.1,0.2,0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4</resolutions>
+                <themes>
+                    <theme name="theme-ddoland2012" host="http://tile2.randers.dk/service/wms"/>
+					<theme name="theme-beskyttede_naturtyper_omridset_soe" host="/wms?servicename=selvbetjening_wms" maxScale="20000"/>
+                </themes>
+            </map>
+            <area urlparam="areal" displayname="Areal:"/>
+            <conflicts urlparam="konflikttekst1" displayname="Ejendomsinformationer:" targerset="ejendomhovedejer" onconflict="haandterEjer(this);"/>
+            <conflicts urlparam="konflikttekst2" displayname="Det ansøgte vandhul vedrører følgende ejendom(e):" targerset="ejendom"/>
+            <conflicts class="warning" displayname="Vær opmærksom på at arealet ligger inden for 10 meter fra et §3 område:" targerset="beskyttede_natur"/>
+            <input type="dropdown" displayname="Hvad søges:" urlparam="hvad" id="hvad" onchange="setJournaldata();">
+                <option value="Vælg" name="Vælg"/>
+                <option value="nyt vandhul" name="Nyt vandhul"/>
+                <option value="oprensning af vandhul" name="Oprensning af vandhul"/>
+                <option value="udvidelse af vandhul" name="Udvidelse af vandhul"/>
+            </input>
+ <!--           <input type="text" displayname="Dette er en over skrift der kan være meget lang eller hvad man nu har lyst til at skrive"/> -->
+            <input type="dropdown" displayname="Arealets udnyttelse pt.:" urlparam="udnyttelse">
+                <option value="Vælg" name="Vælg"/>
+                <option value="mark i omdrift" name="Mark i omdrift"/>
+                <option value="braklagt mark" name="Braklagt mark"/>
+                <option value="udyrket areal" name="Udyrket areal"/>
+                <option value="græsning" name="Græsning"/>
+                <option value="ved ikke" name="Ved ikke"/>
+            </input>
+            <input type="dropdown" displayname="Drænet:" urlparam="draenet">
+                <option value="Vælg" name="Vælg"/>
+                <option value="drænet" name="Ja"/>
+                <option value="ikke drænet" name="Nej"/>
+                <option value="delvis drænet" name="Delvis"/>
+                <option value="ved ikke" name="Ved ikke"/>
+			</input>
+            <input type="textarea" urlparam="begrundelse" displayname="Begrundelse for ansøgning:"/>
+		</content>
+		<content displayname="Kontaktoplysninger">
+            <input type="text" displayname="Ejer oplysninger:"/>
+            <input type="input" id="navn1" displayname="Navn:" urlparam="navn1" />
+            <input type="input" displayname="E-mail:" id="email1" urlparam="email"/>
+            <input type="text" displayname="Indtast e-mail igen, for at verificere:"/>
+            <input type="input" displayname="E-mail:" id="email2" urlparam="email" onkeyup="formular.compare('email1','email2','De to skal være ens')"/>
+            <input type="input" displayname="Tlf. nr. på ejer:" urlparam="tlf"/>
+            <input type="text" displayname=""/>
+            <input type="text" displayname="Hvis ejer er lig ansøger skal du ikke udfylde ansøgerinformationerne:" condition="jQuery('#ejerOK').val() == '0'"/>
+            <input type="input" displayname="Navn på ansøger:" urlparam="navn" id="navn" condition="jQuery('#ejerOK').val() == '0'" />
+            
+            <input type="input" displayname="E-mail på ansøger:" id="email3" urlparam="email3" condition="jQuery('#ejerOK').val() == '0'"/>
+            <input type="text" displayname="Indtast e-mail igen, for at verificere:" condition="jQuery('#ejerOK').val() == '0'"/>
+            <input type="input" displayname="E-mail på ansøger:" id="email4" urlparam="email3" onkeyup="formular.compare('email3','email4','De to skal være ens')" condition="jQuery('#ejerOK').val() == '0'"/>
+            <input type="input" displayname="Tlf. nr. på ansøger:" urlparam="tlf2" condition="jQuery('#ejerOK').val() == '0'"/>
+            
+		</content>
+		<content displayname="Bilag">
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Her kan du vedhætte div. bilag:"/> 
+            <input type="file"  displayname="Vedhæft ejererklæring." urlparam="ejererklaering" condition="jQuery('#ejerOK').val() == '0'"/> 
+            
+            <input type="text" displayname="Det er muligt at vedhæfte 3 billeder:"/>
+            <input type="file"  displayname="Vedhæft billede." urlparam="billede1"/> 
+            <input type="file"  displayname="Vedhæft billede." urlparam="billede2"/> 
+            <input type="file"  displayname="Vedhæft billede." urlparam="billede3"/> 
+        <submitbutton displayname="Opret endnu en ansøgning" function="window.open('https://ddr.randers.dk/FrontEnd.aspx?id=48342')"/>
+            <confirm displayname="Følgende oplysninger er indtastet. Er det korrekt?"/>
+            <submitbutton displayname="Yderliger oplysninger" function="window.open('https://ddr.randers.dk/FrontEnd.aspx?id=2199')"/>
+		</content>
+    </formular>
+
+</config>

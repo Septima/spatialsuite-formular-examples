@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+   <formular name="ventilationsanlaeg">
+        <header>Ventilationsanlæg</header>
+        <subheader> </subheader>
+		<submitpages>
+			<page condition="jQuery('#rediger').val() == 'false'">formular.send.ventilationsanlaeg</page>			
+			<page condition="jQuery('#rediger').val() == 'true' &amp;&amp; jQuery('#update_id').val() > -1">formular.update.ventilationsanlaeg</page>			
+        </submitpages>
+		<reportprofile>ekstern_all</reportprofile>
+        <reportlayers>default</reportlayers>
+		<showreport>false</showreport>
+		<css>/css/custom/tablet.css</css>
+        <js>/modules/formular/formular-config/js/ventilationsanlaeg.js</js>
+		<messages>
+            <message name="done">Oplysningerne om ventilationsanlægget er nu registreret.</message>
+            <message name="error">Der er desværre opstået en fejl!!! Kontakt Rene Jensen på 89 15 18 53</message>
+        </messages>
+        <tabs class="smalltabs">true</tabs>
+        <content displayname="Start">
+            <input type="text" displayname=" "/>
+			<input type="hidden" id="login" urlparam="login" />
+			<input type="hidden" id="rediger" urlparam="rediger" defaultvalue="false"/>
+			<input type="hidden" id="kopierdata" urlparam="kopierdata" defaultvalue="false"/>
+			<input type="hidden" id="update_id" urlparam="update_id" defaultvalue="-1"/>
+			<input type="hidden" id="knownAdrAndSitenr" urlparam="knownAdrAndSitenr" defaultvalue="false" />
+
+            <input type="text" displayname="Rediger et eksisterede ventilationsanlæg" condition="jQuery('#rediger').val() == 'true'" />
+            <input type="text" displayname="Opret nyt ventilationsanlæg ud fra et eksisterende anlæg" condition="jQuery('#kopierdata').val() == 'true'"/>
+            <input type="text" displayname=" " condition="jQuery('#rediger').val() == 'true' || jQuery('#kopierdata').val() == 'true'"/>
+            <input type="text" displayname=" " condition="jQuery('#rediger').val() == 'true' || jQuery('#kopierdata').val() == 'true'"/>
+            <input type="input" displayname="Søg eksisterende anlæg:" urlparam="soeg_anlaeg" id="soeg_anlaeg" condition="jQuery('#rediger').val() == 'true' || jQuery('#kopierdata').val() == 'true'"/>
+            <input type="text" displayname=" " condition="jQuery('#rediger').val() == 'true' || jQuery('#kopierdata').val() == 'true'"/>
+            <input type="text" displayname=" " condition="jQuery('#rediger').val() == 'true' || jQuery('#kopierdata').val() == 'true'"/>
+
+			<input type="hidden" id="sbsys_brugerid" urlparam="sbsys_brugerid" defaultvalue="DQ15586" />
+            <input type="input" displayname="Stednavn:" id="stednavn" urlparam="stednavn"  />
+			
+			<geosearch urlparam="address" id="address" displayname="Søg en adresse:" resources="Adresser" regexp=".+" filter="muncode0730" onkeyup="checkAdrAndSitenr();" />
+            <!-- <address urlparam="address" displayname="Adresse:" apikey="[module.spatialaddress.apikey]" filter="[module.spatialaddress.filter]" validate="Indtast adressen!"/> -->
+            <input type="input" displayname="Aggregatplacering:" id="aggregatplacering" urlparam="aggregatplacering" regexp=".+" validate="Indtast placeringen for aggregatet!"/>
+            <input type="input" displayname="Betjeningsområde:" id="betjeningsomraade" urlparam="betjeningsomraade"/>
+            <input type="input" displayname="Kontaktperson (navn):" id="kontaktperson_navn" urlparam="kontaktperson_navn"/>
+            <input type="input" displayname="Kontaktperson (tlf):" id="kontaktperson_tlf" urlparam="kontaktperson_tlf"/>
+            <input type="input" displayname="Sagsnr:" id="sagsnr" urlparam="sagsnr"/>
+            <input type="input" displayname="Anlæg nr:" id="anlaeg_nr" urlparam="anlaeg_nr" regexp=".+" validate="Indtast anlæggets nummer!" onkeyup="checkAdrAndSitenr();"/>
+			<input type="text" class="error" displayname="Adresse og stednavnet er allerede brugt." condition="jQuery('#knownAdrAndSitenr').val() == 'true'" />
+            <input type="date" displayname="Rev. dato:" id="rev_dato" urlparam="rev_dato"/>
+            <input type="input" displayname="Rev. navn:" id="rev_navn" urlparam="rev_navn"/>
+            <input type="input" displayname="Tegning nr:" id="tegning_nr" urlparam="tegning_nr"/>
+        </content>  
+        
+        <content displayname="Kort">
+
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Placer anlægget på kortet ved at bruge knappen med prikken og tryk på kortet"/>
+<!--
+            <input type="hidden" urlparam="about" defaultvalue="Location"/>
+-->
+            <maptools>
+                <maptool displayname="Brug aktuelle position" name="location" default="true"/>
+<!--
+                <maptool displayname="Tegn en strækning" name="line" default="false"/>
+-->
+                <maptool displayname="Panorer" name="pan" default="false"/>
+                <maptool displayname="Tegn et punkt" name="point" default="false"/>
+            </maptools>
+            <map required='false'>
+                <extent>546927,6285494,583177,6246787</extent>
+                <resolutions>0.2,0.4,0.8,1.6,3.2,6.4,12.8,25.6,51.2,102.4</resolutions>
+                <themes>
+                    <theme name="theme-luftfoto" host="//tile.randers.dk/service/wms?FORMAT=image%2Fjpeg"/>
+                </themes>
+            </map>
+            <input type="text" displayname=" "/>
+        </content>  
+        
+        <content displayname="IND ventilator">
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Fabrikat/type" urlparam="vent_type" id="vent_type"/>
+            <input type="text" displayname=" "/>
+            <input type="dropdown" displayname="Ventilationprincip:" id="ventilationprincip" urlparam="ventilationprincip">
+                <option value="" name="Vælg"/>
+                <option value="Indblæs" name="Indblæs"/>
+                <option value="Udsug" name="Udsug"/>
+                <option value="Rotor" name="Rotor"/>
+                <option value="Kryds" name="Kryds"/>
+                <option value="Modstrøm" name="Modstrøm"/>
+                <option value="Recirkulation" name="Recirkulation"/>
+                <option value="Væskekoblet batteri" name="Væskekoblet batteri"/>
+            </input>          
+            <input type="text" displayname=" "/>
+            <input type="dropdown" displayname="Automatik:" id="vent_automatik" urlparam="vent_automatik">
+                <option value="" name="Vælg"/>
+                <option value="CTS" name="CTS"/>
+                <option value="Egen styrring" name="Egen styrring"/>
+                <option value="Danfoss" name="Danfoss"/>
+                <option value="Netbaseret" name="Netbaseret"/>
+            </input>          
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Luftmængde (projeteret) m3/h" urlparam="vent_luftmaengde_proj" id="vent_luftmaengde_proj" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Luftmængde (målt) m3/h" urlparam="vent_luftmaengde_maalt" id="vent_luftmaengde_maalt" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Statisk tryk (projeteret) Pa" urlparam="vent_statisk_tryk_proj" id="vent_statisk_tryk_proj" regexp="^[-]?[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Statisk tryk (målt) Pa" urlparam="vent_statisk_tryk_maalt" id="vent_statisk_tryk_maalt" regexp="^[-]?[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Total tryk (projeteret) Pa" urlparam="vent_total_tryk_proj" id="vent_total_tryk_proj" regexp="^[-]?[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Total tryk (målt) Pa" urlparam="vent_total_tryk_maalt" id="vent_total_tryk_maalt" regexp="^[-]?[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Omdrejning (projeteret) o/min" urlparam="vent_omdrejning_proj" id="vent_omdrejning_proj" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Omdrejning (målt) o/min" urlparam="vent_omdrejning_maalt" id="vent_omdrejning_maalt" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Max omdrej. (projeteret) o/min" urlparam="vent_maks_omdr_proj" id="vent_maks_omdr_proj" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Max omdrej. (målt) o/min" urlparam="vent_maks_omdr_maalt" id="vent_maks_omdr_maalt" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="SEF (projeteret) j/m3" urlparam="vent_sef_proj" id="vent_sef_proj" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="SEF (målt) j/m3" urlparam="vent_sef_maalt" id="vent_sef_maalt" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+        </content>  
+        <content displayname="IND motor">
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Fabrikat/type" urlparam="motor_type" id="motor_type"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Effekt (projeteret) kW" urlparam="motor_effekt_proj" id="motor_effekt_proj" regexp="^[0-9.]*$" validate="Indtast en talværdi med max 2 decimaler!" onkeyup="setDecimal('motor_effekt_proj')"/>
+            <input type="input" displayname="Effekt (målt) kW" urlparam="motor_effekt_maalt" id="motor_effekt_maalt" regexp="^[0-9.]*$" validate="Indtast en talværdi med max 2 decimaler!" onkeyup="setDecimal('motor_effekt_maalt')"/>
+<!--             <input type="input" displayname="Effekt (målt) kW" urlparam="motor_effekt_maalt" id="motor_effekt_maalt" regexp="^[0-9]+(\.[0-9]{1,2})?$" validate="Indtast en talværdi med max 2 decimaler!" onkeyup="setDecimal('motor_effekt_maalt')"/>
+ -->            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Spænding (projeteret) volt" urlparam="motor_spaending_proj" id="motor_spaending_proj" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Spænding (målt) volt" urlparam="motor_spaending_maalt" id="motor_spaending_maalt" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Strømforbrug (projeteret) Amp" urlparam="motor_stroemforbrug_proj" id="motor_stroemforbrug_proj" regexp="^[0-9.]*$" validate="Indtast en talværdi med max 2 decimaler!" onkeyup="setDecimal('motor_stroemforbrug_proj')"/>
+            <input type="input" displayname="Strømforbrug (målt) Amp" urlparam="motor_stroemforbrug_maalt" id="motor_stroemforbrug_maalt" regexp="^[0-9.]*$" validate="Indtast en talværdi med max 2 decimaler!" onkeyup="setDecimal('motor_stroemforbrug_maalt')"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Omdrejning (projeteret) o/min" urlparam="motor_omdrejning_proj" id="motor_omdrejning_proj" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Omdrejning (målt) o/min" urlparam="motor_omdrejning_maalt" id="motor_omdrejning_maalt" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Cos (projeteret) ø" urlparam="motor_cos_proj" id="motor_cos_proj" regexp="^[0-9.]*$" validate="Indtast et tal mellem 0 og 1 med max 2 decimaler!" onkeyup="setDecimal('motor_cos_proj')"/>
+            <input type="input" displayname="Cos (målt) ø" urlparam="motor_cos_maalt" id="motor_cos_maalt" regexp="^[0-9.]*$" validate="Indtast et tal mellem 0 og 1 med max 2 decimaler!" onkeyup="setDecimal('motor_cos_maalt')"/>
+            <input type="text" displayname=" "/>
+        </content>  
+        <content displayname="IND drivkraft">
+            <input type="text" displayname=" "/>
+            <input type="dropdown" displayname="Drivkraft" urlparam="drivkraft" id="drivkraft">
+                <option value="" name="Vælg"/>
+                <option value="Direkte træk" name="Direkte træk"/>
+                <option value="Remtræk" name="Remtræk"/>
+            </input>          
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Ventilator (remskive)" urlparam="rem_ventilator_remskive" id="rem_ventilator_remskive" condition="jQuery('#drivkraft').val() == 'Remtræk'"/>
+            <input type="input" displayname="Ventilator (bøsning/udbor)" urlparam="rem_ventilator_udbor" id="rem_ventilator_udbor" condition="jQuery('#drivkraft').val() == 'Remtræk'"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Motor (remskive)" urlparam="rem_motor_remskive" id="rem_motor_remskive" condition="jQuery('#drivkraft').val() == 'Remtræk'"/>
+            <input type="input" displayname="Motor (bøsning/udbor)" urlparam="rem_motor_udbor" id="rem_motor_udbor" condition="jQuery('#drivkraft').val() == 'Remtræk'"/>
+<!--
+             <input type="input" displayname="Ventilator (remskive)" urlparam="rem_ventilator_remskive" id="rem_ventilator_remskive" condition="jQuery('#drivkraft').val() == 'Remtræk'" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Ventilator (bøsning/udbor)" urlparam="rem_ventilator_udbor" id="rem_ventilator_udbor" condition="jQuery('#drivkraft').val() == 'Remtræk'" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Motor (remskive)" urlparam="rem_motor_remskive" id="rem_motor_remskive" condition="jQuery('#drivkraft').val() == 'Remtræk'" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Motor (bøsning/udbor)" urlparam="rem_motor_udbor" id="rem_motor_udbor" condition="jQuery('#drivkraft').val() == 'Remtræk'" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+-->
+			<input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Antal kileremme" urlparam="rem_kileremme_antal" id="rem_kileremme_antal" condition="jQuery('#drivkraft').val() == 'Remtræk'" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Type kileremme" urlparam="rem_kileremme_type" id="rem_kileremme_type" condition="jQuery('#drivkraft').val() == 'Remtræk'"/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Centerafstand" urlparam="rem_centerafstand" id="rem_centerafstand" condition="jQuery('#drivkraft').val() == 'Remtræk'" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="+/- justering" urlparam="rem_justering" id="rem_justering" condition="jQuery('#drivkraft').val() == 'Remtræk'" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+        </content>  
+        <content displayname="Filter på indblæsning">
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Filter 1, Indblæsning"/>
+            <input type="dropdown" displayname="Type" urlparam="filter1_type" id="filter1_type">
+                <option value="" name="Vælg"/>
+                <option value="Pose" name="Pose"/>
+                <option value="Panel" name="Panel"/>
+                <option value="Plan" name="Plan"/>
+                <option value="Andet" name="Andet"/>
+            </input>          
+            <input type="input" displayname="Anden type" urlparam="filter1_type_andet" id="filter1_type_andet" condition="jQuery('#filter1_type').val() == 'Andet'"/>
+            <input type="input" displayname="Antal stk." urlparam="filter1_antal" id="filter1_antal" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Fabrikat nr." urlparam="filter1_nr" id="filter1_nr" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Filtrerings klasse" urlparam="filter1_klasse" id="filter1_klasse"/>
+            <input type="input" displayname="Bredde i mm" urlparam="filter1_bredde" id="filter1_bredde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Højde i mm" urlparam="filter1_hoejde" id="filter1_hoejde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Poselængde i mm" urlparam="filter1_laengde" id="filter1_laengde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Pose antal" urlparam="filter1_pose_antal" id="filter1_pose_antal" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Filter 2, Indblæsning"/>
+            <input type="dropdown" displayname="Type" urlparam="filter2_type" id="filter2_type">
+                <option value="" name="Vælg"/>
+                <option value="Pose" name="Pose"/>
+                <option value="Panel" name="Panel"/>
+                <option value="Plan" name="Plan"/>
+                <option value="Andet" name="Andet"/>
+            </input>          
+            <input type="input" displayname="Anden type" urlparam="filter2_type_andet" id="filter2_type_andet" condition="jQuery('#filter2_type').val() == 'Andet'"/>
+            <input type="input" displayname="Antal stk." urlparam="filter2_antal" id="filter2_antal" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Fabrikat nr." urlparam="filter2_nr" id="filter2_nr" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Filtrerings klasse" urlparam="filter2_klasse" id="filter2_klasse"/>
+            <input type="input" displayname="Bredde i mm" urlparam="filter2_bredde" id="filter2_bredde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Højde i mm" urlparam="filter2_hoejde" id="filter2_hoejde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Poselængde i mm" urlparam="filter2_laengde" id="filter2_laengde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Pose antal" urlparam="filter2_pose_antal" id="filter2_pose_antal" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Filter 3, Indblæsning"/>
+            <input type="dropdown" displayname="Type" urlparam="filter3_type" id="filter3_type">
+                <option value="" name="Vælg"/>
+                <option value="Pose" name="Pose"/>
+                <option value="Panel" name="Panel"/>
+                <option value="Plan" name="Plan"/>
+                <option value="Andet" name="Andet"/>
+            </input>          
+            <input type="input" displayname="Anden type" urlparam="filter3_type_andet" id="filter3_type_andet" condition="jQuery('#filter3_type').val() == 'Andet'"/>
+            <input type="input" displayname="Antal stk." urlparam="filter3_antal" id="filter3_antal" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Fabrikat nr." urlparam="filter3_nr" id="filter3_nr" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Filtrerings klasse" urlparam="filter3_klasse" id="filter3_klasse"/>
+            <input type="input" displayname="Bredde i mm" urlparam="filter3_bredde" id="filter3_bredde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Højde i mm" urlparam="filter3_hoejde" id="filter3_hoejde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Poselængde i mm" urlparam="filter3_laengde" id="filter3_laengde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Pose antal" urlparam="filter3_pose_antal" id="filter3_pose_antal" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="textarea" displayname="Bemærkning til indblæsningsfiltre" urlparam="bemaerkning" id="bemaerkning"/>
+            <input type="text" displayname=" "/>
+        </content>  
+
+        <content displayname="UD ventilator">
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Fabrikat/type" urlparam="ud_vent_type" id="ud_vent_type"/>
+            <input type="text" displayname=" "/>
+            <input type="dropdown" displayname="Ventilationprincip:" id="ud_ventilationprincip" urlparam="ud_ventilationprincip">
+                <option value="" name="Vælg"/>
+                <option value="Indblæs" name="Indblæs"/>
+                <option value="Udsug" name="Udsug"/>
+                <option value="Rotor" name="Rotor"/>
+                <option value="Kryds" name="Kryds"/>
+                <option value="Modstrøm" name="Modstrøm"/>
+                <option value="Recirkulation" name="Recirkulation"/>
+            </input>          
+            <input type="text" displayname=" "/>
+            <input type="dropdown" displayname="Automatik:" id="ud_vent_automatik" urlparam="ud_vent_automatik">
+                <option value="" name="Vælg"/>
+                <option value="CTS" name="CTS"/>
+                <option value="Egen styrring" name="Egen styrring"/>
+                <option value="Danfoss" name="Danfoss"/>
+                <option value="Netbaseret" name="Netbaseret"/>
+            </input>          
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Luftmængde (projeteret) m3/h" urlparam="ud_vent_luftmaengde_proj" id="ud_vent_luftmaengde_proj" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Luftmængde (målt) m3/h" urlparam="ud_vent_luftmaengde_maalt" id="ud_vent_luftmaengde_maalt" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Statisk tryk (projeteret) Pa" urlparam="ud_vent_statisk_tryk_proj" id="ud_vent_statisk_tryk_proj" regexp="^[-]?[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Statisk tryk (målt) Pa" urlparam="ud_vent_statisk_tryk_maalt" id="ud_vent_statisk_tryk_maalt" regexp="^[-]?[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Total tryk (projeteret) Pa" urlparam="ud_vent_total_tryk_proj" id="ud_vent_total_tryk_proj" regexp="^[-]?[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Total tryk (målt) Pa" urlparam="ud_vent_total_tryk_maalt" id="ud_vent_total_tryk_maalt" regexp="^[-]?[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Omdrejning (projeteret) o/min" urlparam="ud_vent_omdrejning_proj" id="ud_vent_omdrejning_proj" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Omdrejning (målt) o/min" urlparam="ud_vent_omdrejning_maalt" id="ud_vent_omdrejning_maalt" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Max omdrej. (projeteret) o/min" urlparam="ud_vent_maks_omdr_proj" id="ud_vent_maks_omdr_proj" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Max omdrej. (målt) o/min" urlparam="ud_vent_maks_omdr_maalt" id="ud_vent_maks_omdr_maalt" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="SEF (projeteret) j/m3" urlparam="ud_vent_sef_proj" id="ud_vent_sef_proj" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="SEF (målt) j/m3" urlparam="ud_vent_sef_maalt" id="ud_vent_sef_maalt" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+        </content>  
+        <content displayname="UD motor">
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Fabrikat/type" urlparam="ud_motor_type" id="ud_motor_type"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Effekt (projeteret) kW" urlparam="ud_motor_effekt_proj" id="ud_motor_effekt_proj" regexp="^[0-9.]*$" validate="Indtast en talværdi med max 2 decimaler!" onkeyup="setDecimal('ud_motor_effekt_proj')"/>
+            <input type="input" displayname="Effekt (målt) kW" urlparam="ud_motor_effekt_maalt" id="ud_motor_effekt_maalt" regexp="^[0-9.]*$" validate="Indtast en talværdi med max 2 decimaler!" onkeyup="setDecimal('ud_motor_effekt_maalt')"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Spænding (projeteret) volt" urlparam="ud_motor_spaending_proj" id="ud_motor_spaending_proj" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Spænding (målt) volt" urlparam="ud_motor_spaending_maalt" id="ud_motor_spaending_maalt" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Strømforbrug (projeteret) Amp" urlparam="ud_motor_stroemforbrug_proj" id="ud_motor_stroemforbrug_proj" regexp="^[0-9.]*$" validate="Indtast en talværdi med max 2 decimaler!" onkeyup="setDecimal('ud_motor_stroemforbrug_proj')"/>
+            <input type="input" displayname="Strømforbrug (målt) Amp" urlparam="ud_motor_stroemforbrug_maalt" id="ud_motor_stroemforbrug_maalt" regexp="^[0-9.]*$" validate="Indtast en talværdi med max 2 decimaler!" onkeyup="setDecimal('ud_motor_stroemforbrug_maalt')"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Omdrejning (projeteret) o/min" urlparam="ud_motor_omdrejning_proj" id="ud_motor_omdrejning_proj" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Omdrejning (målt) o/min" urlparam="ud_motor_omdrejning_maalt" id="ud_motor_omdrejning_maalt" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Cos (projeteret) ø" urlparam="ud_motor_cos_proj" id="ud_motor_cos_proj" regexp="^[0-9.]*$" validate="Indtast et tal mellem 0 og 1 med max 2 decimaler!" onkeyup="setDecimal('ud_motor_cos_proj')"/>
+            <input type="input" displayname="Cos (målt) ø" urlparam="ud_motor_cos_maalt" id="ud_motor_cos_maalt" regexp="^[0-9.]*$" validate="Indtast et tal mellem 0 og 1 med max 2 decimaler!" onkeyup="setDecimal('ud_motor_cos_maalt')"/>
+            <input type="text" displayname=" "/>
+        </content>  
+        <content displayname="UD drivkraft">
+            <input type="text" displayname=" "/>
+            <input type="dropdown" displayname="Drivkraft" urlparam="ud_drivkraft" id="ud_drivkraft">
+                <option value="" name="Vælg"/>
+                <option value="Direkte træk" name="Direkte træk"/>
+                <option value="Remtræk" name="Remtræk"/>
+            </input>          
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Ventilator (remskive)" urlparam="ud_rem_ventilator_remskive" id="ud_rem_ventilator_remskive" condition="jQuery('#ud_drivkraft').val() == 'Remtræk'"/>
+            <input type="input" displayname="Ventilator (bøsning/udbor)" urlparam="ud_rem_ventilator_udbor" id="ud_rem_ventilator_udbor" condition="jQuery('#ud_drivkraft').val() == 'Remtræk'"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Motor (remskive)" urlparam="ud_rem_motor_remskive" id="ud_rem_motor_remskive" condition="jQuery('#ud_drivkraft').val() == 'Remtræk'"/>
+            <input type="input" displayname="Motor (bøsning/udbor)" urlparam="ud_rem_motor_udbor" id="ud_rem_motor_udbor" condition="jQuery('#ud_drivkraft').val() == 'Remtræk'"/>
+<!--
+             <input type="input" displayname="Ventilator (remskive)" urlparam="ud_rem_ventilator_remskive" id="ud_rem_ventilator_remskive" condition="jQuery('#ud_drivkraft').val() == 'Remtræk'" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Ventilator (bøsning/udbor)" urlparam="ud_rem_ventilator_udbor" id="ud_rem_ventilator_udbor" condition="jQuery('#ud_drivkraft').val() == 'Remtræk'" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Motor (remskive)" urlparam="ud_rem_motor_remskive" id="ud_rem_motor_remskive" condition="jQuery('#ud_drivkraft').val() == 'Remtræk'" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Motor (bøsning/udbor)" urlparam="ud_rem_motor_udbor" id="ud_rem_motor_udbor" condition="jQuery('#ud_drivkraft').val() == 'Remtræk'" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+-->
+			<input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Antal kileremme" urlparam="ud_rem_kileremme_antal" id="ud_rem_kileremme_antal" condition="jQuery('#ud_drivkraft').val() == 'Remtræk'" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Type kileremme" urlparam="ud_rem_kileremme_type" id="ud_rem_kileremme_type" condition="jQuery('#ud_drivkraft').val() == 'Remtræk'"/>
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Centerafstand" urlparam="ud_rem_centerafstand" id="ud_rem_centerafstand" condition="jQuery('#ud_drivkraft').val() == 'Remtræk'" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="+/- justering" urlparam="ud_rem_justering" id="ud_rem_justering" condition="jQuery('#ud_drivkraft').val() == 'Remtræk'" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+        </content>  
+
+        <content displayname="Filter på udsugningning">
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Filter 1, Udsugning"/>
+            <input type="dropdown" displayname="Type" urlparam="filter1_ud_type" id="filter1_ud_type">
+                <option value="" name="Vælg"/>
+                <option value="Pose" name="Pose"/>
+                <option value="Panel" name="Panel"/>
+                <option value="Plan" name="Plan"/>
+                <option value="Andet" name="Andet"/>
+            </input>          
+            <input type="input" displayname="Anden type" urlparam="filter1_ud_type_andet" id="filter1_ud_type_andet" condition="jQuery('#filter1_ud_type').val() == 'Andet'"/>
+            <input type="input" displayname="Antal stk." urlparam="filter1_ud_antal" id="filter1_ud_antal" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Fabrikat nr." urlparam="filter1_ud_nr" id="filter1_ud_nr" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Filtrerings klasse" urlparam="filter1_ud_klasse" id="filter1_ud_klasse"/>
+            <input type="input" displayname="Bredde i mm" urlparam="filter1_ud_bredde" id="filter1_ud_bredde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Højde i mm" urlparam="filter1_ud_hoejde" id="filter1_ud_hoejde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Poselængde i mm" urlparam="filter1_ud_laengde" id="filter1_ud_laengde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Pose antal" urlparam="filter1_ud_pose_antal" id="filter1_ud_pose_antal" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Filter 2, Udsugning"/>
+            <input type="dropdown" displayname="Type" urlparam="filter2_ud_type" id="filter2_ud_type">
+                <option value="" name="Vælg"/>
+                <option value="Pose" name="Pose"/>
+                <option value="Panel" name="Panel"/>
+                <option value="Plan" name="Plan"/>
+                <option value="Andet" name="Andet"/>
+            </input>          
+            <input type="input" displayname="Anden type" urlparam="filter2_ud_type_andet" id="filter2_ud_type_andet" condition="jQuery('#filter2_ud_type').val() == 'Andet'"/>
+            <input type="input" displayname="Antal stk." urlparam="filter2_ud_antal" id="filter2_ud_antal" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Fabrikat nr." urlparam="filter2_ud_nr" id="filter2_ud_nr" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Filtrerings klasse" urlparam="filter2_ud_klasse" id="filter2_ud_klasse"/>
+            <input type="input" displayname="Bredde i mm" urlparam="filter2_ud_bredde" id="filter2_ud_bredde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Højde i mm" urlparam="filter2_ud_hoejde" id="filter2_ud_hoejde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Poselængde i mm" urlparam="filter2_ud_laengde" id="filter2_ud_laengde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Pose antal" urlparam="filter2_ud_pose_antal" id="filter2_ud_pose_antal" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Filter 3, Udsugning"/>
+            <input type="dropdown" displayname="Type" urlparam="filter3_ud_type" id="filter3_ud_type">
+                <option value="" name="Vælg"/>
+                <option value="Pose" name="Pose"/>
+                <option value="Panel" name="Panel"/>
+                <option value="Plan" name="Plan"/>
+                <option value="Andet" name="Andet"/>
+            </input>          
+            <input type="input" displayname="Anden type" urlparam="filter3_ud_type_andet" id="filter3_ud_type_andet" condition="jQuery('#filter3_ud_type').val() == 'Andet'"/>
+            <input type="input" displayname="Antal stk." urlparam="filter3_ud_antal" id="filter3_ud_antal" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Fabrikat nr." urlparam="filter3_ud_nr" id="filter3_ud_nr" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="input" displayname="Filtrerings klasse" urlparam="filter3_ud_klasse" id="filter3_ud_klasse"/>
+            <input type="input" displayname="Bredde i mm" urlparam="filter3_ud_bredde" id="filter3_ud_bredde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Højde i mm" urlparam="filter3_ud_hoejde" id="filter3_ud_hoejde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Poselængde i mm" urlparam="filter3_ud_laengde" id="filter3_ud_laengde" regexp="^[0-9]*$" validate="Indtast et helt tal i mm!"/>
+            <input type="input" displayname="Pose antal" urlparam="filter3_ud_pose_antal" id="filter3_ud_pose_antal" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="textarea" displayname="Bemærkning til udsugningsfiltre" urlparam="bemaerkning_ud" id="bemaerkning_ud"/>
+            <input type="text" displayname=" "/>
+        </content>  
+        <content displayname="Røgspjæld">
+            <input type="text" displayname=" "/>
+            <input type="input" displayname="Antal stk." urlparam="roegspjaeld_antal" id="roegspjaeld_antal" regexp="^[0-9]*$" validate="Indtast et helt tal!"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Mulighed for at tage et billede i forbindelse med røg- og brandspjæld" condition="jQuery('#roegspjaeld_foto').val() == ''"/>
+            <input type="text" displayname="Se eksisterede billede af røg- og brandspjæld her:" condition="jQuery('#roegspjaeld_foto').val() != ''"/>
+			<input type="text" displayname="&lt;a href=&quot;http://webkort.randers.dk/formular/upload/{linkdata} target=&quot;_new&quot;&gt;Billede af røg- og brandspjæld&lt;/a&gt;" id="roegspjaeld_link" condition="jQuery('#roegspjaeld_foto').val() != ''"/>
+            <input type="text" displayname="Upload et nyt billede af røg- og brandspjæld nedenfor:" condition="jQuery('#roegspjaeld_foto').val() != ''"/>
+            <input type="file" displayname="Indsæt foto" id="roegspjaeld_foto" urlparam="roegspjaeld_foto"/>				
+        </content>  
+        <content displayname="Foto">
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="--!!! Ved iPads og iPhones skal billeder tages liggende med kameraet i øverst venstre hjørne !!!--"/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Medsend op til 4 billeder af anlægget "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Se eksisterede billede her:" condition="jQuery('#foto1').val() != ''"/>
+			<input type="text" displayname="&lt;a href=&quot;http://webkort.randers.dk/formular/upload/{linkdata1} target=&quot;_new&quot;&gt;Se billede&lt;/a&gt;" id="foto1_link" condition="jQuery('#foto1').val() != ''"/>
+            <input type="text" displayname="Upload et nyt billede nedenfor:" condition="jQuery('#foto1').val() != ''"/>
+            <input type="file" displayname="Indsæt foto 1" id="foto1" urlparam="foto1"/>				
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Se eksisterede billede her:" condition="jQuery('#foto2').val() != ''"/>
+			<input type="text" displayname="&lt;a href=&quot;http://webkort.randers.dk/formular/upload/{linkdata2} target=&quot;_new&quot;&gt;Se billede&lt;/a&gt;" id="foto2_link" condition="jQuery('#foto2').val() != ''"/>
+            <input type="text" displayname="Upload et nyt billede nedenfor:" condition="jQuery('#foto2').val() != ''"/>
+            <input type="file" displayname="Indsæt foto 2" id="foto2" urlparam="foto2"/>				
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Se eksisterede billede her:" condition="jQuery('#foto3').val() != ''"/>
+			<input type="text" displayname="&lt;a href=&quot;http://webkort.randers.dk/formular/upload/{linkdata3} target=&quot;_new&quot;&gt;Se billede&lt;/a&gt;" id="foto3_link" condition="jQuery('#foto3').val() != ''"/>
+            <input type="text" displayname="Upload et nyt billede nedenfor:" condition="jQuery('#foto3').val() != ''"/>
+            <input type="file" displayname="Indsæt foto 3" id="foto3" urlparam="foto3"/>				
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="text" displayname="Se eksisterede billede her:" condition="jQuery('#foto4').val() != ''"/>
+			<input type="text" displayname="&lt;a href=&quot;http://webkort.randers.dk/formular/upload/{linkdata4} target=&quot;_new&quot;&gt;Se billede&lt;/a&gt;" id="foto4_link" condition="jQuery('#foto4').val() != ''"/>
+            <input type="text" displayname="Upload et nyt billede nedenfor:" condition="jQuery('#foto4').val() != ''"/>
+            <input type="file" displayname="Indsæt foto 4" id="foto4" urlparam="foto4"/>				
+            <input type="text" displayname=" "/>
+			<confirm displayname="Følgende oplysninger er indtastet. Er det korrekt?"/>
+            <submitbutton displayname="Tilbage til forsiden" function="handleMessageButton();"/>
+        </content>  
+   </formular>
+
+</config>

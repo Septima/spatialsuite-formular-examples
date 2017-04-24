@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+    <endpoint endpointtype="postgis" name="mailsender">
+        <connect>[module.formular-config.connection]</connect>
+        <user>[module.formular-config.user]</user>
+        <pwd>[module.formular-config.pwd]</pwd>
+        <srid>25832</srid>
+        <table geometrycolumn="the_geom" pkcolumn="ogc_fid"/>
+    </endpoint>
+    <datasource displayname="Etablering af nedsivningsanlæg" endpoint="gistest" name="ds_formular_etabler_nedsivningsanlaeg">
+		<table geometrycolumn="wkb_geometry" name="selvbetjening.formular_etabler_nedsivningsanlaeg" pkcolumn="ogc_fid"/>       
+	   <sql command="read-by-id">select * from selvbetjening.formular_etabler_nedsivningsanlaeg where ogc_fid = [number:ogc_fid]</sql>
+	   <sql command="write">insert into selvbetjening.formular_etabler_nedsivningsanlaeg 
+        (	
+			soegtadr ,
+			soegtmatr ,
+			soegtejer ,
+			ejd_adresse ,
+			ejers_navn ,
+			ejers_adresse ,
+			ejers_email ,
+			ejers_tlf ,
+km_navn,
+km_adresse,
+km_mail,
+km_cvr,
+			benyttelse ,
+
+eks_forh_antalpe,
+eks_forh_spabad,
+
+			eks_forh_vandforsyning ,
+			eks_forh_vandvaerk  ,
+			eks_forh_bundfaeldning  ,
+			eks_forh_husspildevand  ,
+			eks_forh_bortskaffelse  ,
+			eks_forh_bortskaf_beskrivelse ,
+
+eks_forh_saerlige_forhold,
+			
+			
+			frem_forh_placering ,
+			frem_forh_accpet ,
+			frem_forh_tryksat ,
+			frem_forh_overterraen ,
+
+frem_forh_afstand_sivdraen_gvs,
+frem_forh_afstand_sivdraen_ter,
+frem_forh_mile,
+
+			frem_forh_flerehusstande ,
+			frem_forh_antalhusstande ,
+			frem_forh_spildvandstype ,
+			frem_forh_groeftareal ,
+			frem_forh_sivelaengde ,
+			frem_forh_siveareal ,
+			frem_forh_eksisterendebundtanke ,
+			frem_forh_nytank_kamre ,
+			frem_forh_nytank_vol ,
+			frem_forh_nytank_type ,
+
+frem_forh_nytank_type_txt ,
+
+			frem_forh_belastning ,
+			frem_forh_belastning_detalje ,
+
+frem_forh_sigteanalyse,
+			
+			afstand_naermestebygning ,
+			afstand_naermesteskel ,
+			afstand_naermesteboring ,
+			afstand_naermesteandenboring,
+			afstand_vandvaerkmindre ,
+			afstand_vandvaerkmindrenavn ,
+			afstand_vandvaerkmere ,
+			afstand_vandvaerkmerenavn ,
+			afstand_proj_kyst ,
+			afstand_proj_kyst_meter ,
+			afstand_proj_soe ,
+			afstand_proj_soe_meter ,
+			afstand_proj_vandloeb ,
+			afstand_proj_vandloeb_meter ,
+			afstand_proj_groeft ,
+			afstand_proj_groeft_meter ,
+			afstand_proj_draenled ,
+			afstand_proj_draenled_meter ,
+			afstand_proj_stejle  ,
+			afstand_proj_stejle_meter ,
+			proj_gravhoeje  ,
+			afstand_proj_gravhoej_meter ,
+afstand_proj_fortidsminder,
+afstand_proj_andre_nedsivningsanlaeg,
+			journalnr ,
+			ref,
+			login,
+			dagsdato,
+			kloakplan,
+			andre_dok,
+			afstand_markvandingsboringer,
+			frem_forh_pejling_dato,
+			frem_forh_tro_og_love,
+			wkb_geometry)
+          values 
+			(
+			[string: if isDefined(address_soeg) then address_soeg else "" endif],
+            [string: if isDefined(matrikelnr) then matrikelnr else "" endif],
+			[string: if isDefined(ejer) then ejer else "" endif],
+            [string: if isDefined(ejendommens_adresse) then ejendommens_adresse else "" endif],
+			[string: if isDefined(navn) then navn else "" endif],
+            [string: if isDefined(adresse) then adresse else "" endif],
+			[string: if isDefined(email) then email else "" endif],
+            [number: if isDefined(ejers_tlf) then ToNumber(ejers_tlf) else 0 endif],
+			[string: if isDefined(km_navn) then km_navn else "" endif],
+			[string: if isDefined(km_adr) then km_adr else "" endif],
+			[string: if isDefined(km_email) then km_email else "" endif],
+			[string: if isDefined(km_cvr) then km_cvr else "" endif],
+
+			[string: if isDefined(eks_forh_benyttelse) then eks_forh_benyttelse else "" endif],
+
+			[string: if isDefined(eks_forh_antalpe) then eks_forh_antalpe else "" endif],
+			[string: if isDefined(eks_forh_spabad) then eks_forh_spabad else "" endif],
+
+            [string: if isDefined(eks_forh_vandforsyning) then eks_forh_vandforsyning else "" endif],
+			[string: if isDefined(eks_forh_vandvaerk) then eks_forh_vandvaerk else "" endif],
+            [string: if isDefined(eks_forh_bundfaeldning) then eks_forh_bundfaeldning else "" endif],
+			[string: if isDefined(eks_forh_husspildevand) then eks_forh_husspildevand else "" endif],
+            [string: if isDefined(eks_forh_bortskaffelse) then eks_forh_bortskaffelse else "" endif],
+			[string: if isDefined(eks_forh_bortskaf_beskrivelse) then eks_forh_bortskaf_beskrivelse else "" endif],
+			[string: if isDefined(eks_forh_saerlige_forhold) then eks_forh_saerlige_forhold else "" endif],
+            [string: if isDefined(frem_forh_placering) then frem_forh_placering else "" endif],
+			[string: if isDefined(frem_forh_accpet) then frem_forh_accpet else "" endif],
+            [string: if isDefined(frem_forh_tryksat) then frem_forh_tryksat else "" endif],
+			[string: if isDefined(frem_forh_overterraen) then frem_forh_overterraen else "" endif],
+			
+			[number: if isDefined(frem_forh_afstand_sivdraen_gvs) then ToNumber(frem_forh_afstand_sivdraen_gvs) else -1 endif],
+			[number: if isDefined(frem_forh_afstand_sivdraen_ter) then ToNumber(frem_forh_afstand_sivdraen_ter) else -1 endif],
+			[number: if isDefined(frem_forh_mile) then ToNumber(frem_forh_mile) else "" endif],
+
+            [string: if isDefined(frem_forh_flerehusstande) then frem_forh_flerehusstande else "" endif],
+			[number: if isDefined(frem_forh_antalhusstande) then ToNumber(frem_forh_antalhusstande) else -1 endif],
+            [string: if isDefined(frem_forh_spildvandstype) then frem_forh_spildvandstype else "" endif],
+			[string: if isDefined(frem_forh_groeftareal) then frem_forh_groeftareal else "" endif],
+            [number: if isDefined(frem_forh_sivelaengde) then ToNumber(frem_forh_sivelaengde) else -1 endif],
+			[number: if isDefined(frem_forh_siveareal) then ToNumber(frem_forh_siveareal) else -1 endif],
+			[string: if isDefined(frem_forh_eksisterendebundtanke) then frem_forh_eksisterendebundtanke else "" endif],
+            [number: if isDefined(frem_forh_nytank_kamre) then ToNumber(frem_forh_nytank_kamre) else -1 endif],
+			[number: if isDefined(frem_forh_nytank_vol) then ToNumber(frem_forh_nytank_vol) else -1 endif],
+            [string: if isDefined(frem_forh_nytank_type) then frem_forh_nytank_type else "" endif],
+
+			[string: if isDefined(frem_forh_nytank_type_txt) then frem_forh_nytank_type_txt else "" endif],
+
+			[string: if isDefined(frem_forh_belastning) then frem_forh_belastning else "" endif],
+			[string: if isDefined(frem_forh_belastning_detalje) then frem_forh_belastning_detalje else "" endif],
+
+			[string: if isDefined(frem_forh_sigteanalyse) then frem_forh_sigteanalyse else "" endif],
+
+            [string: if isDefined(afstand_naermestebygning) then afstand_naermestebygning else "" endif],
+			[string: if isDefined(afstand_naermesteskel) then afstand_naermesteskel else "" endif],
+            [string: if isDefined(afstand_naermesteboring) then afstand_naermesteboring else "" endif],
+			[string: if isDefined(afstand_naermesteandenboring) then afstand_naermesteandenboring else "" endif],
+            [string: if isDefined(afstand_vandvaerkmindre) then afstand_vandvaerkmindre else "" endif],
+			[string: if isDefined(afstand_vandvaerkmindrenavn) then afstand_vandvaerkmindrenavn else "" endif],
+            [string: if isDefined(afstand_vandvaerkmere) then afstand_vandvaerkmere else "" endif],
+			[string: if isDefined(afstand_vandvaerkmerenavn) then afstand_vandvaerkmerenavn else "" endif],
+            [string: if isDefined(afstand_proj_kyst) then afstand_proj_kyst else "" endif],
+			[number: if isDefined(afstand_proj_kyst_meter) then ToNumber(afstand_proj_kyst_meter) else -1 endif],
+            [string: if isDefined(afstand_proj_soe) then afstand_proj_soe else "" endif],
+			[number: if isDefined(afstand_proj_soe_meter) then ToNumber(afstand_proj_soe_meter) else -1 endif],
+            [string: if isDefined(afstand_proj_vandloeb) then afstand_proj_vandloeb else "" endif],
+			[number: if isDefined(afstand_proj_vandloeb_meter) then ToNumber(afstand_proj_kyst_meter) else -1 endif],
+            [string: if isDefined(afstand_proj_groeft) then afstand_proj_groeft else "" endif],
+			[number: if isDefined(afstand_proj_groeft_meter) then ToNumber(afstand_proj_groeft_meter) else -1 endif],
+            [string: if isDefined(afstand_proj_draenled) then afstand_proj_draenled else "" endif],
+			[number: if isDefined(afstand_proj_draenled_meter) then ToNumber(afstand_proj_draenled_meter) else -1 endif],
+            [string: if isDefined(afstand_proj_stejle) then afstand_proj_stejle else "" endif],
+			[number: if isDefined(afstand_proj_stejle_meter) then ToNumber(afstand_proj_stejle_meter) else -1 endif],
+            [string: if isDefined(afstand_proj_gravhoeje) then afstand_proj_gravhoeje else "" endif],
+			[number: if isDefined(afstand_proj_gravhoej_meter) then ToNumber(afstand_proj_gravhoej_meter) else -1 endif],
+			[string: if isDefined(afstand_proj_fortidsminder) then afstand_proj_fortidsminder else "" endif],
+			[string: if isDefined(afstand_proj_andre_nedsivningsanlaeg) then afstand_proj_andre_nedsivningsanlaeg else "" endif],
+            [string: if isDefined(journalnr) then journalnr else "" endif],
+			[string: if isDefined(sessionid) then sessionid else "" endif],
+            [string: if isDefined(login) then login else "" endif],
+			[string: if isDefined(dagsdato) then dagsdato else "" endif],
+			[string: if isDefined(kloakplan) then kloakplan else "" endif],
+			[string: if isDefined(andre_dok) then andre_dok else "" endif],
+			[string: if isDefined(afstand_markvandingsboringer) then afstand_markvandingsboringer else "" endif],
+			[string: if isDefined(frem_forh_pejling_dato) then frem_forh_pejling_dato else "" endif],
+			[string: if isDefined(frem_forh_tro_og_love) then frem_forh_tro_og_love else "" endif],
+            [geometry: ToGeometry(wkt)])</sql>
+		   <!-- <debug>true</debug> -->
+    </datasource>
+</datasources>

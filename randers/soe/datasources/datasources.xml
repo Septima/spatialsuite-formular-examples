@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+    <endpoint endpointtype="postgis" name="mailsender">
+        <connect>[module.formular-config.connection]</connect>
+        <user>[module.formular-config.user]</user>
+        <pwd>[module.formular-config.pwd]</pwd>
+        <srid>25832</srid>
+        <table geometrycolumn="the_geom" pkcolumn="ogc_fid"/>
+    </endpoint>
+    <datasource displayname="Andmeldelse af vandhul" endpoint="selvbetjening" name="ds_formular_soe">
+        <sql command="write">insert into formular_soe
+                      (formular, address, areal, konflikttekst1, konflikttekst2, hvad, udnyttelse, draenet, navn, email, tlf, navn1, email3, ejererklaering, begrundelse, billede1, billede2, billede3, wkb_geometry) 
+                      values
+                      (
+                      [string: if isDefined(formular) then formular else "Ikke oplyst" endif],
+                      [string: if isDefined(address) then address else "Ikke oplyst" endif],
+                      [string: if isDefined(areal) then areal else "Ikke oplyst" endif],
+                      [string: if isDefined(konflikttekst1) then konflikttekst1 else "Ikke oplyst" endif],
+                      [string: if isDefined(konflikttekst2) then konflikttekst2 else "Ikke oplyst" endif],
+                      [string: if isDefined(hvad) then hvad else "Ikke oplyst" endif],
+                      [string: if isDefined(udnyttelse) then udnyttelse else "Ikke oplyst" endif],
+                      [string: if isDefined(draenet) then draenet else "Ikke oplyst" endif],
+                      [string: if isDefined(navn1) then navn1 else "Ikke oplyst" endif],
+                      [string: if isDefined(email) then email else "Ikke oplyst" endif],
+                      [string: if isDefined(tlf) then tlf else "Ikke oplyst" endif],
+                      [string: if isDefined(navn) then navn else "Ikke oplyst" endif],
+                      [string: if isDefined(email3) then email3 else "Ikke oplyst" endif],
+                      [string: if isDefined(ejererklaering) then ejererklaering else "Ikke oplyst" endif],
+                      [string: if isDefined(begrundelse) then begrundelse else "Ikke oplyst" endif],
+                      [string: if isDefined(billede1) then begrundelse else "Ikke oplyst" endif],
+                      [string: if isDefined(billede2) then begrundelse else "Ikke oplyst" endif],
+                      [string: if isDefined(billede3) then begrundelse else "Ikke oplyst" endif],
+                      [geometry: ToGeometry(wkt)])</sql>
+        <table geometrycolumn="wkb_geometry" name="formular_soe" pkcolumn="ogc_fid"/>
+    </datasource>
+</datasources>

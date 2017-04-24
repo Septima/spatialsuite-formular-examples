@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+   <formular name="tjek_og_serviceliste_vent">
+        <header>Tjek- og serviceliste - Ventilationsanlæg</header>
+        <subheader> </subheader>
+		<submitpages>
+			<page>formular.send.tjek_og_serviceliste_vent</page>			
+        </submitpages>
+		<!-- 
+        <submitpage>formular.send.tjek_og_serviceliste_vent</submitpage>
+		-->
+		<reportprofile>ekstern_all</reportprofile>
+        <reportlayers>default</reportlayers>
+		<showreport>false</showreport>
+<!--
+		<localstore>true</localstore>
+        <reportxsl>tilsyn_vandloeb</reportxsl>
+        <tabs class="smalltabs">true</tabs>
+-->
+        <js>/modules/formular/formular-config/js/tjek_og_serviceliste_vent.js</js>
+		<css>/css/custom/tablet.css</css>
+		<messages>
+            <message name="done">Tjek- og servicelisten er nu sendt</message>
+            <message name="error">Der er desværre opstået en fejl!!! Kontakt Rene Jensen på 89 15 18 53</message>
+        </messages>
+        <content displayname="Start">
+            <input type="text" displayname=" "/>
+			<input type="hidden" id="login" urlparam="login"/>
+			<input type="hidden" id="sbsys_brugerid" urlparam="sbsys_brugerid" defaultvalue="DQ15586" />
+            <input type="date" displayname="Service udført d.:" id="service_dato" urlparam="service_dato" regexp=".+" validate="Vælg datoen for udført service!"/>
+            <input type="input" displayname="Vælg anlæg:" id="anlaeg" urlparam="anlaeg" regexp=".+" validate="Vælg et anlæg fra listen!"/>
+			<input type="hidden" id="anlaeg_wkt" urlparam="anlaeg_wkt" defaultvalue="" />
+            <input type="dropdown" displayname="Er serviceopgaven afsluttet?" urlparam="service_afsluttet" id="service_afsluttet" regexp=".+" validate="Vælg Ja eller Nej!">
+                <option value="" name="Vælg"/>
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>
+            </input>          
+            <input type="checkbox" displayname="Manglende udskiftning af filtre" defaultvalue="false" urlparam="udskiftning_filtre" id="udskiftning_filtre" condition="jQuery('#service_afsluttet').val() == 'Nej'"/>
+            <input type="checkbox" displayname="Manglende udskiftning af remme" defaultvalue="false" urlparam="udskiftning_remme" id="udskiftning_remme" condition="jQuery('#service_afsluttet').val() == 'Nej'"/>
+            <input type="checkbox" displayname="Manglende udskiftning af andet" defaultvalue="false" urlparam="udskiftning_andet" id="udskiftning_andet" condition="jQuery('#service_afsluttet').val() == 'Nej'"/>
+            <input type="dropdown" displayname="Passer serviceinterval med nuværende forbrugsprofil?" urlparam="passer_serviceinterval" id="passer_serviceinterval" regexp=".+" validate="Vælg Ja eller Nej!">
+                <option value="" name="Vælg"/>
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>
+            </input>          
+            <input type="dropdown" displayname="Foreslå andet serviceinterval?" urlparam="foreslag_serviceinterval" id="foreslag_serviceinterval" condition="jQuery('#passer_serviceinterval').val() == 'Nej'">
+                <option value="" name="Vælg"/>
+                <option value="3. måned" name="3. måned"/>
+                <option value="6. måned" name="6. måned"/>
+                <option value="9. måned" name="9. måned"/>
+                <option value="12. måned" name="12. måned"/>
+                <option value="18. måned" name="18. måned"/>
+                <option value="24. måned" name="24. måned"/>
+            </input>          
+            <input type="dropdown" displayname="Er anlægget underlagt energieftersyn (LVE)?" urlparam="energieftersyn_lve" id="energieftersyn_lve" regexp=".+" validate="Vælg Ja eller Nej!">
+                <option value="" name="Vælg"/>
+                <option value="Ja" name="Ja"/>
+                <option value="Nej" name="Nej"/>
+            </input>          
+            <input type="text" displayname=" "/>
+            <input type="text" displayname=" "/>
+            <input type="file" displayname="Medsend 'Tjek- og serviceliste'" id="tjek_serviceliste" urlparam="tjek_serviceliste"/>				
+            <submitbutton displayname="Tilbage til forsiden" function="handleMessageButton();"/>
+        </content>  
+   </formular>
+
+</config>

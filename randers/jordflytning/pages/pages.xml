@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages>
+	<page name="sbsys.jordflytning.create-case" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="create">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="statuskode" value="Created"/>
+				<url-parameter name="beskyttet" value="0"/>										
+				<url-parameter name="klenummer" value="09.08.15" />								
+				<url-parameter name="facetnummer" value="P19"/>									
+				<url-parameter name="titel" value="Jordflytning" />
+				<url-parameter name="sagsbehandler" value="demo1"/>								
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="bortskaffelseskode" value="K"/>							
+			</url-parameters>
+		</data>
+	</page>
+
+	<page name="formular.lookup.jordflytning.cvrdata" contenttype="text/xml" resultpassing="pass-all">
+         <data handler="datasource" operation="execute-command">
+           <url-parameters>
+				<url-parameter name="datasource" value="ds_tmp_cvr" />
+				<url-parameter name="command">command</url-parameter>
+				<url-parameter name="cvrnr">if IsDefined(cvrnr) then cvrnr else 0 endif </url-parameter>
+            </url-parameters>
+        </data>
+	</page>
+
+	<page name="sbsys.jordflytning.journalNr" contenttype="application/json" >
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="get">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="sagsnummer">frid</url-parameter>
+			</url-parameters>
+		</data>		
+	</page>
+
+
+	<page name="formular.send.jordflytning.pdf" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+		<include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+	
+
+	<page name="formular.send.jordflytning.save" contenttype="application/json" sessionrequired="true">
+		<data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_jordflytning"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>
+    </page>
+	
+	<page name="formular.send.jordflytning.mail" contenttype="application/json" sessionrequired="true">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">frid</url-parameter>
+                <url-parameter name="sendto_email">'to:'+anmeldemail</url-parameter>
+                <url-parameter name="sendto_subject">'Flytning af jord'</url-parameter> -->
+                <url-parameter name="sendto_content">'Tak for din anmeldelse om jordflytning.
+
+I henhold til Jordflytningsbekendtgørelse nr. 1479 af 12 december 2007 § 5, har Randers kommune 4 uger til at besvare anmeldelsen/anvise jorden.
+
+I praksis går det dog langt hurtigere, da vi prioriterer jordflytningsanmeldelser højt.
+
+Vi bestræber os på at besvare anmeldelser/anvise jord indenfor en uge fra anmeldelse og ofte vil det kunne ske fra dag til dag.
+
+Med venlig hilsen
+Natur og Miljø
+Randers Kommune'</url-parameter>
+                <url-parameter name="sendto_attached">'ansøgning.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+frid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+
+	<page name="sbsys.jordflytning.attach-document.ansoegning" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Ansøgning" />
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.pdf.dir]/'+formular+'_'+frid+'.pdf'</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.jordflytning.attach-document.fil_plan" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Plan" />
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.upload.dir]/'+fil_plan</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.jordflytning.attach-document.fil_analyse" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Analyseresultat" />
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.upload.dir]/'+fil_analyse</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+
+</pages>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+    <endpoint endpointtype="postgis" name="mailsender">
+        <connect>[module.formular-config.connection]</connect>
+        <user>[module.formular-config.user]</user>
+        <pwd>[module.formular-config.pwd]</pwd>
+        <srid>25832</srid>
+        <table geometrycolumn="the_geom" pkcolumn="ogc_fid"/>
+    </endpoint>
+    <datasource displayname="Færdigmelding ifm separering af kloak" endpoint="selvbetjening" name="ds_formular_faerdig_sep_kloak">
+        <sql command="write">INSERT INTO formular_faerdig_sep_kloak
+		(bygherre, vvs_mester, email, kommentar, adresse, dato, vaskeplads, vaskeplads_str, konflikttekst, olieudskiller,tagfladevand,skitse,bbrkode,bbrtekst,erhvervsareal,moedding, ref,wkb_geometry) 
+		VALUES 
+		([string: bygherre],
+		[string: kloakmester],
+		[string: if isdefined(email) then email else "Ikke oplyst" endif],
+		[string: if isdefined(kommentar) then kommentar else "Ikke oplyst" endif],
+		[string: if isdefined(address) then address else "Ikke oplyst" endif],
+		[string: if isdefined(dato_faerdig) then dato_faerdig else "Ikke oplyst" endif],
+		[string: vaskeplads],
+		[string: areal_vaskeplads],
+		[string: if isdefined(konflikttekst1) then konflikttekst1 else "Ikke oplyst" endif],
+		[string: if isdefined(olieudskiller) then olieudskiller else "" endif],
+		[string: if isdefined(tagfladevand) then tagfladevand else " " endif],
+		[string: if isdefined(filnavn1) then filnavn1 else "" endif],
+		[number: ToNumber(bbrkode)],
+		[string: if isdefined(bbrtekst) then bbrtekst else "" endif],
+		[number: if isdefined(erhvervsareal) then ToNumber(erhvervsareal) else 0 endif],
+		[string: if isdefined(moedding) then moedding else "" endif],
+		
+		[string: sessionid],
+		[geometry: ToGeometry(wkt)])</sql>
+        <sql command="read-by-id">select * from formular_faerdig_sep_kloak where ogc_fid = [number: ToNumber(id)]</sql>
+		<table geometrycolumn="wkb_geometry" name="formular_faerdig_sep_kloak" pkcolumn="ogc_fid"/>
+    </datasource>
+</datasources>

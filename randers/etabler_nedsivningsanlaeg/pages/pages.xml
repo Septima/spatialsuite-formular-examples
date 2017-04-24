@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages>
+	<page name="sbsys.etabler_nedsivningsanlaeg.create-case" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="create">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="statuskode" value="Created"/>
+				<url-parameter name="beskyttet" value="0"/>										
+				<url-parameter name="klenummer" value="06.01.05" />								
+				<url-parameter name="facetnummer" value="P19"/>									
+				<url-parameter name="titel">'MBL § 19 ' + navn + ' ' + ejendommens_adresse + ' nedsivningstilladelse'</url-parameter>
+				<url-parameter name="sagsbehandler" value="demo1"/>								
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="bortskaffelseskode" value="K"/>							
+			</url-parameters>
+		</data>
+	</page>
+
+	<page name="sbsys.etabler_nedsivningsanlaeg.journalNr" contenttype="application/json" >
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="get">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="sagsnummer">frid</url-parameter>
+			</url-parameters>
+		</data>		
+	</page>
+	
+	<page name="formular.send.etabler_nedsivningsanlaeg.save" contenttype="application/json" sessionrequired="true">
+		<data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_etabler_nedsivningsanlaeg"/>
+                <url-parameter name="command" value="write"/>
+            </url-parameters>
+        </data>
+    </page>
+
+
+	<page name="formular.send.etabler_nedsivningsanlaeg.pdf" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+		<include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+    <page name="formular.send.etabler_nedsivningsanlaeg.pdf.move" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+           <url-parameters>
+                <url-parameter name="datasource" value="formular-final"/>
+                <url-parameter name="command" value="move"/>
+				<url-parameter name="frid">frid</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+	
+	
+	<page name="formular.send.etabler_nedsivningsanlaeg.pdf.kvittering" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+		<data handler="PDFFormatter" operation="format-pdf">
+            <url-parameters>
+                <url-parameter name="formularxsl" value="pdf"/>
+                <url-parameter name="nomap" value="false"/>
+				<url-parameter name="stylesheet">"[module:formular-randers.dir]/xsl/slam_kvittering.xsl"</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+    <page name="formular.send.etabler_nedsivningsanlaeg.pdf.move.kvittering" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+        <data handler="datasource" operation="execute-command">
+           <url-parameters>
+                <url-parameter name="datasource" value="formular-final"/>
+                <url-parameter name="command" value="move"/>
+				<url-parameter name="frid">frid+'_2'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+
+	
+	<page name="formular.send.etabler_nedsivningsanlaeg.mail" contenttype="application/json" sessionrequired="true">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="mailsender"/>
+                <url-parameter name="command" value="sendmail"/>
+                <url-parameter name="sendto_ref">frid+'_2'</url-parameter>
+                <url-parameter name="sendto_email">'to:'+email+',bcc:' + mail_intern</url-parameter>
+                <url-parameter name="sendto_subject">'Etablering af nedsivningsanlæg (journalnr:' + journalNr + ')'</url-parameter>
+                <url-parameter name="sendto_content">'Randers Kommune kvitterer hermed for modtagelse af din anmeldelse om etablering af nedsivningsanlæg
+
+
+Med venlig hilsen
+Natur og Miljø
+Randers Kommune'</url-parameter>
+                <url-parameter name="sendto_attached">'ansøgning.pdf;[cbinfo.wwwroot.dir]/formular/kvitteringer/'+formular+'_'+frid+'.pdf'</url-parameter>
+            </url-parameters>
+        </data>
+    </page>
+
+	<page name="sbsys.etabler_nedsivningsanlaeg.attach-document.pdf" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Ansøgning"/>
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.pdf.dir]/'+formular+'_'+frid+'.pdf'</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.etabler_nedsivningsanlaeg.attach-document.frem_forh_accpet" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Tinglysning" />
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.upload.dir]/'+frem_forh_accpet</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.etabler_nedsivningsanlaeg.attach-document.sigteanalyse" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Sigteanalyse" />
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.upload.dir]/'+frem_forh_sigteanalyse</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.etabler_nedsivningsanlaeg.attach-document.kloakplan" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Kloakplan" />
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.upload.dir]/'+kloakplan</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+	<page name="sbsys.etabler_nedsivningsanlaeg.attach-document.andre_dok" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid">sbsys_brugerid</url-parameter>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel" value="Andre dokumenter" />
+				<url-parameter name="journalbeskrivelse" value="i kabinetskab"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.upload.dir]/'+andre_dok</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>			
+			</url-parameters>
+		</data>
+	</page>
+
+	<page name="sbsys.etabler_nedsivningsanlaeg.pdf.so" contenttype="application/json" sessionrequired="false">
+        <data handler="datasource" operation="execute-command">
+            <url-parameters>
+                <url-parameter name="datasource" value="ds_formular_etabler_nedsivningsanlaeg"/>
+                <url-parameter name="command" value="read-by-id"/>
+				<url-parameter name="ogc_fid">ogc_fid</url-parameter>
+            </url-parameters>
+        </data>
+        
+        <data handler="PDFFormatter" operation="format-pdf">
+            <url-parameters>
+                <url-parameter name="formularxsl" value="pdf"/>
+                <url-parameter name="nomap" value="false"/>
+                <url-parameter name="stylesheet" value="[module:formular-randers.dir]/xsl/etabler_nedsivningsanlaeg_so.xsl"/>
+            </url-parameters>
+        </data>
+		
+	</page>
+
+</pages>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages>
+
+    <page name="formular-query-tilsyn_fbb" contenttype="text/xml">
+        <data handler="spatialquery2" operation="execute-query">
+            <url-parameters>
+
+				<!-- DETTE ER SPECIELT I DENNE PAGE -->
+                <url-parameter name="query" value="formular-wkt-proxy-ds_bygning_fot"/>
+                <url-parameter name="queryfile" value="[module:formular-randers.dir]/queries/spatialqueries.xml"/>
+
+                <url-parameter name="targetsetfile">if IsDefined(targetsetfile) then targetsetfile else '[module.formular.targetsetfile]' endif</url-parameter>
+                <url-parameter name="targetset">if IsDefined(targetset) then targetset else 'formular' endif</url-parameter>
+                <url-parameter name="saveresult" value="true"/>
+                <url-parameter name="savename" value="formular_result"/>
+            </url-parameters>
+        </data>
+    </page>
+
+    <page name="formular.send.tilsyn_fbb.pdf" contenttype="application/json" sessionrequired="true" resultpassing="pass-all">
+        <include src="[module:formular.dir]/pages/pages-includes.xml" nodes="/pages/page[@name='formular.send']/*" mustexist="true"/>
+    </page>
+
+	<page name="sbsys.tilsyn_fbb.get-case" contenttype="application/json" sessionrequired="false">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="get">
+			<url-parameters>
+				<url-parameter name="brugerid" value="DQ24297"/>
+				<url-parameter name="journalnummer" value="01.10.00-P15-1-16"/>
+				<!-- <url-parameter name="journalnummer" value="01.10.00-A26-10-16"/> -->
+			</url-parameters>
+		</data> 
+	</page>
+	<page name="sbsys.tilsyn_fbb.journalnr" contenttype="application/json" >
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="get">
+			<url-parameters>
+				<url-parameter name="brugerid" value="DQ24297" />
+				<url-parameter name="sagsnummer">frid</url-parameter>
+			</url-parameters>
+		</data>		
+	</page>
+
+	<page name="sbsys.tilsyn_fbb.attach-document" contenttype="application/json" sessionrequired="true">
+		<data handler="dk.septima.integration.sbsys.SbsysHandler" operation="attach">
+			<url-parameters>
+				<url-parameter name="brugerid" value="DQ24297"/>
+				<url-parameter name="type" value="InternalDocument"/>
+				<url-parameter name="titel">'Registrering af bevaringsværdi for ' + adr + ', ' + bygnr + ', ' + dagsdato </url-parameter>
+				<url-parameter name="journalbeskrivelse" value="Registrering til upload på Kulturstyrelsens database"/>				
+				<url-parameter name="oprettetdato" value="!now"/>								
+				<url-parameter name="oprettetaf" value="demo1"/>								
+				<url-parameter name="filsti">'[module.formular.pdf.dir]/'+formular+'_'+frid+'.pdf'</url-parameter> 
+				<url-parameter name="sagsnummer">frid</url-parameter>	
+			</url-parameters>
+		</data>
+	</page>
+	
+</pages>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+    <endpoint endpointtype="postgis" name="mailsender">
+        <connect>[module.formular-config.connection]</connect>
+        <user>[module.formular-config.user]</user>
+        <pwd>[module.formular-config.pwd]</pwd>
+        <srid>25832</srid>
+        <table geometrycolumn="the_geom" pkcolumn="ogc_fid"/>
+    </endpoint>
+    <datasource displayname="Ejendomsavance beskatning" endpoint="selvbetjening" name="ds_formular_ejendavance">
+        <table geometrycolumn="wkb_geometry" name="formular_ejendavance" pkcolumn="ogc_fid"/>
+		<sql command="write">INSERT INTO formular_ejendavance 
+								(
+								matrikelinfo,
+								samletareal,
+								landzone,
+								lokalplan,
+								kommuneplan,
+								straksafgoerelse,
+								firmanavn,
+								firmaadresse,
+								firmacvrnr,
+								kontaktperson,
+								tlf,
+								login,
+								journalnr,
+								wkb_geometry
+								) 
+								VALUES
+								(
+								[string: if IsDefined(konflikttekst1)         then konflikttekst1 else "" endif],
+								[number: if IsDefined(samletareal)         then toNumber(samletareal) else 0 endif],
+								[string: if IsDefined(landzone)         then landzone else "-" endif],
+								[string: if IsDefined(lokalplan)         then lokalplan else "-" endif],
+								[string: if IsDefined(kommuneplan)         then kommuneplan else "-" endif],
+								[string: if IsDefined(straksafg)         then straksafg else "" endif],
+								[string: if IsDefined(firma)         then firma else "" endif],
+								[string: if IsDefined(firmaadresse)         then firmaadresse else "" endif],
+								[string: if IsDefined(cvrnr)         then cvrnr else "" endif],
+								[string: if IsDefined(navn)         then navn else "" endif],
+								[string: if IsDefined(tlf)         then tlf else "" endif],
+								[string: if IsDefined(login)         then login else "" endif],
+								[string: if IsDefined(journalnr)         then journalnr else "" endif],
+								[geometry: ToGeometry(wkt)]
+								)
+								</sql>
+    </datasource>
+</datasources>

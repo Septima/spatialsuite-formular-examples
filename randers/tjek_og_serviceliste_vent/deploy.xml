@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy>
+
+    <version>0.0.1</version>
+
+    <copydir fromdir="[module:formular-tjek_og_serviceliste_vent.dir]/js"    todir="[cbinfo.wwwroot.dir]/modules/formular/formular-config/js" replacetext="false"/>
+
+</deploy>

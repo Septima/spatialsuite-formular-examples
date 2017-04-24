@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+    <endpoint endpointtype="postgis" name="mailsender">
+        <connect>[module.formular-config.connection]</connect>
+        <user>[module.formular-config.user]</user>
+        <pwd>[module.formular-config.pwd]</pwd>
+        <srid>25832</srid>
+        <table geometrycolumn="the_geom" pkcolumn="ogc_fid"/>
+    </endpoint>
+    <datasource displayname="Færdigmelding af nedsivningsanlæg" endpoint="gistest" name="ds_formular_faerdig_nedsivning">
+		<table geometrycolumn="wkb_geometry" name="formular_faerdig_nedsivning" pkcolumn="ogc_fid"/>       
+	   <sql command="write">insert into formular_faerdig_nedsivning 
+        (formular,
+           ref,
+           address,
+           areal,
+           konflikttekst1,
+           
+           tanktype,
+           antal_kamre,
+           volumen,
+           afslutningsdato,
+           tilladelsesdato,
+           overenstemmelse,
+           filnavn,
+           ejendommens_adresse,
+           navn,
+           adresse,
+           email,
+           tlf,
+           km_navn,
+           km_adr,
+           km_email,
+           km_cvr,
+		   journalnr,
+		   dagsdato,
+           wkb_geometry)
+           values 
+					 ([string: formular],
+				   [string: sessionid],
+           [string: if isDefined(address) then address else "Ikke oplyst" endif],
+           [string: if isDefined(areal) then areal else "-1" endif],
+           [string: konflikttekst1],
+           
+           [string: tanktype],
+           [string: antal_kamre],
+           [string: volumen],
+           [string: afslutningsdato],
+           [string: tilladelsesdato],
+           [string: overenstemmelse],
+           [string: if isDefined(filnavn) then filnavn else "Ikke oplyst" endif],
+           [string: if isDefined(ejendommens_adresse) then ejendommens_adresse else "Ikke oplyst" endif],
+           [string: if isDefined(enavn) then enavn else "Ikke oplyst" endif],
+           [string: if isDefined(eadresse) then eadresse else "Ikke oplyst" endif],
+           [string: if isDefined(email) then email else "Ikke oplyst" endif],
+           [string: if isDefined(eejers_tlf) then eejers_tlf else 0 endif],
+           [string: if isDefined(km_navn) then km_navn else "Ikke oplyst" endif],
+           [string: if isDefined(km_adr) then km_adr else "Ikke oplyst" endif],
+           [string: if isDefined(km_email) then km_email else "Ikke oplyst" endif],
+           [string: if isDefined(km_cvr) then km_cvr else "Ikke oplyst" endif],
+		   [string: if isDefined(journalnr) then journalnr else "" endif],
+		   [string: if isDefined(dagsdato) then dagsdato else "" endif],
+           [geometry: ToGeometry(wkt)])</sql>
+    </datasource>
+</datasources>
